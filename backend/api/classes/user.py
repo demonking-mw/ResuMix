@@ -11,9 +11,9 @@ dbconn rule:
 
 # pylint: disable=import-error
 from flask_restful import Resource
-from ../../src.db_helper.dbconn import DBConn
-from ../../src.classes_req.user_req import user_req
-from ../../src.general_helper.google_auth_extract import GoogleAuthExtract as gae
+from ...src.db_helper.dbconn import DBConn
+from ...src.classes_req.user_req import user_req
+from ...rc.general_helper.google_auth_extract import GoogleAuthExtract as gae
 
 
 class User(Resource):
@@ -29,9 +29,9 @@ class User(Resource):
         args = user_req.user_auth.parse_args()
         # Check auth type
         if args["type"] == "email":
-            
+            pass
         elif args["type"] == "up":
-            
+            pass
         elif args["type"] == "go":
             if args["jwt_token"] is None:
                 return {"status": False, "message": "JWT token is required for go auth type"}, 400
