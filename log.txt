@@ -1,0 +1,6 @@
+Time spend on this:
+
+Next up:
+finish building user
+setting up google auth
+connecting database to local
