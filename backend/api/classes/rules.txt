@@ -1,0 +1,6 @@
+RULES FOR CLASSES FOLDER:
+
+1. Classes here must NOT try to implement features using code
+2. Features should only be used (through calling other classes) here.
+3. For each class, include a document on how to call each endpoint and what info to provide. Ideally make a sample
+4. Copy all black box document to doc.md
