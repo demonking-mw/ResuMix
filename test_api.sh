@@ -20,10 +20,23 @@ if [[ -z "$VIRTUAL_ENV" ]]; then
         exit 1
     fi
 else
-    echo "Virtual environment already active."
+    echo -e "Virtual environment active.\n"
 fi
 echo "black-ing"
 black .
+echo -e "\n"
+echo -e "update all.txt\n"
+
+# Update all.txt
+all_file="./backend/api_tests/lists/all.txt"
+> "$all_file"  # Clear the all.txt file
+for file in ./backend/api_tests/*; do
+    if [ -f "$file" ]; then
+        filename=$(basename -- "$file")
+        stem="${filename%.*}"
+        echo "$stem" >> "$all_file"
+    fi
+done
 
 test_file="./backend/api_tests/lists/$1.txt"
 
