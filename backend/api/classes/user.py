@@ -66,3 +66,15 @@ class User(Resource):
                 return user_auth_json, login_status
         else:
             return {"status": False, "message": "Invalid auth type"}, 400
+    def post(self) -> tuple[dict, int]:
+        """
+        Creates a new user and log the user in
+        """
+        args = user_req.user_signup.parse_args()
+        # Check auth type
+        if args["type"] == "go":
+            pass
+        elif args["type"] == "eupn":
+            pass
+        else:
+            return {"status": False, "message": "Invalid auth type"}, 400
