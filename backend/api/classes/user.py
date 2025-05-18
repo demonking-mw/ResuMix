@@ -13,6 +13,7 @@ dbconn rule:
 from flask_restful import Resource
 from ...src.db_helper.dbconn import DBConn
 from ...src.classes_req import user_req
+from ...src.class_helper import user_auth
 from ...rc.general_helper.google_auth_extract import GoogleAuthExtract as gae
 
 
@@ -21,17 +22,28 @@ class User(Resource):
     CLASS USAGE:
     
     """
-    def get(self):
+    def get(self) -> tuple[dict, int]:
         """
         Gets all user info after authentication
         Creates a new user if not exists and having enough info (go type)
+        Note: SIGN IN ONLY
         """
         args = user_req.user_auth.parse_args()
         # Check auth type
         if args["type"] == "email":
-            pass
+            # NOT BUILT YET
+            # REQUIRING EMAIL AUTH METHOD
+            return {"status": False, "message": "Email auth not implemented"}, 501
         elif args["type"] == "up":
-            pass
+            database = DBConn()
+            user_auth_obj = user_auth.UserAuth(database, args)
+            user_auth_json, login_status = user_auth_obj.login_up()
+            database.close()
+            if login_status == -1:  # Login_status SHOULD be defined if this is reached
+                print("ERROR: something is cooked for login")
+                return {"status": False, "detail": {"status": "info mismatch"}}, 400
+            else:
+                return user_auth_json, login_status
         elif args["type"] == "go":
             if args["jwt_token"] is None:
                 return {"status": False, "message": "JWT token is required for go auth type"}, 400
@@ -40,9 +52,13 @@ class User(Resource):
                 return {"status": False, "message": "go auth failed, bad jwt"}, 401
             # JWT token authed at this point
             database = DBConn()
-            # INSERT USER AUTH FUNCTION HERE
+            user_auth_obj = user_auth.UserAuth(database, auth_jwt.decoded)
+            user_auth_json, login_status = user_auth_obj.auth_go()
             database.close()
+            if login_status == -1:
+                print("ERROR: something is cooked for login")
+                return {"status": False, "message": "info incomplete or defect"}, 400
+            else:
+                return user_auth_json, login_status
         else:
             return {"status": False, "message": "Invalid auth type"}, 400
-    
-
