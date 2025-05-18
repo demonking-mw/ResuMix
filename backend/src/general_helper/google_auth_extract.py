@@ -1,5 +1,5 @@
 """
-parse google auth jwt to standard user auth 
+parse google auth jwt to standard user auth
 """
 
 import jwt  # pylint: disable=import-error

@@ -33,7 +33,7 @@ if [ ! -f "$test_file" ]; then
 fi
 
 # Run the test program
-python -m backend.flask_api.api_1 &
+python -m backend.api.api_1 &
 echo "Running api server"
 sleep 12 # Wait for the server to start
 pass_count=0
@@ -55,7 +55,7 @@ if [ $fail_count -eq 0 ]; then
 fi
 
 
-pkill -f "backend.flask_api.api_1"
+pkill -f "backend.api.api_1"
 echo "Killed api server\n"
 exit $fail_count
 

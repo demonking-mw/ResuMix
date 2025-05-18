@@ -14,14 +14,15 @@ from flask_restful import Resource
 from ...src.db_helper.dbconn import DBConn
 from ...src.classes_req import user_req
 from ...src.class_helper import user_auth
-from ...rc.general_helper.google_auth_extract import GoogleAuthExtract as gae
+from ...src.general_helper.google_auth_extract import GoogleAuthExtract as gae
 
 
 class User(Resource):
     """
     CLASS USAGE:
-    
+
     """
+
     def get(self) -> tuple[dict, int]:
         """
         Gets all user info after authentication
@@ -46,7 +47,10 @@ class User(Resource):
                 return user_auth_json, login_status
         elif args["type"] == "go":
             if args["jwt_token"] is None:
-                return {"status": False, "message": "JWT token is required for go auth type"}, 400
+                return {
+                    "status": False,
+                    "message": "JWT token is required for go auth type",
+                }, 400
             auth_jwt = gae(args["jwt_token"])
             if not auth_jwt.authenticate():
                 return {"status": False, "message": "go auth failed, bad jwt"}, 401

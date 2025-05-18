@@ -97,7 +97,7 @@ class UserAuth:
             return {"status": False, "detail": "uid mismatch"}, 401
         if quick:
             return {"status": True, "detail": "jwt token valid"}, 200
-        sql_query = f"SELECT * FROM user_accounts WHERE uid = '{self.args['uid']}';"
+        sql_query = f"SELECT * FROM data WHERE uid = '{self.args['uid']}';"
         table_1 = self.database.run_sql(sql_query)
         if datetime.datetime.utcnow() > datetime.datetime.fromtimestamp(
             payload["exp"]
@@ -128,7 +128,7 @@ class UserAuth:
             # uid and pwd are mandatory
             print("ERROR: uid or pwd not provided")
             return {}, -1
-        sql_query = f"SELECT * FROM user_accounts WHERE uid = '{self.args['uid']}';"
+        sql_query = f"SELECT * FROM data WHERE uid = '{self.args['uid']}';"
         table_1 = self.database.run_sql(sql_query)
         if not table_1:
             return {"status": False, "detail": {"status": "user not found"}}, 400
@@ -153,7 +153,7 @@ class UserAuth:
         if any(not self.args[field] for field in required_fields):
             print("ERROR: uid, pwd, email, or name not provided")
             return {}, -1
-        sql_query = f"INSERT INTO user_accounts VALUES('{self.args['uid']}', '{self.args['user_name']}', '{self.args['pwd']}', '{self.args['email']}', false, 'eup', 'tier1', ARRAY[]::integer[], ARRAY[]::integer[], '{{}}'::jsonb, 0, '{{}}'::jsonb)"
+        sql_query = f"INSERT INTO data VALUES('{self.args['uid']}', '{self.args['user_name']}', '{self.args['pwd']}', '{self.args['email']}', 'eup', '{{}}'::jsonb, '{{}}'::jsonb)"
         try:
             self.database.run_sql(sql_query)
             return {
@@ -175,7 +175,7 @@ class UserAuth:
         if any(field not in self.args for field in required_fields):
             print("ERROR: uid, pwd, email, or name not provided")
             return {}, -1
-        sql_query = f"DELETE FROM user_accounts WHERE uid = '{self.args['uid']}' AND pwd = '{self.args['pwd']}' AND email = '{self.args['email']}' AND user_name = '{self.args['user_name']}';"
+        sql_query = f"DELETE FROM data WHERE uid = '{self.args['uid']}' AND pwd = '{self.args['pwd']}' AND email = '{self.args['email']}' AND user_name = '{self.args['user_name']}';"
         try:
             self.database.run_sql(sql_query)
             return {"status": True, "detail": {"status": "user deleted"}}, 200
@@ -197,11 +197,11 @@ class UserAuth:
         if not self.args["sub"]:
             print("ERROR: sub not provided")
             return {}, -1
-        sql_query = f"SELECT * FROM user_accounts WHERE uid = '{self.args['sub']}';"
+        sql_query = f"SELECT * FROM data WHERE uid = '{self.args['sub']}';"
         table_1 = self.database.run_sql(sql_query)
 
         if not table_1:
-            sql_query = f"INSERT INTO user_accounts VALUES('{self.args['sub']}', '{self.args['name']}', '', '{self.args['email']}', true, 'go', 'tier1', ARRAY[]::integer[], ARRAY[]::integer[], '{{}}'::jsonb, 0, '{{}}'::jsonb)"
+            sql_query = f"INSERT INTO data VALUES('{self.args['sub']}', '{self.args['name']}', '', '{self.args['email']}', 'go', '{{}}'::jsonb, '{{}}'::jsonb)"
             try:
                 self.database.run_sql(sql_query)
                 return {
