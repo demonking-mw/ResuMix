@@ -1,4 +1,4 @@
-Time spend on this:
+Time (h) spend on this: 2
 
 Next up:
 finish building user
