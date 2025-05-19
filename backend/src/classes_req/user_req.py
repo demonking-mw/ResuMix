@@ -45,3 +45,25 @@ user_signup.add_argument("pwd", type=str, help="Password", required=False)
 user_signup.add_argument(
     "user_name", type=str, help="User name", required=False, default=None
 )
+
+
+# User Delete: TYPE, jwt_token, REAUTH_JWT, email, uid, pwd
+user_delete = reqparse.RequestParser()
+user_delete.add_argument(
+    "type",
+    type=str,
+    help="Type is required, can be email, up, or go",
+    required=True,
+)
+user_delete.add_argument(
+    "jwt_token", type=str, help="JWT token for go type", required=False, default=None
+)
+user_delete.add_argument(
+    "reauth_jwt",
+    type=str,
+    help="Reauth JWT, required for deletion",
+    required=True,
+)
+user_delete.add_argument("email", type=str, help="Email", required=False)
+user_delete.add_argument("uid", type=str, help="User ID", required=False)
+user_delete.add_argument("pwd", type=str, help="Password", required=False)

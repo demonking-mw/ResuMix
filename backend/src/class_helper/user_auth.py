@@ -9,6 +9,7 @@ DATABASE: USE PROVIDED, DO NOT CLOSE
 
 Note: for each method, doccumentation of all possible result is mandatory
 """
+
 import json
 import os
 import datetime
@@ -175,19 +176,22 @@ class UserAuth:
             }, 201
         except psycopg.errors.UniqueViolation:
             print("UID unique violation")
-            return {"status": False, "detail": {"status": "uid or email unique violation"}}, 409
+            return {
+                "status": False,
+                "detail": {"status": "uid or email unique violation"},
+            }, 409
 
-    def delete_eupn(self) -> tuple[dict, int]:
+    def delete_eup(self) -> tuple[dict, int]:
         """
         delete user with email, uid, password (and name)
         TO BE MIGRATED TO admin_user_edit.py
         Expected result: success; deletion failed (return specific error)
         """
-        required_fields = ["uid", "pwd", "email", "user_name"]
+        required_fields = ["uid", "pwd", "email"]
         if any(field not in self.args for field in required_fields):
             print("ERROR: uid, pwd, email, or name not provided")
             return {}, -1
-        sql_query = f"DELETE FROM data WHERE uid = '{self.args['uid']}' AND pwd = '{self.args['pwd']}' AND email = '{self.args['email']}' AND user_name = '{self.args['user_name']}';"
+        sql_query = f"DELETE FROM data WHERE uid = '{self.args['uid']}' AND pwd = '{self.args['pwd']}' AND email = '{self.args['email']}';"
         try:
             self.database.run_sql(sql_query)
             return {"status": True, "detail": {"status": "user deleted"}}, 200
@@ -195,7 +199,7 @@ class UserAuth:
             print(f"ERROR: {e}")
             return {
                 "status": False,
-                "detail": {"status": "deletion failed", "detail": str(e)},
+                "detail": {"status": False, "detail": str(e)},
             }, 500
 
     def auth_go(self) -> tuple[dict, int]:
@@ -230,16 +234,37 @@ class UserAuth:
                 self.database.run_sql(sql_query, params)
                 return {
                     "status": True,
-                    "detail": {"status": "user created"},
+                    "detail": {"message": "user created"},
                     "jwt": self.sign_jwt(self.args["sub"]),
                 }, 201
             except psycopg.errors.UniqueViolation:
                 print("BACKEND ERROR: on creation while account exists")
                 return {}, -1
         if table_1[0]["auth_type"] != "go":
-            return {"status": False, "detail": "auth type mismatch"}, 401
+            return {"status": False, "message": "auth type mismatch"}, 401
         return {
             "status": True,
-            "detail": table_1[0],
+            "info": table_1[0],
             "jwt": self.sign_jwt(table_1[0]["uid"]),
         }, 200
+
+    def delete_go(self) -> tuple[dict, int]:
+        """
+        delete user with google oauth
+        Expected result: success; deletion failed (return specific error)
+        """
+        if not self.args["uid"]:
+            print("ERROR: sub not provided")
+            return {}, -1
+        sql_query = (
+            f"DELETE FROM data WHERE uid = '{self.args['uid']}' AND auth_type = 'go';"
+        )
+        try:
+            self.database.run_sql(sql_query)
+            return {"status": True, "message": "user deleted"}, 200
+        except Exception as e:  # pylint: disable=broad-except
+            print(f"ERROR: {e}")
+            return {
+                "status": False,
+                "message": f"deletion failed: {str(e)}",
+            }, 400

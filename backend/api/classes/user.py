@@ -93,3 +93,62 @@ class User(Resource):
                 return user_auth_json, login_status
         else:
             return {"status": False, "message": "Invalid auth type"}, 400
+
+    def delete(self) -> tuple[dict, int]:
+        """
+        Delete the user
+        FUTURE: keep the email tracked, maintain some basic info
+        """
+        args = user_req.user_delete.parse_args()
+        if args["type"] == "go":
+            if not args["jwt_token"]:
+                return {
+                    "status": False,
+                    "message": "JWT token is required for go auth type",
+                }, 400
+            auth_jwt = gae(args["jwt_token"])
+            if not auth_jwt.authenticate():
+                return {"status": False, "message": "go auth failed, bad jwt"}, 401
+            jwt_decode_uid = auth_jwt.decoded.get("sub")
+            args["uid"] = jwt_decode_uid
+            database = DBConn()
+            user_auth_obj = user_auth.UserAuth(database, args)
+            reauth_result, login_status = user_auth_obj.login_jwt(quick=True)
+            if login_status != 200:
+                print("reauth result: ", reauth_result)
+                database.close()
+                return {
+                    "status": False,
+                    "detail": {"status": "Reauth failure, user not logged in"},
+                }, 400
+            user_auth_json, del_status = user_auth_obj.delete_go()
+            database.close()
+            return user_auth_json, del_status
+        elif args["type"] == "eup":
+            req = ["email", "uid", "pwd"]
+            if any(not args[field] for field in req):
+                return {
+                    "status": False,
+                    "message": f"Missing required fields: {', '.join(req)}",
+                }, 400
+            database = DBConn()
+            user_auth_obj = user_auth.UserAuth(database, args)
+            reauth_result, login_status = user_auth_obj.login_jwt(quick=True)
+            if login_status != 200:
+                print("reauth result: ", reauth_result)
+                return {
+                    "status": False,
+                    "detail": {"status": "Reauth failure, user not logged in"},
+                }, 400
+            user_auth_json, del_status = user_auth_obj.delete_eup()
+            database.close()
+            if del_status == -1:
+                print("ERROR: something is cooked for deletion")
+                return {
+                    "status": False,
+                    "detail": {"status": "internal error, should not happen"},
+                }, 400
+            else:
+                return user_auth_json, del_status
+        else:
+            return {"status": False, "message": "Invalid auth type"}, 400
