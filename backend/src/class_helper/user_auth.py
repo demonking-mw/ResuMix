@@ -9,15 +9,14 @@ DATABASE: USE PROVIDED, DO NOT CLOSE
 
 Note: for each method, doccumentation of all possible result is mandatory
 """
-
+import json
 import os
 import datetime
 import jwt  # pylint: disable=import-error
-import json
 
 from dotenv import load_dotenv
-
 import psycopg  # type: ignore
+
 from ..db_helper import dbconn
 
 
@@ -176,7 +175,7 @@ class UserAuth:
             }, 201
         except psycopg.errors.UniqueViolation:
             print("UID unique violation")
-            return {"status": False, "detail": {"status": "uid unique violation"}}, 409
+            return {"status": False, "detail": {"status": "uid or email unique violation"}}, 409
 
     def delete_eupn(self) -> tuple[dict, int]:
         """

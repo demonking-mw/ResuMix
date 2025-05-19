@@ -82,6 +82,14 @@ class User(Resource):
         if args["type"] == "go":
             return self.__go_auth(args)
         elif args["type"] == "eupn":
-            pass
+            database = DBConn()
+            user_auth_obj = user_auth.UserAuth(database, args)
+            user_auth_json, login_status = user_auth_obj.signup_eupn()
+            database.close()
+            if login_status == -1:  # Login_status will be defined if this is reached
+                print("ERROR: something is cooked for login")
+                return {"status": False, "detail": {"status": "info mismatch"}}, 400
+            else:
+                return user_auth_json, login_status
         else:
             return {"status": False, "message": "Invalid auth type"}, 400
