@@ -12,3 +12,4 @@ Backend API reture rule:
     - Note: it conveys a different meaning than the code
     - It is possible that the action was not performed but no error was reached
 - 'info' means data
+- 'jwt' means a reauthentication jwt for quick auth next time.

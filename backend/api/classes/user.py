@@ -23,6 +23,29 @@ class User(Resource):
 
     """
 
+    def __go_auth(self, args: dict) -> tuple[dict, int]:
+        """
+        Handles the go auth here because login and signup are identical
+        """
+        if args["jwt_token"] is None:
+            return {
+                "status": False,
+                "message": "JWT token is required for go auth type",
+            }, 400
+        auth_jwt = gae(args["jwt_token"])
+        if not auth_jwt.authenticate():
+            return {"status": False, "message": "go auth failed, bad jwt"}, 401
+        # JWT token authed at this point
+        database = DBConn()
+        user_auth_obj = user_auth.UserAuth(database, auth_jwt.decoded)
+        user_auth_json, login_status = user_auth_obj.auth_go()
+        database.close()
+        if login_status == -1:
+            print("ERROR: something is cooked for login")
+            return {"status": False, "message": "info incomplete or defect"}, 400
+        else:
+            return user_auth_json, login_status
+
     def get(self) -> tuple[dict, int]:
         """
         Gets all user info after authentication
@@ -46,26 +69,10 @@ class User(Resource):
             else:
                 return user_auth_json, login_status
         elif args["type"] == "go":
-            if args["jwt_token"] is None:
-                return {
-                    "status": False,
-                    "message": "JWT token is required for go auth type",
-                }, 400
-            auth_jwt = gae(args["jwt_token"])
-            if not auth_jwt.authenticate():
-                return {"status": False, "message": "go auth failed, bad jwt"}, 401
-            # JWT token authed at this point
-            database = DBConn()
-            user_auth_obj = user_auth.UserAuth(database, auth_jwt.decoded)
-            user_auth_json, login_status = user_auth_obj.auth_go()
-            database.close()
-            if login_status == -1:
-                print("ERROR: something is cooked for login")
-                return {"status": False, "message": "info incomplete or defect"}, 400
-            else:
-                return user_auth_json, login_status
+            return self.__go_auth(args)
         else:
             return {"status": False, "message": "Invalid auth type"}, 400
+
     def post(self) -> tuple[dict, int]:
         """
         Creates a new user and log the user in
@@ -73,7 +80,7 @@ class User(Resource):
         args = user_req.user_signup.parse_args()
         # Check auth type
         if args["type"] == "go":
-            pass
+            return self.__go_auth(args)
         elif args["type"] == "eupn":
             pass
         else:

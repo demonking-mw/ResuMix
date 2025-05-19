@@ -13,6 +13,7 @@ Note: for each method, doccumentation of all possible result is mandatory
 import os
 import datetime
 import jwt  # pylint: disable=import-error
+import json
 
 from dotenv import load_dotenv
 
@@ -153,9 +154,21 @@ class UserAuth:
         if any(not self.args[field] for field in required_fields):
             print("ERROR: uid, pwd, email, or name not provided")
             return {}, -1
-        sql_query = f"INSERT INTO data VALUES('{self.args['uid']}', '{self.args['user_name']}', '{self.args['pwd']}', '{self.args['email']}', 'eup', '{{}}'::jsonb, '{{}}'::jsonb)"
+        sql_query = """
+            INSERT INTO data (uid, user_name, pwd, email, auth_type, userinfo, resumeinfo)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        params = (
+            self.args["uid"],
+            self.args["user_name"],
+            self.args["pwd"],
+            self.args["email"],
+            "eup",
+            json.dumps({"email_verified": False}),
+            json.dumps({}),
+        )
         try:
-            self.database.run_sql(sql_query)
+            self.database.run_sql(sql_query, params)
             return {
                 "status": True,
                 "detail": {"status": "user created"},
@@ -201,9 +214,21 @@ class UserAuth:
         table_1 = self.database.run_sql(sql_query)
 
         if not table_1:
-            sql_query = f"INSERT INTO data VALUES('{self.args['sub']}', '{self.args['name']}', '', '{self.args['email']}', 'go', '{{}}'::jsonb, '{{}}'::jsonb)"
+            sql_query = """
+                INSERT INTO data (uid, user_name, pwd, email, auth_type, userinfo, resumeinfo)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            params = (
+                self.args["sub"],
+                self.args["name"],
+                "",
+                self.args["email"],
+                "go",
+                json.dumps({"email_verified": True}),
+                json.dumps({}),
+            )
             try:
-                self.database.run_sql(sql_query)
+                self.database.run_sql(sql_query, params)
                 return {
                     "status": True,
                     "detail": {"status": "user created"},
