@@ -18,13 +18,19 @@ Helper to modify any user data fields
 
 from ..db_helper import dbconn
 from .user_auth import UserAuth
-from ...general_helper import batch_ins_gen as big
+from ..general_helper import batch_ins_gen as big
 
 
 class UserMod:
     """
     Usage: first create the object with args and db as input
     modifiable: user_name, pwd, userinfo, resumeinfo
+    Sample usage:
+
+    xxx = UserMod(args, db)
+    print(xxx) # prints the fields to be modified
+    xxx.modify()
+
     """
 
     def __init__(self, args: dict, db: dbconn.DBConn, email_auth: bool = False):
@@ -62,10 +68,7 @@ class UserMod:
         newargs = {"uid": self.uid, "pwd": self.args["old_pwd"]}
         auth_obj = UserAuth(self.database, newargs)
         _, login_status = auth_obj.login_up()
-        if login_status == 200:
-            return True
-        else:
-            return False
+        return bool(login_status == 200)
 
     def __str__(self) -> str:
         """
@@ -76,6 +79,9 @@ class UserMod:
         return f"UserMod({', '.join(self.targets.keys())})"
 
     def modify(self) -> bool:
+        """
+        actually modify the user data
+        """
         if not self.uid:
             print("ERROR: uid not provided")
             return False
@@ -87,4 +93,5 @@ class UserMod:
             self.args["uid"],
         )
         self.database.run_sql(upd_query, values)
+        self.executed = True
         return True

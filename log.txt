@@ -1,4 +1,4 @@
-Time (h) spend on this: 3.5
-
 Next up:
-build info modify functions (without declaring dbconn)
+test user_mod
+define structure for resume
+ALL OF THE ABOVE due friday

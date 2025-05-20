@@ -141,8 +141,8 @@ class UserAuth:
                 "detail": table_1[0],
                 "jwt": self.sign_jwt(self.args["uid"]),
             }, 200
-        else:
-            return {"status": False, "detail": {"status": "password incorrect"}}, 401
+
+        return {"status": False, "detail": {"status": "password incorrect"}}, 401
 
     def signup_eupn(self) -> tuple[dict, int]:
         """

@@ -43,8 +43,8 @@ class User(Resource):
         if login_status == -1:
             print("ERROR: something is cooked for login")
             return {"status": False, "message": "info incomplete or defect"}, 400
-        else:
-            return user_auth_json, login_status
+
+        return user_auth_json, login_status
 
     def get(self) -> tuple[dict, int]:
         """
@@ -58,7 +58,7 @@ class User(Resource):
             # NOT BUILT YET
             # REQUIRING EMAIL AUTH METHOD
             return {"status": False, "message": "Email auth not implemented"}, 501
-        elif args["type"] == "up":
+        if args["type"] == "up":
             database = DBConn()
             user_auth_obj = user_auth.UserAuth(database, args)
             user_auth_json, login_status = user_auth_obj.login_up()
@@ -66,12 +66,11 @@ class User(Resource):
             if login_status == -1:  # Login_status SHOULD be defined if this is reached
                 print("ERROR: something is cooked for login")
                 return {"status": False, "detail": {"status": "info mismatch"}}, 400
-            else:
-                return user_auth_json, login_status
-        elif args["type"] == "go":
+            return user_auth_json, login_status
+        if args["type"] == "go":
             return self.__go_auth(args)
-        else:
-            return {"status": False, "message": "Invalid auth type"}, 400
+
+        return {"status": False, "message": "Invalid auth type"}, 400
 
     def post(self) -> tuple[dict, int]:
         """
@@ -81,7 +80,7 @@ class User(Resource):
         # Check auth type
         if args["type"] == "go":
             return self.__go_auth(args)
-        elif args["type"] == "eupn":
+        if args["type"] == "eupn":
             database = DBConn()
             user_auth_obj = user_auth.UserAuth(database, args)
             user_auth_json, login_status = user_auth_obj.signup_eupn()
@@ -89,10 +88,10 @@ class User(Resource):
             if login_status == -1:  # Login_status will be defined if this is reached
                 print("ERROR: something is cooked for login")
                 return {"status": False, "detail": {"status": "info mismatch"}}, 400
-            else:
-                return user_auth_json, login_status
-        else:
-            return {"status": False, "message": "Invalid auth type"}, 400
+
+            return user_auth_json, login_status
+
+        return {"status": False, "message": "Invalid auth type"}, 400
 
     def delete(self) -> tuple[dict, int]:
         """
