@@ -124,7 +124,7 @@ class User(Resource):
             user_auth_json, del_status = user_auth_obj.delete_go()
             database.close()
             return user_auth_json, del_status
-        elif args["type"] == "eup":
+        if args["type"] == "eup":
             req = ["email", "uid", "pwd"]
             if any(not args[field] for field in req):
                 return {
@@ -150,5 +150,5 @@ class User(Resource):
                 }, 400
             else:
                 return user_auth_json, del_status
-        else:
-            return {"status": False, "message": "Invalid auth type"}, 400
+
+        return {"status": False, "message": "Invalid auth type"}, 400

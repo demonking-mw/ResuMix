@@ -1,5 +1,4 @@
 Time (h) spend on this: 3.5
 
 Next up:
-finish building user
 build info modify functions (without declaring dbconn)
