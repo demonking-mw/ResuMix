@@ -13,3 +13,36 @@ Backend API reture rule:
     - It is possible that the action was not performed but no error was reached
 - 'info' means data
 - 'jwt' means a reauthentication jwt for quick auth next time.
+
+
+Definition of resumeinfo:
+(here lstr means latex string)
+resumeinfo -> sections -> items -> lines
+    |           |           |        |- content: lstr
+    |           |           |        |- cate_scores: dict
+    |           |           |        |- content_str
+    |           |           |        |          |- one dict per each category
+    |           |           |        |- keywords: listof(str)
+    |           |           |- Titles: listof(lstr)
+    |           |           |- Category_weight: dict
+    |           |           |- Category_bias: dict
+    |           |           |- Aux_info: dict
+    |           |- Title: lstr
+    |           |- Type_info: dict
+    |           |- Aux_info: dict
+    |- Style_info: dict
+    |- Category_scoring_functions: dict
+    |- Aux_info: dict
+Note: all contents should be in the form of latex code segments, so things like hyperlink is easy
+
+aux_info: type, 
+
+EDIT: every class should have a aux_info class
+
+Classes: ResumeInfo, Sections, Items, Lines
+Note: they should store the user's full resume
+Note: conversion between json and obj should be quick and ezez
+
+Most major calculations should be done in the backend
+
+Resume generate: use pylatex

@@ -2,3 +2,4 @@ Next up:
 test user_mod
 define structure for resume
 ALL OF THE ABOVE due friday
+Build an ai convo class
