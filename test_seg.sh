@@ -50,7 +50,7 @@ pass_count=0
 fail_count=0
 for indiv_test in $(cat $test_file | tr -d '\r'); do
     echo -e "\nAttempt to run test $indiv_test: "
-    python ./backend/src/segment_tests/"$indiv_test".py
+    python -m backend.src.segment_tests."$indiv_test"
     if [ $? -eq 0 ]; then
         echo "Test $indiv_test passed"
         pass_count=$((pass_count + 1))
