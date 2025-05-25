@@ -34,6 +34,7 @@ class Lines:
         # This stands for category score
         self.content_str = ""  # content_str is pure string
         self.keywords = []  # list of pure strings
+        self.aux_info = {}
         # getter and setters are not needed
         if class_dict is not None:
             if "aux_info" not in class_dict:
@@ -52,6 +53,7 @@ class Lines:
                 class_dict["content_str"] if "content_str" in class_dict else ""
             )
             self.keywords = class_dict["keywords"] if "keywords" in class_dict else []
+            self.aux_info = class_dict["aux_info"]
 
     def content_flatten(self) -> None:
         """
@@ -66,15 +68,13 @@ class Lines:
         self.content_str = re.sub(r"\s+", " ", self.content_str).strip()
         # This should be useless if the frontend works as expected
 
-    def gen_score(
-        self, adj_factor: float = 1.0, forced: bool = True, industry: str = "software"
-    ) -> bool:
+    def gen_score(self, forced: bool = False, industry: str = "software") -> bool:
         """
         Generate a set of scores for this line
         WILL OVERWRITE EXISTING
         Effect: modify self.cate_score
         """
-        if self.cate_score is not {} and not forced:
+        if self.cate_score and not forced:
             return False
         new_cate_score = {"technical": {}, "soft": {}, "relevance": {}}
         result = True
@@ -82,7 +82,7 @@ class Lines:
             "The following line is a description line under an item in a resume. "
         )
         reminder = "Remember, your answer MUST be ONLY a python dictionary, as it will be parsed by a program"
-        tech_prompt = f"Analyze for me what technical skills (for the {industry} industry) it demonstrates. Select up to 4, then give each a score (out of 3) that represents how strong the line demonstrates the skill. The line is: "
+        tech_prompt = f"Analyze for me what technical skills (for the {industry} industry) it demonstrates. Select up to 4, then give each a score that represents how impressive and strong the line demonstrates the skill. The line is: "
         success, technical_scores = self.__get_dict(
             pre_prompt + tech_prompt + self.content_str + reminder, retries=3
         )
@@ -106,6 +106,7 @@ class Lines:
         )
         if success:
             new_cate_score["relevance"] = relevance_scores
+            self.keywords = list(relevance_scores.keys())
         else:
             result = False
 
@@ -117,10 +118,13 @@ class Lines:
         Compile the class into a dict for storage
         """
         result = {}
-        result["aux_info"] = {"type": "lines"}
+        if self.aux_info:
+            result["aux_info"] = self.aux_info
+        else:
+            result["aux_info"] = {"type": "lines"}
         result["content"] = self.content
-        result["cate_score"] = self.cate_score
         result["content_str"] = self.content_str
+        result["cate_score"] = self.cate_score
         result["keywords"] = self.keywords
         return result
 
@@ -132,7 +136,7 @@ class Lines:
         the dict represents the result
         This method is RECURSIVE, when retries hits 0 it returns failure
         """
-        prompt_instruction = "When you are asked a question, first analyze it, then output ONLY a python dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. Note: the dictionary should contain keys of type string and values of type int Do not output anything else."
+        prompt_instruction = "When you are asked a question, first analyze it, then output ONLY a python dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. Note: the dictionary should contain keys of type string and values of type int Do not output anything else. Also, whenever giving something a score, make it out of 3"
         if retries <= 0:
             return False, {}
 
