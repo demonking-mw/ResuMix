@@ -1,5 +1,3 @@
-import re
-
 """
 The Lines Class
 
@@ -7,13 +5,17 @@ This class is used to represent a line in a resume.
 It contains the information stored about the line, and related functions to parse it.
 """
 
+import re
+import ast
+from ..general_helper.isa_bot import AIBot
+
 
 class Lines:
     """
     Functions needed:
     - gen_score: have AI cook
     - adj_score: adjust score by general input in learning phase
-    - gen_keyword: generate keywords with AI
+    - gen_keyword: generate keywords with AI: just rip it off gen_score
     - strip: generate the string only content for stuff such as gpt
     Variables needed:
     - contents: lstr
@@ -22,7 +24,7 @@ class Lines:
     - keywords: listof(str)
     """
 
-    def __init__(self, class_dict: dict) -> None:
+    def __init__(self, class_dict: dict = None) -> None:
         """
         Takes the info from storage to build the class
         OR create an empty class if info is None
@@ -64,16 +66,51 @@ class Lines:
         self.content_str = re.sub(r"\s+", " ", self.content_str).strip()
         # This should be useless if the frontend works as expected
 
-    def gen_score(self, adj_factor: float = 1.0, forced: bool = False) -> bool:
+    def gen_score(
+        self, adj_factor: float = 1.0, forced: bool = True, industry: str = "software"
+    ) -> bool:
         """
         Generate a set of scores for this line
         WILL OVERWRITE EXISTING
         Effect: modify self.cate_score
         """
-        if self.cate_score is not None and not forced:
+        if self.cate_score is not {} and not forced:
             return False
-        # NOT IMPLEMENTED YET
-        return True
+        new_cate_score = {"technical": {}, "soft": {}, "relevance": {}}
+        result = True
+        pre_prompt = (
+            "The following line is a description line under an item in a resume. "
+        )
+        reminder = "Remember, your answer MUST be ONLY a python dictionary, as it will be parsed by a program"
+        tech_prompt = f"Analyze for me what technical skills (for the {industry} industry) it demonstrates. Select up to 4, then give each a score (out of 3) that represents how strong the line demonstrates the skill. The line is: "
+        success, technical_scores = self.__get_dict(
+            pre_prompt + tech_prompt + self.content_str + reminder, retries=3
+        )
+        if success:
+            new_cate_score["technical"] = technical_scores
+        else:
+            result = False
+
+        soft_prompt = "Analyze the line for soft skills it demonstrates. Select up to 2, then give each a score that represents how strong the line demonstrates the skill. The line is: "
+        success, soft_scores = self.__get_dict(
+            pre_prompt + soft_prompt + self.content_str + reminder, retries=3
+        )
+        if success:
+            new_cate_score["soft"] = soft_scores
+        else:
+            result = False
+
+        relevance_prompt = "Identify the person's passion mentioned from this line that is irrelevant to the core technical skills and soft skills shown in the activity. Select the top 2 that demonstrates the person's interest in the topic. Output it in a dict with the keywords as keys and 1 as values. The line is: "
+        success, relevance_scores = self.__get_dict(
+            pre_prompt + relevance_prompt + self.content_str + reminder, retries=3
+        )
+        if success:
+            new_cate_score["relevance"] = relevance_scores
+        else:
+            result = False
+
+        self.cate_score = new_cate_score
+        return result
 
     def to_dict(self) -> dict:
         """
@@ -86,3 +123,38 @@ class Lines:
         result["content_str"] = self.content_str
         result["keywords"] = self.keywords
         return result
+
+    def __get_dict(self, prompt: str, retries: int) -> tuple[bool, dict]:
+        """
+        Gets the dictionary according to the prompt (mainly to fill the cate_score)
+        DOES NOT DIRECTLY MODIFY CATE_SCORE
+        the boolean represents whether a valid response is generated
+        the dict represents the result
+        This method is RECURSIVE, when retries hits 0 it returns failure
+        """
+        prompt_instruction = "When you are asked a question, first analyze it, then output ONLY a python dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. Note: the dictionary should contain keys of type string and values of type int Do not output anything else."
+        if retries <= 0:
+            return False, {}
+
+        bot = AIBot()
+        try:
+            response = bot.response_instruction(prompt, prompt_instruction)
+            print(response)  # Debugging output
+            # Extract the dictionary from the response
+            match = re.search(r"\s*(\{.*\})", response, re.DOTALL)
+            if match:
+
+                result_dict = ast.literal_eval(
+                    match.group(1)
+                )  # Safely convert string to dictionary
+                # Convert the values of the dictionary to integers
+                result_dict = {
+                    k: int(v) for k, v in result_dict.items() if str(v).isdigit()
+                }
+            if isinstance(result_dict, dict):
+                return True, result_dict
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            pass
+
+        return Lines.__get_dict(self, prompt, retries - 1)

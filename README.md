@@ -14,6 +14,7 @@ Backend API reture rule:
 - 'info' means data
 - 'jwt' means a reauthentication jwt for quick auth next time.
 
+Categories: Technical, Soft, Relevance, 
 
 Definition of resumeinfo:
 (here lstr means latex string)
@@ -34,6 +35,8 @@ resumeinfo -> sections -> items -> lines
     |- Category_scoring_functions: dict
     |- Aux_info: dict
 Note: all contents should be in the form of latex code segments, so things like hyperlink is easy
+
+Lines' cate_scores: a dict of dicts: {technical: {}, soft: {}}
 
 aux_info: type, 
 
