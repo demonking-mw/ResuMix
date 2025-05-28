@@ -2,6 +2,9 @@
 A new resume optimizer that brings you closer to employment
 
 
+MAJOR ASSUMPTIONS: 
+EACH LINES IN AN ITEM IN A RESUME HAVE SIMILAR LENGTH
+
 
 RULES:
 
@@ -38,7 +41,7 @@ Note: all contents should be in the form of latex code segments, so things like 
 
 Lines' cate_scores: a dict of dicts: {technical: {}, soft: {}}
 
-aux_info: type, 
+aux_info: type: lines/items/sections, format: see documentation for different classes
 
 EDIT: every class should have a aux_info class
 
@@ -49,3 +52,4 @@ Note: conversion between json and obj should be quick and ezez
 Most major calculations should be done in the backend
 
 Resume generate: use pylatex
+

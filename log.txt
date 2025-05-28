@@ -1,5 +1,12 @@
-Next up:
-test user_mod
-define structure for resume
-ALL OF THE ABOVE due friday
-Build an ai convo class
+Major roadblocks:
+0. understanding latex
+1. latex scripting - BEFORE Fri, May 30 EOD
+2. height calculation - Mon, Jun 2 EOD
+3. item selector - Thurs, Jun 5 EOD
+4. latex generator
+5. basic frontend
+
+
+
+Research result:
+1. pylatex and texsoup can be helpful for step 0 and 1

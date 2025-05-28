@@ -10,13 +10,14 @@ import ast
 from ..general_helper.isa_bot import AIBot
 
 
-class Lines:
+class Line:
     """
     Functions needed:
     - gen_score: have AI cook
     - adj_score: adjust score by general input in learning phase
     - gen_keyword: generate keywords with AI: just rip it off gen_score
     - strip: generate the string only content for stuff such as gpt
+    - to_dict: get the dictionary version to store into db
     Variables needed:
     - contents: lstr
     - content_str: str
@@ -35,6 +36,7 @@ class Lines:
         self.content_str = ""  # content_str is pure string
         self.keywords = []  # list of pure strings
         self.aux_info = {}
+        self.bot = AIBot()  # AI bot for generating scores
         # getter and setters are not needed
         if class_dict is not None:
             if "aux_info" not in class_dict:
@@ -140,9 +142,8 @@ class Lines:
         if retries <= 0:
             return False, {}
 
-        bot = AIBot()
         try:
-            response = bot.response_instruction(prompt, prompt_instruction)
+            response = self.bot.response_instruction(prompt, prompt_instruction)
             print(response)  # Debugging output
             # Extract the dictionary from the response
             match = re.search(r"\s*(\{.*\})", response, re.DOTALL)
@@ -162,3 +163,9 @@ class Lines:
             pass
 
         return Lines.__get_dict(self, prompt, retries - 1)
+
+    def total_tokens(self) -> int:
+        """
+        Returns the total number of tokens used in the cate_score generation
+        """
+        return self.bot.total_tokens

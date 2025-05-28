@@ -32,6 +32,7 @@ class AIBot:
             raise ValueError("ai source bad")
         self.ai_client = OpenAI(api_key=self.api_key)
         self.default_model = default_model
+        self.total_tokens = 0
 
     def response_simple(
         self, prompt: str, model: str = None, token_limit: int = 2000
@@ -51,6 +52,7 @@ class AIBot:
             max_tokens=token_limit,
             temperature=0.7,
         )
+        self.total_tokens += response.usage.total_tokens
         return response.choices[0].message.content.strip()
 
     def response_instruction(
@@ -75,6 +77,7 @@ class AIBot:
             max_tokens=token_limit,
             temperature=0.7,
         )
+        self.total_tokens += response.usage.total_tokens
         return response.choices[0].message.content.strip()
 
     def response_dict(
@@ -105,4 +108,5 @@ class AIBot:
             max_tokens=token_limit,
             temperature=response_temperature,
         )
+        self.total_tokens += response.usage.total_tokens
         return response
