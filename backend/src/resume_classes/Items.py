@@ -11,9 +11,8 @@ Listof item objects(dicts):
 - Height
 """
 
-from pylatex import Fragment
 
-from pylatex import Command, NoEscape
+from pylatex import Command, NoEscape, Itemize, MiniPage
 from .lines import Line
 
 
@@ -60,12 +59,13 @@ class Item:
         else:
             for line_no in lines_sel:
                 selected_lines.append(self.line_objs[line_no])
-        entry_container = Fragment()
+        exp_item = MiniPage(width=NoEscape(r'\textwidth'))
+        # NoEscape for Latex safety
 
         # Append the \resumeSubheading command
         if len(self.titles) == 4:
             # 4 titles item
-            entry_container.append(
+            exp_item.append(
                 Command(
                     "resumeSubheading",
                     arguments=[
@@ -78,14 +78,11 @@ class Item:
             )
         else:
             print("ERROR: OTHER LENGHTS ARE NOT IMPLEMENTED")
-        entry_container.append(Command("resumeItemListStart"))
-        for line in selected_lines:
-            # line is the Lines object, do not forget that
-            entry_container.append(
-                Command("resumeItem", arguments=NoEscape(line.content))
-            )
-        entry_container.append(Command("resumeItemListEnd"))
-        return {"object": entry_container, "score": self.calc_scores()}
+        with exp_item.create(Itemize(option=NoEscape('leftmargin=*'))) as itemize:
+            for line in selected_lines:
+                # line is the Lines object, do not forget that
+                itemize.append(NoEscape(r"\resumeItem{" + line.content + "}"))
+        return {"object": exp_item, "score": self.calc_scores()}
 
     def calc_scores(self) -> dict:
         """

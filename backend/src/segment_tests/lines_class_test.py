@@ -2,7 +2,7 @@
 Tests the lines class, mainly the score generator
 """
 
-from ..resume_parts.lines import Line
+from ..resume_objects.lines import Line
 
 myline = Line()
 

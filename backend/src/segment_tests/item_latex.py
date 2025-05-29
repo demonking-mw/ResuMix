@@ -3,8 +3,8 @@ Tests the item class
 So far only the to_latex
 """
 
-from ..resume_parts.lines import Line
-from ..resume_parts.items import Item
+from ..resume_objects.lines import Line
+from ..resume_objects.items import Item
 
 print("DEBUG: checkpoint0")
 
