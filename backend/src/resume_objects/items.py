@@ -21,7 +21,7 @@ class Item:
     - build: takes in a weight set, make the best item with different length
         - result of build: list of dictionaries
     - to_dict: convert back to dictionary
-    -
+    -calc_score
     Variables needed:
     - Title: list
     - Lines: list of Lines class
@@ -35,30 +35,54 @@ class Item:
         self.line_objs = []
         self.cate_scores = {}
         self.aux_info = {}
+        self.paragraph = r''
+        self.style = ''
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "items":
                 raise ValueError(
                     f"Type mismatch: expected 'items', got "
                     f"'{class_dict['aux_info']['type']}' instead"
                 )
-            self.titles = class_dict.get("titles")
-            for line_dict in class_dict.get("lines"):
-                self.line_objs.append(Line(line_dict))
-            self.cate_scores = class_dict.get("cate_scores")
-            self.aux_info = class_dict.get("aux_info")
+            self.style = class_dict['aux_info']['style']
+            if self.style == 'p':
+                self.paragraph = class_dict.get("paragraph")
+            else:
+                self.titles = class_dict.get("titles")
+                for line_dict in class_dict.get("lines"):
+                    self.line_objs.append(Line(line_dict))
+                self.cate_scores = class_dict.get("cate_scores")
+                self.aux_info = class_dict.get("aux_info")
+        else:
+            self.cate_scores = {
+                'technical': {
+                    'weight': 1.0,
+                    'bias': 1.0,
+                },
+                'soft': {
+                    'weight': 1.0,
+                    'bias': 1.0,
+                },
+                'relevant': {
+                    'weight': 1.0,
+                    'bias': 1.0,
+                },
+            }
 
-    def make_specific(self, lines_sel: list = None) -> dict:
+    def make_specific(self, lines_sel: list = None, processor: dict = None) -> dict:
         """
         make a build dict with selected lines
         dictionary contains: pylatex object, scores
+        scores won't be calculated if processor is None
         """
+        if self.style == 'p':
+            raise RuntimeError("NOT IMPLEMENTED YET.")
+        # do this tomorrow
         selected_lines = []
         if lines_sel is None:
             selected_lines = self.line_objs
         else:
             for line_no in lines_sel:
                 selected_lines.append(self.line_objs[line_no])
-        exp_item = MiniPage(width=NoEscape(r"\textwidth"))
         # NoEscape for Latex safety
 
         # Append the \resumeSubheading command
@@ -74,15 +98,52 @@ class Item:
             latex += r"\resumeItemListEnd" "\n"
             latex_obj = NoEscape(latex)
         else:
-            print("ERROR: OTHER LENGHTS ARE NOT IMPLEMENTED")
-        return {"object": latex_obj, "score": self.calc_scores()}
+            raise NotImplementedError("ERROR: OTHER LENGTHS ARE NOT IMPLEMENTED")
+        if processor is None:
+            return {"object": latex_obj}
+        return {"object": latex_obj, "score": self.calc_scores(processor), 'height': self.calc_height()}
 
-    def calc_scores(self) -> dict:
+    def calc_height(self) -> int:
+        '''
+        NOT IMPLEMENTED YET
+        '''
+        return 1
+
+    def calc_scores(self, processor: dict, default_weight: int = 3) -> dict:
         """
         returns the category scores of the item under a specific build
-        NOT IMPLEMENTED YET
+        Processor: a dict storing instruction on how to process items
+        {values: {cate: {} ~...}, functions: {cate: funcn}}
+        values are AI generated for each value present in each category
+        function is for scoring a category of an item:
+        (weight: int, bias: int, products: listof int) -> (score: int)
+        MAJOR ASSUMPTION: THIS WILL NOT BE CALLED IF ANY LINE OBJ IS EMPTY,
+            WILL THROW ERROR OTHERWISE
+        return value: dict of each category's score
         """
-        return {}
+        overall_scores = {}
+        defaulted_count = 0
+        cate_list = ['technical', 'soft', 'relevant']
+        for cate_name in cate_list:
+            cate_score = []
+            cate_weights = processor['values'][cate_name] # the weights of each attribute assigned by AI
+            for line_obj in self.line_objs:
+                line_prod_list = []
+                for cate, value in line_obj.cate_score[cate_name].items():
+                    if cate in cate_weights:
+                        line_prod_list.append(value * cate_weights[cate])
+                    else:
+                        line_prod_list.append(value * default_weight)
+                        defaulted_count += 1
+                cate_score.append(line_prod_list)
+            cate_funcn = processor['functions'][cate_name]
+            overall_scores[cate_name] = cate_funcn(
+                self.cate_scores[cate_name]['weight'],
+                self.cate_scores[cate_name]['bias'],
+                cate_score
+            )
+
+        return overall_scores
 
     def to_dict(self) -> dict:
         """
@@ -91,6 +152,8 @@ class Item:
         # Ensure aux_info has 'type' and it is 'items'
 
         self.aux_info["type"] = "items"
+        self.aux_info['style'] = self.style
+        
         return {
             "titles": self.titles if self.titles is not None else [],
             "lines": (
@@ -100,4 +163,5 @@ class Item:
             ),
             "cate_scores": self.cate_scores if self.cate_scores is not None else {},
             "aux_info": self.aux_info,
+            "paragraph": self.paragraph
         }

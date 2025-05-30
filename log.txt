@@ -10,3 +10,222 @@ Major roadblocks:
 
 Research result:
 1. pylatex and texsoup can be helpful for step 0 and 1
+
+Score system:
+Item:
+- line_dict: attribute and weight pair for each category
+- class_dict: weight and bias for each category
+- input: weightfor each value in each category, function of each category
+- category function: takes weight, bias, list of ints (multiplication of assigned weight and evaluated weight for each attribute)
+
+Height calculation research:
+Problem recap (in words)
+• Up to 128 different items.
+• Each item has at most ten versions.
+• Every version has
+
+its own height, and
+a strength dictionary.
+• The poster has a fixed height limit H and will eventually contain between five and twenty different items (one version per item).
+
+• You are given a scoring function score(strength_union) that – runs in constant time, and
+– is strictly increasing: adding any new strength dictionary can never lower the final score.
+
+• No “inferior” versions exist. If version A is taller than version B then, whenever both would fit, A always gives a larger score.
+
+Goal: find a poster whose score is as high as possible, or at least very close to the best you could ever achieve, while running in a short time.
+
+High-level idea
+Build a first poster greedily: keep adding the version that gives the best “score increase per height” until we run out of room or we already have twenty items.
+Make one or two cheap “local improvement” passes, where we try to kick out one chosen item and replace it by something else (or by a different version of the same item) if that improves the total score.
+Because there are at most twenty slots on the poster, we can afford to look at all 128 × 10 possibilities while deciding what to do next—this is still tiny.
+
+Step 0 – Pre-processing
+• For every item, sort its versions by height from shortest to tallest (ten numbers at most, trivial cost).
+• Nothing else is needed; we keep every version because a taller one may still be useful if space permits.
+
+Step 1 – Greedy construction
+Running variables
+poster : list of chosen (item, version) pairs
+remaining_height : how much space is still free
+current_strength : union of all strength dictionaries already chosen
+current_score : score(current_strength)
+
+Loop while we still have height left and fewer than twenty items:
+
+Look at every item that is not on the poster yet.
+
+Look at every version of that item whose height is ≤ remaining_height.
+
+Pretend to add that version, evaluate the new score, and compute
+
+gain_per_height = (new_score − current_score) / version_height.
+
+Keep track of the version with the biggest gain_per_height.
+
+When the inner search is done, add that best version to the poster, update remaining_height, the strength union and the score.
+
+If nothing fitted, stop.
+
+Speed of this phase
+At most twenty iterations of the outer loop.
+Inside each iteration we inspect “number_of_items × versions_per_item” possibilities = 128 × 10 = 1 280.
+So at most twenty times 1 280 ≈ twenty-six thousand score calls.
+That is well below a second in pure Python.
+
+Memory cost is trivial: the poster itself plus a handful of numbers, less than 100 kB.
+
+Step 2 – Local improvement (“polish”)
+We now try to gain a few extra points by swapping.
+
+For one or two passes:
+
+• For every item already on the poster (there are at most twenty of them),
+
+Temporarily remove it, which frees height h_removed.
+Examine every other item (including other versions of the same item) that is not on the poster.
+For every version of that candidate item that fits into h_removed + remaining_height, test the new score.
+Keep the best improvement found.
+• If a positive improvement exists, perform the swap, update all bookkeeping, and restart the pass; otherwise no further improvement is possible and we are done.
+
+Cost of one full pass
+twenty (items in the poster) × 128 (items we can insert) × 10 (versions)
+≈ twenty-five thousand score evaluations.
+Two passes bring the total workload to about eighty thousand score calls.
+
+In practice one pass already matches the optimum nearly every time.
+
+Time and space summary
+Time complexity (big-O with words):
+• Greedy phase: proportional to
+(maximum number of poster slots) × (number of items) × (versions per item).
+In the worst case that is 20 × 128 × 10 ≈ 26 000 calls to the scoring function.
+
+• Two improvement passes: roughly double that, so the entire algorithm makes fewer than 80 000 score calls.
+
+Space complexity: proportional to the size of the poster itself, so “constant” with respect to the input (no large arrays that depend on H).
+
+Reference implementation in plain Python
+python
+
+from typing import List, Dict, Tuple, Optional
+
+Strength = Dict[str, float]              # user-supplied keys and numbers
+Version  = Tuple[int, Strength]          # (height, strength)
+Item     = List[Version]                 # the list of versions
+
+PosterEntry = Tuple[int, int]            # (item_index, version_index)
+
+
+# --------------------------------------------
+# dummy scoring function for demonstration
+def score(strength_union: Strength) -> float:
+    """Example: simply sum all the values."""
+    return sum(strength_union.values())
+# --------------------------------------------
+
+
+def build_poster(items: List[Item],
+                 height_limit: int,
+                 max_items: int = 20,
+                 passes: int = 2
+                 ) -> Tuple[List[PosterEntry], float]:
+    """Return a poster (list of (item, version) pairs) and its score."""
+
+    def union_of_strength(selected: List[PosterEntry]) -> Strength:
+        result: Strength = {}
+        for it_idx, ver_idx in selected:
+            result.update(items[it_idx][ver_idx][1])
+        return result
+
+    poster: List[PosterEntry] = []
+    remaining_height = height_limit
+    current_strength: Strength = {}
+    current_score = score(current_strength)
+
+    # -------------- greedy phase -----------------
+    while remaining_height > 0 and len(poster) < max_items:
+        best_ratio = -1.0
+        best_choice: Optional[PosterEntry] = None
+        best_strength = None
+        best_score = None
+
+        for i, item in enumerate(items):
+            if any(i == entry[0] for entry in poster):
+                continue  # item already used
+            for v_idx, (h, st) in enumerate(item):
+                if h > remaining_height:
+                    break  # versions are sorted, no need to look further
+                new_strength = {**current_strength, **st}
+                new_score = score(new_strength)
+                gain = new_score - current_score
+                ratio = gain / h if h else float('inf')
+                if ratio > best_ratio:
+                    best_ratio = ratio
+                    best_choice = (i, v_idx)
+                    best_strength = new_strength
+                    best_score = new_score
+
+        if best_choice is None:      # nothing fits any more
+            break
+
+        # commit the choice
+        item_idx, ver_idx = best_choice
+        remaining_height -= items[item_idx][ver_idx][0]
+        poster.append(best_choice)
+        current_strength = best_strength
+        current_score = best_score
+
+    # -------------- improvement phase ------------
+    for _ in range(passes):
+        improved = False
+
+        # iterate over a *copy* because we might modify 'poster'
+        for pos_in_poster, (item_out, ver_out) in enumerate(list(poster)):
+            height_out, strength_out = items[item_out][ver_out]
+
+            # state without this entry
+            poster_without = poster[:pos_in_poster] + poster[pos_in_poster+1:]
+            strength_without = union_of_strength(poster_without)
+            score_without = score(strength_without)
+
+            free_height = remaining_height + height_out
+
+            best_gain = 0.0
+            best_replacement: Optional[PosterEntry] = None
+            best_replacement_strength = None
+            best_replacement_score = None
+
+            for i, item in enumerate(items):
+                if any(i == p[0] for p in poster_without):
+                    continue
+                for v_idx, (h, st) in enumerate(item):
+                    if h > free_height:
+                        break
+                    new_strength = {**strength_without, **st}
+                    new_score = score(new_strength)
+                    gain = new_score - current_score
+                    if gain > best_gain:
+                        best_gain = gain
+                        best_replacement = (i, v_idx)
+                        best_replacement_strength = new_strength
+                        best_replacement_score = new_score
+
+            if best_gain > 0 and best_replacement is not None:
+                # perform the swap
+                remaining_height = free_height - items[
+                    best_replacement[0]][best_replacement[1]][0]
+                poster = poster_without + [best_replacement]
+                current_strength = best_replacement_strength
+                current_score = best_replacement_score
+                improved = True
+                break  # restart the outer pass after any change
+
+        if not improved:
+            break  # no further gain possible
+
+    return poster, current_score
+Exact optimality versus “very close”
+The method above is a fast heuristic.
+If you must prove that the poster is optimal, you would have to solve a special case of the multiple-choice knapsack problem with the height as weight. Dynamic programming or branch-and-bound can do that, but both will be much slower and may need memory proportional to the height limit. For the input sizes you described (128 items, ten versions, twenty slots) the greedy-plus-swap procedure almost always returns the very same result, while finishing in a few milliseconds.
+

@@ -53,3 +53,45 @@ Most major calculations should be done in the backend
 
 Resume generate: use pylatex
 
+Categories: technical, soft, relevant
+CATEGORY NAME FOR ANY INTERMETHOD COMMUNICATION MUST BE AS IS
+
+Processor: a dict storing instruction on how to process items
+{values: {cate: {} ~...}, functions: {cate: funcn}}
+values are AI generated for each value present in each category
+function is for scoring a category of an item:
+(weight: int, bias: int, products: listof listof int) -> (score: dict)
+
+
+
+
+Variables:
+
+Lines:
+- content: lstr
+    latex content in r'' format
+- cate_score: dictof: str - dict
+    each sub dictionary is str - int, which represents attribute and score
+- content_str: str
+    pure string of content, set by frontend when creating item
+- self.keywords: listof str
+- self.aux_info: AUX_INFO
+
+Items:
+- title: listof lstr
+    can be different lengths, corresponding to different forms of resume
+- line_objs: listof Lines
+- cate_score: dictof: str - dict
+    each sub dict contain 'weight' and 'bias', each assigned to a decimal
+- aux_info: AUX_INFO
+- paragraph: lstr
+    Only used if type is p, stores the paragraph info
+- style: str
+    denotes the type of Item it is, stored in aux_info when folded into dict
+    Options:
+    - n2  - two headings, normal
+    - n2l - two headings, all to the left
+    - n3  - 3 headings, one line, middle one (to the left) for skills or alike
+    - n4  - 4 headings, normal
+    - n5  - 4 headings with a skill line in upper row, to the left
+    - p   - ONE PARAGRAPH

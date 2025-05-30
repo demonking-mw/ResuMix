@@ -162,7 +162,7 @@ class Line:
             print(f"Error occurred: {e}")
             pass
 
-        return Lines.__get_dict(self, prompt, retries - 1)
+        return self.__get_dict(prompt, retries - 1)
 
     def total_tokens(self) -> int:
         """
