@@ -11,7 +11,6 @@ Listof item objects(dicts):
 - Height
 """
 
-
 from pylatex import Command, NoEscape, Itemize, MiniPage
 from .lines import Line
 
@@ -59,30 +58,24 @@ class Item:
         else:
             for line_no in lines_sel:
                 selected_lines.append(self.line_objs[line_no])
-        exp_item = MiniPage(width=NoEscape(r'\textwidth'))
+        exp_item = MiniPage(width=NoEscape(r"\textwidth"))
         # NoEscape for Latex safety
 
         # Append the \resumeSubheading command
         if len(self.titles) == 4:
-            # 4 titles item
-            exp_item.append(
-                Command(
-                    "resumeSubheading",
-                    arguments=[
-                        NoEscape(self.titles[0]),
-                        NoEscape(self.titles[1]),
-                        NoEscape(self.titles[2]),
-                        NoEscape(self.titles[3]),
-                    ],
-                )
+            latex = (
+                r"\resumeSubheading"
+                f"{{{self.titles[0]}}}{{{self.titles[1]}}}{{{self.titles[2]}}}{{{self.titles[3]}}}\n"
+                r"\resumeItemListStart"
+                "\n"
             )
+            for line in selected_lines:
+                latex += f"    \\resumeItem{{{line.content}}}\n"
+            latex += r"\resumeItemListEnd" "\n"
+            latex_obj = NoEscape(latex)
         else:
             print("ERROR: OTHER LENGHTS ARE NOT IMPLEMENTED")
-        with exp_item.create(Itemize(option=NoEscape('leftmargin=*'))) as itemize:
-            for line in selected_lines:
-                # line is the Lines object, do not forget that
-                itemize.append(NoEscape(r"\resumeItem{" + line.content + "}"))
-        return {"object": exp_item, "score": self.calc_scores()}
+        return {"object": latex_obj, "score": self.calc_scores()}
 
     def calc_scores(self) -> dict:
         """
