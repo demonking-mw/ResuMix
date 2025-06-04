@@ -229,3 +229,30 @@ Exact optimality versus “very close”
 The method above is a fast heuristic.
 If you must prove that the poster is optimal, you would have to solve a special case of the multiple-choice knapsack problem with the height as weight. Dynamic programming or branch-and-bound can do that, but both will be much slower and may need memory proportional to the height limit. For the input sizes you described (128 items, ten versions, twenty slots) the greedy-plus-swap procedure almost always returns the very same result, while finishing in a few milliseconds.
 
+
+
+
+REFINED IDEA:
+
+SUMMARY: 128 items, each of 10 versions, resume is E3 tall
+
+Steps:
+
+1. DP build
+Use DP to get linearly optimal resume
+USE THE ASSUMPTION THAT SCORE FUNCTION HAS NO CURVE OR OVERFLOW DEDUCTION
+Time: E6
+Space: E5
+
+1.5, Optional
+Depending on whether 1 is the dominating step, consider reordering the addition sequence and repeat up to E1 times
+
+2. Swaps
+Use an extension to the scoring function to assess contribution to the total score
+That is, total category score splitted to each item, sum each part to get the 'GPA' of each item
+Perform 2.1 on the least GPA efficient item, put it on a ban list, and repeat for E_ times
+
+2.1 Swap call
+Remove the target, go through every item-version and find the highest scoring one
+Time: E3
+Space: E1
