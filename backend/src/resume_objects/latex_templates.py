@@ -1,11 +1,14 @@
+"""
+dataclass to store latex templates for resumes
+Note: it also contains two functions to calculate the height of an item and the remaining height of a doc.
+
 from dataclasses import dataclass
 from typing import Callable
-
-
+"""
 
 @dataclass
 class LTemplate:
-    '''
+    """
     A class to represent a LaTeX template for resumes.
     Contains:
     - Wrapper code: latex code that needs to be inserted at the top of the doc
@@ -14,11 +17,13 @@ class LTemplate:
     - remaining_height_calculator: function taking in the number of sections and return the total height allowed
         - I/O: (sections: int) -> int
             - Note: section count should exclude headers
-    '''
+    """
+
     wrapper_code: str
     item_height_calculator: Callable
     remaining_height_calculator: Callable
     # This class is for internal use only, handling bad input is not done AT ALL
+
 
 # # Example usage of LTemplate
 
