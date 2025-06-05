@@ -20,8 +20,13 @@ class Item:
     Functions needed:
     - build: takes in a weight set, make the best item with different length
         - result of build: list of dictionaries
+            - each dict contains the latex object, 
+    - make_specific: make a specific item with selected lines, mainly for inter
     - to_dict: convert back to dictionary
-    -calc_score
+    - calc_score: calculate the score of the item
+        - the function is an input!!
+        - takes the data of each Line object and cook
+    - calc_height: calculate the height of the item, mainly for internal use
     Variables needed:
     - Title: list
     - Lines: list of Lines class
@@ -112,14 +117,17 @@ class Item:
     def calc_scores(self, processor: dict, default_weight: int = 3) -> dict:
         """
         returns the category scores of the item under a specific build
+
         Processor: a dict storing instruction on how to process items
         {values: {cate: {} ~...}, functions: {cate: funcn}}
         values are AI generated for each value present in each category
+
         function is for scoring a category of an item:
         (weight: int, bias: int, products: listof int) -> (score: int)
         MAJOR ASSUMPTION: THIS WILL NOT BE CALLED IF ANY LINE OBJ IS EMPTY,
             WILL THROW ERROR OTHERWISE
-        return value: dict of each category's score
+
+        return value: dict of category -> score
         """
         overall_scores = {}
         defaulted_count = 0
@@ -142,7 +150,7 @@ class Item:
                 self.cate_scores[cate_name]['bias'],
                 cate_score
             )
-
+        # overall_score is a dict of category(str) -> score(int)
         return overall_scores
 
     def to_dict(self) -> dict:
