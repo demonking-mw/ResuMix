@@ -85,7 +85,7 @@ Items:
     each sub dict contain 'weight' and 'bias', each assigned to a decimal
 - aux_info: AUX_INFO
 - paragraph: lstr
-    Only used if type is p, stores the paragraph info
+    Only used if style is p, stores the paragraph info
 - style: str
     denotes the type of Item it is, stored in aux_info when folded into dict
     Options:

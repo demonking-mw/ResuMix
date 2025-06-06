@@ -1,10 +1,11 @@
 """
 dataclass to store latex templates for resumes
 Note: it also contains two functions to calculate the height of an item and the remaining height of a doc.
+"""
 
 from dataclasses import dataclass
 from typing import Callable
-"""
+
 
 @dataclass
 class LTemplate:

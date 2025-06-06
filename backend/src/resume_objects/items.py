@@ -1,7 +1,7 @@
 """
 The item class
 
-it represent an item, stores its optimized states in the process of generation,
+it represent an item, provides its optimized states in the process of generation,
 outputs pdf-able format for generation or json for storing things back into db
 
 Item Build:
@@ -11,10 +11,12 @@ Listof item objects(dicts):
 - Height
 """
 
+from itertools import combinations
 from pylatex import Command, NoEscape, Itemize, MiniPage
+
 from .lines import Line
 from .latex_templates import LTemplate
-from itertools import combinations
+
 
 
 class Item:
@@ -132,7 +134,14 @@ class Item:
             # Implement the rest of the build logic here
             results = []
             num_lines = len(self.line_objs)
-            for sel_size in range(1, num_lines + 1):
+            for sel_size in range(0, num_lines + 1):
+                # allows empty selection
+                if sel_size == 0:
+                    # empty selection, no lines selected
+                    results.append(
+                        self.make_specific(0, [], templ)
+                    )
+                    continue
                 max_score = -100000
                 max_lines_sel = []
                 for lines_sel_tup in combinations(range(num_lines), sel_size):
