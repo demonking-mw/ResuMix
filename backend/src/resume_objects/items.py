@@ -28,6 +28,8 @@ class Item:
     - calc_score: calculate the score of the item
         - the function is an input!!
         - takes the data of each Line object and cook
+    - get_skills_dict: get the skills dict for the item
+        - gets from each line object, and returns a dict of skills (not overlapping)
     Variables needed:
     - Title: list
     - Lines: list of Lines class
@@ -73,6 +75,8 @@ class Item:
                     "bias": 1.0,
                 },
             }
+
+
 
     def make_specific(
         self, lines_score: int, lines_sel: list, templ: LTemplate
@@ -141,7 +145,22 @@ class Item:
                     self.make_specific(max_score, max_lines_sel, templ)
                 )
             return results
-            
+
+    def get_skills_dict(self) -> dict:
+        """
+        get the skills dict for the item
+        returns a dict of skills (not overlapping)
+        """
+        skills_dict =  {"technical": [], "soft": [], "relevance": []}
+        for line_obj in self.line_objs:
+            cate_list = ["technical", "soft", "relevance"]
+            if not line_obj.cate_score:
+                line_obj.gen_score()
+            for cate_name in cate_list:
+                for skill, score in line_obj.cate_score[cate_name].items():
+                    if skill not in skills_dict[cate_name]:
+                        skills_dict[cate_name].append(skill)
+        return skills_dict
 
     def calc_scores(
         self, lines_sel: list, processor: dict, default_weight: int = 3
