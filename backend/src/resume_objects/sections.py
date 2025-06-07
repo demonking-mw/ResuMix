@@ -46,6 +46,7 @@ class Section:
     '''
     def __init__(self, class_dict: dict = None, templ: LTemplate) -> None:
         self.template = templ
+        self.title = ""
         # template musn't be None or empty or things will break
         self.items = []
         self.aux_info = {}
@@ -56,13 +57,14 @@ class Section:
                     f"Type mismatch: expected 'section', got "
                     f"'{class_dict['aux_info']['type']}' instead"
                 )
+            self.title = class_dict.get("title", "")
             self.aux_info = class_dict.get("aux_info", {})
             for item_dict in class_dict.get("items", []):
                 self.items.append(Item(item_dict))
         else:
             self.aux_info = {"type": "section"}
 
-    def make(self, processor: dict) -> list:
+    def make(self, requirements: dict) -> list:
         '''
         make items build ready
         stores the item builds and returns score-height dict for optimization
@@ -72,13 +74,14 @@ class Section:
         Returns:
         - list of list of tuples
             - each tuple is (score, height)
+            - score is a dict, see item.get_score() for details
         '''
         if not self.items:
             raise ValueError("No items to process in the section")
         # Normal section with headers
         results = []
         for item in self.items:
-            item_build = item.build(processor, self.template)
+            item_build = item.build(requirements, self.template)
             self.item_make_results = item_build
             version_tuples = []
             for version in item_build:
@@ -87,5 +90,17 @@ class Section:
                 version_tuples.append((score, height))
             results.append(version_tuples)
         return results
+
+    def build(self) -> 
+
+    def to_dict(self) -> dict:
+        '''
+        Returns the dict representation of the section
+        '''
+        return {
+            "title": self.title,
+            "items": [item.to_dict() for item in self.items],
+            "aux_info": self.aux_info,
+        }
 
     

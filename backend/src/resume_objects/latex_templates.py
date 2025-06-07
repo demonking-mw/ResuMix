@@ -18,11 +18,16 @@ class LTemplate:
     - remaining_height_calculator: function taking in the number of sections and return the total height allowed
         - I/O: (sections: int) -> int
             - Note: section count should exclude headers
+    - item_builder: function taking in a list of headings and a list of items, builds the latex code
+        - I/O: (headings: list, items: listof lstr) -> NoEscape
+    - section_builder: function taking in a title and a list of NoEscape Item builds, builds a NoEscape
+        - I/O: (title: str, items: listof NoEscape) -> NoEscape
     """
 
     wrapper_code: str
     item_height_calculator: Callable
     remaining_height_calculator: Callable
+    item_builder: Callable
     # This class is for internal use only, handling bad input is not done AT ALL
 
 

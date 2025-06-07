@@ -97,30 +97,36 @@ class Item:
             for line_no in lines_sel:
                 selected_lines.append(self.line_objs[line_no])
         # NoEscape for Latex safety
-
-        # Append the \resumeSubheading command
-        if len(self.titles) == 4:
-            latex = (
-                r"\resumeSubheading"
-                f"{{{self.titles[0]}}}{{{self.titles[1]}}}{{{self.titles[2]}}}{{{self.titles[3]}}}\n"
-                r"\resumeItemListStart"
-                "\n"
-            )
-            for line in selected_lines:
-                latex += f"    \\resumeItem{{{line.content}}}\n"
-            latex += r"\resumeItemListEnd" "\n"
-            latex_obj = NoEscape(latex)
-        else:
-            raise NotImplementedError("ERROR: OTHER LENGTHS ARE NOT IMPLEMENTED")
+        lines_content_list = []
+        for line in selected_lines:
+            lines_content_list.append(line.content)
+        latex_obj = templ.item_builder(
+            self.titles, lines_content_list
+        )
+        # THE BELOW BLOCK WILL BE USED IN item_builder IN LTEMPLATE.
+        # # Append the \resumeSubheading command
+        # if len(self.titles) == 4:
+        #     latex = (
+        #         r"\resumeSubheading"
+        #         f"{{{self.titles[0]}}}{{{self.titles[1]}}}{{{self.titles[2]}}}{{{self.titles[3]}}}\n"
+        #         r"\resumeItemListStart"
+        #         "\n"
+        #     )
+        #     for line in selected_lines:
+        #         latex += f"    \\resumeItem{{{line.content}}}\n"
+        #     latex += r"\resumeItemListEnd" "\n"
+        #     latex_obj = NoEscape(latex)
+        # else:
+        #     raise NotImplementedError("ERROR: OTHER LENGTHS ARE NOT IMPLEMENTED")
         return {
             "object": latex_obj,
             "score": lines_score,
             "height": templ.item_height_calculator(self),
         }
 
-    def build(self, templ: LTemplate, processor: dict) -> list:
+    def build(self, templ: LTemplate, requirement: dict) -> list:
         """
-        build the item with given processor
+        build the item with given requirement (AI generated item weights)
         template is used to calculate the height of the item
         ASSUMPTION: using different lines won't make major difference in height
         right here, throw error if information is missing and build is impossible
@@ -146,7 +152,7 @@ class Item:
                 max_lines_sel = []
                 for lines_sel_tup in combinations(range(num_lines), sel_size):
                     lines_sel = list(lines_sel_tup)
-                    curr_score = self.calc_scores(lines_sel, processor)
+                    curr_score = self.calc_scores(lines_sel, requirement)
                     if curr_score > max_score:
                         max_score = curr_score
                         max_lines_sel = lines_sel
@@ -172,7 +178,7 @@ class Item:
         return skills_dict
 
     def calc_scores(
-        self, lines_sel: list, requirement: dict, default_weight: int = 3
+        self, lines_sel: list, requirement: dict
     ) -> dict:
         """
         returns the category scores of the item under a specific build (given by lines_sel)
@@ -190,7 +196,7 @@ class Item:
 
         return value: dict of category -> dict of score, bias
         """
-        
+
         results = {
             'technical': {'scores': {}, 'bias': self.cate_scores['technical']['bias']},
             'soft': {'scores': {}, 'bias': self.cate_scores['soft']['bias']},
@@ -222,9 +228,6 @@ class Item:
                     else:
                         warnings.warn(f"Skill '{item}' not in requirement for category '{cate_name}', neglecting it.")
         return results
-        
-        
-        
         # overall_scores = {}
         # defaulted_count = 0
         # lines_sel = sorted(lines_sel)
