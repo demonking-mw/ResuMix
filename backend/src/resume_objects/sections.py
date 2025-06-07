@@ -22,6 +22,7 @@ functions needed:
 
 '''
 
+from pylatex import NoEscape
 from .latex_templates import LTemplate
 from .items import Item
 
@@ -50,7 +51,7 @@ class Section:
         # template musn't be None or empty or things will break
         self.items = []
         self.aux_info = {}
-        self.item_make_results = None
+        self.item_make_results = []
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "section":
                 raise ValueError(
@@ -69,29 +70,59 @@ class Section:
         make items build ready
         stores the item builds and returns score-height dict for optimization
         DOES NOT BUILD THE SECTION
-        processor is a dict storing AI decision of skills,
+        requirements is a dict storing AI decision of skills,
             and scoring function for each category.
         Returns:
-        - list of list of tuples
-            - each tuple is (score, height)
-            - score is a dict, see item.get_score() for details
+        - list of list of item_core_info
+        item_core_info is a dict with keys:
+            - id: list
+            - score: float
+            - height: int
+        
         '''
         if not self.items:
             raise ValueError("No items to process in the section")
         # Normal section with headers
         results = []
+        item_count = 0
         for item in self.items:
             item_build = item.build(requirements, self.template)
-            self.item_make_results = item_build
-            version_tuples = []
+            self.item_make_results.append(item_build)
+            version_icis = []
+            version_count = 0
             for version in item_build:
-                score = version.get("score")
-                height = version.get("height")
-                version_tuples.append((score, height))
-            results.append(version_tuples)
+                item_version_core_info = {
+                    "id": [item_count, version_count],
+                    "score": version.get("score"),
+                    "height": version.get("height")
+                }
+                version_icis.append(item_version_core_info)
+                version_count += 1
+            results.append(version_icis)
+            item_count += 1
         return results
 
-    def build(self) -> 
+    def build(self, decision: list, templ: LTemplate) -> NoEscape:
+        '''
+        Builds the section with template into pylatex object
+        THIS IS AFTER THE OPTIMIZATION PROCESS
+        Takes in a list of item_version_ids (augmented with section id) called decision
+        ASSUME the id list is augmented with section id
+        '''
+        # Sort the decision list by the second element in each sublist
+        sorted_decision = sorted(decision, key=lambda x: x[1])
+        build_target_NEs = []
+        for item_version_id in sorted_decision:
+            item_id = item_version_id[1]
+            version_id = item_version_id[2]
+            item_version_build = self.item_make_results[item_id][version_id]
+            item_build = item_version_build.get("object")
+            build_target_NEs.append(item_build)
+        # Build the section using the template's section_builder
+        section_build = templ.section_builder(self.title, build_target_NEs)
+        # NOT TESTED YET!!
+        return section_build
+        
 
     def to_dict(self) -> dict:
         '''

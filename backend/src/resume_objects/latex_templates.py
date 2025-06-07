@@ -28,6 +28,7 @@ class LTemplate:
     item_height_calculator: Callable
     remaining_height_calculator: Callable
     item_builder: Callable
+    section_builder: Callable
     # This class is for internal use only, handling bad input is not done AT ALL
 
 

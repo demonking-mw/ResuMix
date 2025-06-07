@@ -135,7 +135,7 @@ class Item:
             raise RuntimeError("NOT IMPLEMENTED YET.")
         else:
             # Check for required information
-            if not self.titles or not self.line_objs or templ is None or processor is None:
+            if not self.titles or not self.line_objs or not templ or not requirement:
                 raise ValueError("Missing required information: titles, lines, template, or processor.")
             # Implement the rest of the build logic here
             results = []
@@ -152,7 +152,7 @@ class Item:
                 max_lines_sel = []
                 for lines_sel_tup in combinations(range(num_lines), sel_size):
                     lines_sel = list(lines_sel_tup)
-                    curr_score = self.calc_scores(lines_sel, requirement)
+                    curr_score = self.__calc_score(lines_sel, requirement)
                     if curr_score > max_score:
                         max_score = curr_score
                         max_lines_sel = lines_sel
@@ -172,10 +172,41 @@ class Item:
             if not line_obj.cate_score:
                 line_obj.gen_score()
             for cate_name in cate_list:
-                for skill, score in line_obj.cate_score[cate_name].items():
+                for skill, _ in line_obj.cate_score[cate_name].items():
                     if skill not in skills_dict[cate_name]:
                         skills_dict[cate_name].append(skill)
         return skills_dict
+
+    def __calc_score(self, lines_sel: list, requirement: dict) -> dict:
+        '''
+        calculate the actual score of the item in approximation
+        using the assumption that the actual scoring funciton is near linear
+        ONLY FOR INTERNAL USE!!
+        '''
+        result = 0
+        if not lines_sel:
+            # This is the case if the item is a paragraph
+            return result
+        target_lines = []
+        for line_no in lines_sel:
+            target_lines.append(self.line_objs[line_no])
+        cate_list = ["technical", "soft", "relevant"]
+        for line_obj in target_lines:
+            if not line_obj.cate_score:
+                warnings.warn(
+                    f"Line {line_obj.content_str} has no category scores, generating them."
+                )
+                line_obj.gen_score()
+            for cate_name in cate_list:
+                for item, value in line_obj.cate_score[cate_name].items():
+                    if item in requirement[cate_name]:
+                        result += value * requirement[cate_name][item]
+                    else:
+                        warnings.warn(
+                            f"Skill '{item}' not in requirement for category "
+                            f"'{cate_name}', neglecting it."
+                        )
+        return result
 
     def calc_scores(
         self, lines_sel: list, requirement: dict
@@ -224,9 +255,14 @@ class Item:
                     line_obj.gen_score()
                 for item, value in line_obj.cate_score[cate_name].items():
                     if item in results[cate_name]['scores']:
-                        results[cate_name]['scores'][item] += value * self.cate_scores[cate_name]['weight']
+                        results[cate_name]['scores'][item] += (
+                            value * self.cate_scores[cate_name]['weight']
+                        )
                     else:
-                        warnings.warn(f"Skill '{item}' not in requirement for category '{cate_name}', neglecting it.")
+                        warnings.warn(
+                            f"Skill '{item}' not in requirement for category "
+                            f"'{cate_name}', neglecting it."
+                        )
         return results
         # overall_scores = {}
         # defaulted_count = 0
