@@ -16,6 +16,7 @@ from pylatex import Command, NoEscape, Itemize, MiniPage
 
 from .lines import Line
 from .latex_templates import LTemplate
+import warnings
 
 
 
@@ -77,7 +78,6 @@ class Item:
                     "bias": 1.0,
                 },
             }
-
 
 
     def make_specific(
@@ -172,51 +172,88 @@ class Item:
         return skills_dict
 
     def calc_scores(
-        self, lines_sel: list, processor: dict, default_weight: int = 3
+        self, lines_sel: list, requirement: dict, default_weight: int = 3
     ) -> dict:
         """
         returns the category scores of the item under a specific build (given by lines_sel)
 
-        Processor: a dict storing instruction on how to process items
-        {values: {cate: {} ~...}, functions: {cate: funcn}}
-        values are AI generated for each value present in each category
+        TO REPLACE Processor:
+        requirements: dict
+        {cate: {}}
+        each sub dict is attribute: score
+        
+        Action of this function:
+        - sum each attribute's score in each category
+        - add the weight to it
+        - append bias to the result as it
+        - return WITHOUT calculating anything
 
-        function is for scoring a category of an item:
-        (weight: int, bias: int, products: listof int) -> (score: int)
-        MAJOR ASSUMPTION: THIS WILL NOT BE CALLED IF ANY LINE OBJ IS EMPTY,
-            WILL THROW ERROR OTHERWISE
-
-        return value: dict of category -> score
+        return value: dict of category -> dict of score, bias
         """
-        overall_scores = {}
-        defaulted_count = 0
-        lines_sel = sorted(lines_sel)
+        
+        results = {
+            'technical': {'scores': {}, 'bias': self.cate_scores['technical']['bias']},
+            'soft': {'scores': {}, 'bias': self.cate_scores['soft']['bias']},
+            'relevant': {'scores': {}, 'bias': self.cate_scores['relevant']['bias']}
+        }
+        cate_list = ["technical", "soft", "relevant"]
+        for cate_name in cate_list:
+            # put every item in requirements into the results
+            for item, value in requirement[cate_name]:
+                results[cate_name]['scores'][item] = 0
+        # Check if lines_sel is empty
+        if not lines_sel:
+            # This is the case if the item is a paragraph
+            return results
+        # ASSUME requirement is valid
+        # also ASSUME line_sel is sorted already, note that it CAN be empty
         target_lines = []
         for line_no in lines_sel:
             target_lines.append(self.line_objs[line_no])
-        cate_list = ["technical", "soft", "relevant"]
-        for cate_name in cate_list:
-            cate_score = []
-            cate_weights = processor["values"][
-                cate_name
-            ]  # the weights of each attribute assigned by AI
-            for line_obj in target_lines:
-                line_prod_list = []
-                for cate, value in line_obj.cate_score[cate_name].items():
-                    if cate in cate_weights:
-                        line_prod_list.append(value * cate_weights[cate])
+        # Add each score to the results
+        for line_obj in target_lines:
+            for cate_name in cate_list:
+                if not line_obj.cate_score:
+                    warnings.warn(f"Line {line_obj.content_str} has no category scores, generating them.")
+                    line_obj.gen_score()
+                for item, value in line_obj.cate_score[cate_name].items():
+                    if item in results[cate_name]['scores']:
+                        results[cate_name]['scores'][item] += value * self.cate_scores[cate_name]['weight']
                     else:
-                        line_prod_list.append(value * default_weight)
-                        defaulted_count += 1
-                cate_score.append(line_prod_list)
-            cate_funcn = processor["functions"][cate_name]
-            overall_scores[cate_name] = cate_funcn(
-                self.cate_scores[cate_name]["weight"],
-                self.cate_scores[cate_name]["bias"],
-                cate_score,
-            )
-        # overall_score is a dict of category(str) -> score(int)
-        return overall_scores
+                        warnings.warn(f"Skill '{item}' not in requirement for category '{cate_name}', neglecting it.")
+        return results
+        
+        
+        
+        # overall_scores = {}
+        # defaulted_count = 0
+        # lines_sel = sorted(lines_sel)
+        # target_lines = []
+        # for line_no in lines_sel:
+        #     target_lines.append(self.line_objs[line_no])
+        # cate_list = ["technical", "soft", "relevant"]
+        # for cate_name in cate_list:
+        #     cate_score = []
+        #     cate_weights = processor["values"][
+        #         cate_name
+        #     ]  # the weights of each attribute assigned by AI
+        #     for line_obj in target_lines:
+        #         line_prod_list = []
+        #         for cate, value in line_obj.cate_score[cate_name].items():
+        #             if cate in cate_weights:
+        #                 line_prod_list.append(value * cate_weights[cate])
+        #             else:
+        #                 line_prod_list.append(value * default_weight)
+        #                 defaulted_count += 1
+        #         cate_score.append(line_prod_list)
+        #     cate_funcn = processor["functions"][cate_name]
+        #     overall_scores[cate_name] = cate_funcn(
+        #         self.cate_scores[cate_name]["weight"],
+        #         self.cate_scores[cate_name]["bias"],
+        #         cate_score,
+        #     )
+        # # overall_score is a dict of category(str) -> score(int)
+        # return overall_scores
 
     def to_dict(self) -> dict:
         """

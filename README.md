@@ -95,3 +95,10 @@ Items:
     - n4  - 4 headings, normal
     - n5  - 4 headings with a skill line in upper row, to the left
     - p   - ONE PARAGRAPH
+
+
+
+UPDATE: 
+scoring is done only once with the master scoring function to enable functions such as:
+- balancing skills
+- preference of variety or depth

@@ -49,7 +49,6 @@ class Section:
         # template musn't be None or empty or things will break
         self.items = []
         self.aux_info = {}
-        self.style = ""
         self.item_make_results = None
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "section":
@@ -58,7 +57,6 @@ class Section:
                     f"'{class_dict['aux_info']['type']}' instead"
                 )
             self.aux_info = class_dict.get("aux_info", {})
-            self.style = self.aux_info.get("style", "")
             for item_dict in class_dict.get("items", []):
                 self.items.append(Item(item_dict))
         else:
@@ -77,21 +75,17 @@ class Section:
         '''
         if not self.items:
             raise ValueError("No items to process in the section")
-        if self.style and self.style[0] == 'n':
-            # Normal section with headers
-            results = []
-            for item in self.items:
-                item_build = item.build(processor, self.template)
-                self.item_make_results = item_build
-                version_tuples = []
-                for version in item_build:
-                    score = version.get("score")
-                    height = version.get("height")
-                    version_tuples.append((score, height))
-                results.append(version_tuples)
-            return results
-        else:
-            raise NotImplementedError(
-                f"Style '{self.style}' is not implemented for section make YET"
-            )
-            # Other styles will be done later, they are quite different from the normal ones
+        # Normal section with headers
+        results = []
+        for item in self.items:
+            item_build = item.build(processor, self.template)
+            self.item_make_results = item_build
+            version_tuples = []
+            for version in item_build:
+                score = version.get("score")
+                height = version.get("height")
+                version_tuples.append((score, height))
+            results.append(version_tuples)
+        return results
+
+    
