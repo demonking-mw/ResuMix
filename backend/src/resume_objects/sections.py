@@ -1,4 +1,4 @@
-'''
+"""
 The section class
 
 represents a section in a resume. Abstracts the building process for the resume.
@@ -20,15 +20,16 @@ functions needed:
     - builds from a given list of item-versions
 - make: make items build ready, stores the item builds and returns score-height dict for optimization
 
-'''
+"""
 
 from pylatex import NoEscape  # pylint: disable=import-error
 from .latex_templates import LTemplate
 from .items import Item
 
+
 class Section:
-    '''
-    variables needed: 
+    """
+    variables needed:
     - template: LTemplate
     - items: list of Item objects
     - aux_info with type as section
@@ -39,13 +40,14 @@ class Section:
         - l: dotted list section
         - l2: dotted list section with 2 columns
 
-    functions needed: 
+    functions needed:
     - build: builds the section with template into pylatex object
         - builds from a given list of item-versions
-    - make: make items build ready, 
+    - make: make items build ready,
         stores the item builds and returns score-height dict for optimization
 
-    '''
+    """
+
     def __init__(self, templ: LTemplate, sect_id: int, class_dict: dict = None) -> None:
         self.template = templ
         self.title = ""
@@ -67,8 +69,23 @@ class Section:
         else:
             self.aux_info = {"type": "section"}
 
+    def get_skills_dict(self) -> dict:
+        """
+        get all skills from items in the section
+        uses item.get_skills_dict() to get the skills
+        """
+        skills_dict = {"technical": [], "soft": [], "relevance": []}
+        cate_list = ["technical", "soft", "relevance"]
+        for item in self.items:
+            item_skills = item.get_skills_dict()
+            for cate in cate_list:
+                for skill in item_skills[cate]:
+                    if skill not in skills_dict[cate]:
+                        skills_dict[cate].append(skill)
+        return skills_dict
+
     def make(self, requirements: dict) -> list:
-        '''
+        """
         make items build ready
         stores the item builds and returns score-height dict for optimization
         DOES NOT BUILD THE SECTION
@@ -80,8 +97,8 @@ class Section:
             - id: list (augmented with section id already)
             - score: float
             - height: int
-        
-        '''
+
+        """
         if not self.items:
             raise ValueError("No items to process in the section")
         # Normal section with headers
@@ -96,7 +113,7 @@ class Section:
                 item_version_core_info = {
                     "id": [self.sect_id, item_count, version_count],
                     "score": version.get("score"),
-                    "height": version.get("height")
+                    "height": version.get("height"),
                 }
                 version_icis.append(item_version_core_info)
                 version_count += 1
@@ -105,11 +122,11 @@ class Section:
         return results
 
     def build(self, decision: list, templ: LTemplate) -> NoEscape:
-        '''
+        """
         Builds the section with template into pylatex object
         THIS IS AFTER THE OPTIMIZATION PROCESS
         Takes in a list of item_version_ids (augmented with section id) called decision
-        '''
+        """
         # Sort the decision list by the second element in each sublist
         sorted_decision = sorted(decision, key=lambda x: x[1])
         build_target_NEs = []
@@ -125,9 +142,9 @@ class Section:
         return section_build
 
     def to_dict(self) -> dict:
-        '''
+        """
         Returns the dict representation of the section
-        '''
+        """
         return {
             "title": self.title,
             "items": [item.to_dict() for item in self.items],

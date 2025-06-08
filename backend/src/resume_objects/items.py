@@ -72,7 +72,7 @@ class Item:
                     "weight": 1.0,
                     "bias": 1.0,
                 },
-                "relevant": {
+                "relevance": {
                     "weight": 1.0,
                     "bias": 1.0,
                 },
@@ -80,7 +80,7 @@ class Item:
 
 
     def make_specific(
-        self, lines_score: int, lines_sel: list, templ: LTemplate
+        self, lines_score: dict, lines_sel: list, templ: LTemplate
     ) -> dict:
         """
         make a build dict with selected lines and given score
@@ -158,7 +158,7 @@ class Item:
                         max_score = curr_score
                         max_lines_sel = lines_sel
                 results.append(
-                    self.make_specific(max_score, max_lines_sel, templ)
+                    self.make_specific(self.calc_scores(max_lines_sel, requirements), max_lines_sel, templ)
                 )
             return results
 
@@ -168,8 +168,8 @@ class Item:
         returns a dict of skills (not overlapping)
         """
         skills_dict =  {"technical": [], "soft": [], "relevance": []}
+        cate_list = ["technical", "soft", "relevance"]
         for line_obj in self.line_objs:
-            cate_list = ["technical", "soft", "relevance"]
             if not line_obj.cate_score:
                 line_obj.gen_score()
             for cate_name in cate_list:
@@ -178,7 +178,7 @@ class Item:
                         skills_dict[cate_name].append(skill)
         return skills_dict
 
-    def __calc_score(self, lines_sel: list, requirement: dict) -> dict:
+    def __calc_score(self, lines_sel: list, requirement: dict) -> int:
         '''
         calculate the actual score of the item in approximation
         using the assumption that the actual scoring funciton is near linear
@@ -191,7 +191,7 @@ class Item:
         target_lines = []
         for line_no in lines_sel:
             target_lines.append(self.line_objs[line_no])
-        cate_list = ["technical", "soft", "relevant"]
+        cate_list = ["technical", "soft", "relevance"]
         for line_obj in target_lines:
             if not line_obj.cate_score:
                 warnings.warn(
@@ -232,9 +232,9 @@ class Item:
         results = {
             'technical': {'scores': {}, 'bias': self.cate_scores['technical']['bias']},
             'soft': {'scores': {}, 'bias': self.cate_scores['soft']['bias']},
-            'relevant': {'scores': {}, 'bias': self.cate_scores['relevant']['bias']}
+            'relevance': {'scores': {}, 'bias': self.cate_scores['relevance']['bias']}
         }
-        cate_list = ["technical", "soft", "relevant"]
+        cate_list = ["technical", "soft", "relevance"]
         for cate_name in cate_list:
             # put every item in requirements into the results
             for item, value in requirement[cate_name]:
@@ -274,7 +274,7 @@ class Item:
         # target_lines = []
         # for line_no in lines_sel:
         #     target_lines.append(self.line_objs[line_no])
-        # cate_list = ["technical", "soft", "relevant"]
+        # cate_list = ["technical", "soft", "relevance"]
         # for cate_name in cate_list:
         #     cate_score = []
         #     cate_weights = processor["values"][

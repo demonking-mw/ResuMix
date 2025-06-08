@@ -85,6 +85,12 @@ class Line:
             "Remember, your answer MUST be ONLY a python dictionary, "
             "as it will be parsed by a program"
         )
+        prompt_instruction = (
+            "When you are asked a question, first analyze it, then output ONLY a python "
+            "dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. "
+            "Note: the dictionary should contain keys of type string and values of type int. "
+            "Do not output anything else. Also, whenever giving something a score, make it out of 3"
+        )
         if not self.cate_score['technical'] or forced:
             tech_prompt = (
                 f"Analyze for me what technical skills (for the {industry} industry) "
@@ -92,8 +98,8 @@ class Line:
                 "represents how impressive and strong the line demonstrates the skill. "
                 "The line is: "
             )
-            success, technical_scores = self.__get_dict(
-                pre_prompt + tech_prompt + self.content_str + reminder, retries=3
+            success, technical_scores = self.bot.python_response_instruction(
+                pre_prompt + tech_prompt + self.content_str + reminder, prompt_instruction, retries=3
             )
             if success:
                 new_cate_score["technical"] = technical_scores
@@ -105,8 +111,8 @@ class Line:
                 "Select up to 2, then give each a score that represents how strong "
                 "the line demonstrates the skill. The line is: "
             )
-            success, soft_scores = self.__get_dict(
-                pre_prompt + soft_prompt + self.content_str + reminder, retries=3
+            success, soft_scores = self.bot.python_response_instruction(
+                pre_prompt + soft_prompt + self.content_str + reminder, prompt_instruction, retries=3
             )
             if success:
                 new_cate_score["soft"] = soft_scores
@@ -120,8 +126,8 @@ class Line:
                 "the topic. Output it in a dict with the keywords as keys and 1 as "
                 "values. The line is: "
             )
-            success, relevance_scores = self.__get_dict(
-                pre_prompt + relevance_prompt + self.content_str + reminder, retries=3
+            success, relevance_scores = self.bot.python_response_instruction(
+                pre_prompt + relevance_prompt + self.content_str + reminder, prompt_instruction, retries=3
             )
             if success:
                 new_cate_score["relevance"] = relevance_scores
@@ -146,39 +152,39 @@ class Line:
         result["keywords"] = self.keywords
         return result
 
-    def __get_dict(self, prompt: str, retries: int) -> tuple[bool, dict]:
-        """
-        Gets the dictionary according to the prompt (mainly to fill the cate_score)
-        DOES NOT DIRECTLY MODIFY CATE_SCORE
-        the boolean represents whether a valid response is generated
-        the dict represents the result
-        This method is RECURSIVE, when retries hits 0 it returns failure
-        """
-        prompt_instruction = "When you are asked a question, first analyze it, then output ONLY a python dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. Note: the dictionary should contain keys of type string and values of type int Do not output anything else. Also, whenever giving something a score, make it out of 3"
-        if retries <= 0:
-            return False, {}
+    # def __get_dict(self, prompt: str, retries: int) -> tuple[bool, dict]:
+    #     """
+    #     Gets the dictionary according to the prompt (mainly to fill the cate_score)
+    #     DOES NOT DIRECTLY MODIFY CATE_SCORE
+    #     the boolean represents whether a valid response is generated
+    #     the dict represents the result
+    #     This method is RECURSIVE, when retries hits 0 it returns failure
+    #     """
+    #     prompt_instruction = "When you are asked a question, first analyze it, then output ONLY a python dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. Note: the dictionary should contain keys of type string and values of type int Do not output anything else. Also, whenever giving something a score, make it out of 3"
+    #     if retries <= 0:
+    #         return False, {}
 
-        try:
-            response = self.bot.response_instruction(prompt, prompt_instruction)
-            print(response)  # Debugging output
-            # Extract the dictionary from the response
-            match = re.search(r"\s*(\{.*\})", response, re.DOTALL)
-            if match:
+    #     try:
+    #         response = self.bot.response_instruction(prompt, prompt_instruction)
+    #         print(response)  # Debugging output
+    #         # Extract the dictionary from the response
+    #         match = re.search(r"\s*(\{.*\})", response, re.DOTALL)
+    #         if match:
 
-                result_dict = ast.literal_eval(
-                    match.group(1)
-                )  # Safely convert string to dictionary
-                # Convert the values of the dictionary to integers
-                result_dict = {
-                    k: int(v) for k, v in result_dict.items() if str(v).isdigit()
-                }
-            if isinstance(result_dict, dict):
-                return True, result_dict
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            pass
+    #             result_dict = ast.literal_eval(
+    #                 match.group(1)
+    #             )  # Safely convert string to dictionary
+    #             # Convert the values of the dictionary to integers
+    #             result_dict = {
+    #                 k: int(v) for k, v in result_dict.items() if str(v).isdigit()
+    #             }
+    #         if isinstance(result_dict, dict):
+    #             return True, result_dict
+    #     except Exception as e:
+    #         print(f"Error occurred: {e}")
+    #         pass
 
-        return self.__get_dict(prompt, retries - 1)
+    #     return self.__get_dict(prompt, retries - 1)
 
     def total_tokens(self) -> int:
         """

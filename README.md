@@ -53,7 +53,7 @@ Most major calculations should be done in the backend
 
 Resume generate: use pylatex
 
-Categories: technical, soft, relevant
+Categories: technical, soft, relevance
 CATEGORY NAME FOR ANY INTERMETHOD COMMUNICATION MUST BE AS IS
 
 Processor: a dict storing instruction on how to process items
@@ -96,6 +96,11 @@ Items:
     - n5  - 4 headings with a skill line in upper row, to the left
     - p   - ONE PARAGRAPH
 
+
+
+RULE:
+- usually, make means to parse the information and to get the thing ready to be built
+- build would be to build the object.
 
 
 UPDATE: 
