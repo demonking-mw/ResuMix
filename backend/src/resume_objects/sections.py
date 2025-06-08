@@ -22,7 +22,7 @@ functions needed:
 
 '''
 
-from pylatex import NoEscape
+from pylatex import NoEscape  # pylint: disable=import-error
 from .latex_templates import LTemplate
 from .items import Item
 
@@ -42,12 +42,14 @@ class Section:
     functions needed: 
     - build: builds the section with template into pylatex object
         - builds from a given list of item-versions
-    - make: make items build ready, stores the item builds and returns score-height dict for optimization
+    - make: make items build ready, 
+        stores the item builds and returns score-height dict for optimization
 
     '''
-    def __init__(self, class_dict: dict = None, templ: LTemplate) -> None:
+    def __init__(self, templ: LTemplate, sect_id: int, class_dict: dict = None) -> None:
         self.template = templ
         self.title = ""
+        self.sect_id = sect_id
         # template musn't be None or empty or things will break
         self.items = []
         self.aux_info = {}
@@ -75,7 +77,7 @@ class Section:
         Returns:
         - list of list of item_core_info
         item_core_info is a dict with keys:
-            - id: list
+            - id: list (augmented with section id already)
             - score: float
             - height: int
         
@@ -92,7 +94,7 @@ class Section:
             version_count = 0
             for version in item_build:
                 item_version_core_info = {
-                    "id": [item_count, version_count],
+                    "id": [self.sect_id, item_count, version_count],
                     "score": version.get("score"),
                     "height": version.get("height")
                 }
@@ -107,7 +109,6 @@ class Section:
         Builds the section with template into pylatex object
         THIS IS AFTER THE OPTIMIZATION PROCESS
         Takes in a list of item_version_ids (augmented with section id) called decision
-        ASSUME the id list is augmented with section id
         '''
         # Sort the decision list by the second element in each sublist
         sorted_decision = sorted(decision, key=lambda x: x[1])
@@ -122,7 +123,6 @@ class Section:
         section_build = templ.section_builder(self.title, build_target_NEs)
         # NOT TESTED YET!!
         return section_build
-        
 
     def to_dict(self) -> dict:
         '''
@@ -133,5 +133,3 @@ class Section:
             "items": [item.to_dict() for item in self.items],
             "aux_info": self.aux_info,
         }
-
-    

@@ -10,14 +10,13 @@ Listof item objects(dicts):
 - Latex code for item
 - Height
 """
+import warnings
 
 from itertools import combinations
-from pylatex import Command, NoEscape, Itemize, MiniPage
+from pylatex import NoEscape  # pylint: disable=import-error
 
 from .lines import Line
 from .latex_templates import LTemplate
-import warnings
-
 
 
 class Item:
@@ -100,7 +99,7 @@ class Item:
         lines_content_list = []
         for line in selected_lines:
             lines_content_list.append(line.content)
-        latex_obj = templ.item_builder(
+        latex_obj: NoEscape = templ.item_builder(
             self.titles, lines_content_list
         )
         # THE BELOW BLOCK WILL BE USED IN item_builder IN LTEMPLATE.
@@ -136,7 +135,9 @@ class Item:
         else:
             # Check for required information
             if not self.titles or not self.line_objs or not templ or not requirement:
-                raise ValueError("Missing required information: titles, lines, template, or processor.")
+                raise ValueError(
+                    "Missing required information: titles, lines, template, or processor."
+                )
             # Implement the rest of the build logic here
             results = []
             num_lines = len(self.line_objs)
@@ -251,7 +252,10 @@ class Item:
         for line_obj in target_lines:
             for cate_name in cate_list:
                 if not line_obj.cate_score:
-                    warnings.warn(f"Line {line_obj.content_str} has no category scores, generating them.")
+                    warnings.warn(
+                        f"Line {line_obj.content_str} has no category scores, "
+                        "generating them."
+                    )
                     line_obj.gen_score()
                 for item, value in line_obj.cate_score[cate_name].items():
                     if item in results[cate_name]['scores']:
