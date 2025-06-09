@@ -131,6 +131,10 @@ class Section:
         sorted_decision = sorted(decision, key=lambda x: x[1])
         build_target_NEs = []
         for item_version_id in sorted_decision:
+            if item_version_id[0] != self.sect_id:
+                raise ValueError(
+                    f"Item version id {item_version_id} does not match section id {self.sect_id}"
+                )
             item_id = item_version_id[1]
             version_id = item_version_id[2]
             item_version_build = self.item_make_results[item_id][version_id]

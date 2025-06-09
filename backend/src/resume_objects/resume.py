@@ -5,6 +5,7 @@ Handlles building, optimizing, etc
 
 from .sections import Section
 from ..general_helper.isa_bot import AIBot
+import random
 
 class Resume:
     '''
@@ -22,6 +23,8 @@ class Resume:
         self.requirements = {}
         self.attribute_targets = {} # dict of cate -> list of attributes
         self.bot = AIBot()  # AI bot for generating scores
+        self.optimization_result = None # set by optimize(), see docstring for shape
+        self.make_results_flattened = [] # Flattened list of item_core_info for optimization
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "resume":
                 raise ValueError(
@@ -68,6 +71,9 @@ class Resume:
         - Calls __pre_make()
         - Makes requirement dict, update self.requirements
         - Calls make() for each section, stores the item_core_info in self.section_make_results
+            - Shape of section_make_results:
+            listof listof listof item_core_info(dict)
+            each list corresponds to: section -> item -> version
         - Returns True if successful, False otherwise
         '''
         if not self.__pre_make():
@@ -140,13 +146,82 @@ class Resume:
             print("DEBUG: Failed to get requirements from AI")
             return False
         self.requirements = requirements_dict
-
+        make_results_flattened = [] # Flattened list of item_core_info for optimization
         # Make each section using self.requirements
         for section in self.sections:
             item_core_info = section.make(self.requirements)
+            for item_info_list in item_core_info:
+                self.make_results_flattened.append(item_info_list)
             if item_core_info is None:
                 print(f"DEBUG: Failed to make section {section.sect_id}")
                 return False
             self.section_make_results.append(item_core_info)
+        self.make_results_flattened = make_results_flattened
         print("DEBUG: ready for optimization")
+        return True
+
+    def optimize(self, evaluator: callable, shuffle_times = 2, swap_times = 2) -> bool:
+        '''
+        Optimize the resume using the AI decision generated in make()
+        Input: evaluator:
+        (section_make_results: list of item_core_info) -> score: int
+        GIVEN: evaluator is very close to a linear function, and it is none-decreasing
+        Result:
+        - updates self.optimization_result
+        - returns True if successful, False otherwise
+
+        shape of self.optimization_result:
+        listof section_decision,
+            section_decision is a list of item_version_ids
+
+        Process: apply the algorithm on the flattened list, then sort them to sections and return
+        '''
+        width = len(self.make_results_flattened)
+        height = self.template.remaining_height_calculator(len(self.sections))
+        if not self.make_results_flattened:
+            print("DEBUG: No items to optimize, empty resume")
+            return False
+        data_list = self.make_results_flattened
+        max_variant_score = 0
+        max_result = [] # a list of ici
+        for _ in range(shuffle_times):
+            random.shuffle(data_list)
+            dp_list = [[[] for _ in range(width)] for _ in range(height)]
+            # Each item in dp_list is a list of ici (with id, score, height)
+            for w in range(width):
+                for h in range(height):
+                    max_score = evaluator(
+                        [
+                            item["score"]
+                            for item in dp_list[h][w - 1]
+                        ]
+                    ) if w > 0 else 0
+                    dp_list[h][w] = dp_list[h][w - 1] if w > 0 else []
+                    # This represents not adding the item in question
+                    for version in data_list[w]:
+                        if version["height"] <= h:
+                            if w == 0:
+                                score = evaluator([version["score"]])
+                            else:
+                                resume_score_list = [item["score"] for item in dp_list[h - version["height"]][w - 1]]
+                                resume_score_list.append(version["score"])
+                                score = evaluator(resume_score_list)
+                            if score > max_score:
+                                max_score = score
+                                dp_list[h][w] = dp_list[h - version["height"]][w - 1] + [version["id"]]
+            current_max_score = evaluator(
+                [item["score"] for item in dp_list[height - 1][width - 1]]
+            )
+            if current_max_score > max_variant_score:
+                max_variant_score = current_max_score
+                max_result = dp_list[height - 1][width - 1]
+        # ABOVE NOT TESTED, CAN BE VERY WRONG
+        # Currently not building the swap algorithm, as DP should be decent for the job.
+        # Will implement if need arises
+        result_len = len(self.sections)
+        self.optimization_result = [[] for _ in range(result_len)]
+        for ici in max_result:
+            ids = ici["id"]
+            section_id = ids[0]
+            self.optimization_result[section_id].append(ids)
         return True

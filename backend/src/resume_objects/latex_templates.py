@@ -17,7 +17,7 @@ class LTemplate:
         - I/O: (item: Item) -> int
     - remaining_height_calculator: function taking in the number of sections and return the total height allowed
         - I/O: (sections: int) -> int
-            - Note: section count should exclude headers
+            - Note: section count should exclude static sections
     - item_builder: function taking in a list of headings and a list of items, builds the latex code
         - I/O: (headings: list, items: listof lstr) -> NoEscape
     - section_builder: function taking in a title and a list of NoEscape Item builds, builds a NoEscape
