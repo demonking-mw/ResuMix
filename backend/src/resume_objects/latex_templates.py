@@ -5,14 +5,34 @@ Note: it also contains two functions to calculate the height of an item and the 
 
 from dataclasses import dataclass
 from typing import Callable
+from reportlab.pdfbase.pdfmetric import stringWidth
+from reportlab.platypus import Paragraph
+from reportlab.lib.pagesizes import A4
+
+from .styles import ResumeStyle
+from . impoort styles
 
 
 @dataclass
+class PageData:
+    '''
+    A dataclass to store resume page info
+    Contains:
+    - height
+    - width
+    - item_margin
+    - wrap_forgive
+    '''
+    height: int
+    width: int
+    item_margin: int
+    wrap_forgive: int
+
 class LTemplate:
     """
-    A class to represent a LaTeX template for resumes.
+    A class to represent a Reportlab template for resumes.
     Contains:
-    - Wrapper code: latex code that needs to be inserted at the top of the doc
+    - preamble: latex code that needs to be inserted at the top of the doc
     - item_height_calculator: function taking in an item and returning its height
         - I/O: (item: Item) -> int
     - remaining_height_calculator: function taking in the number of sections and return the total height allowed
@@ -24,8 +44,45 @@ class LTemplate:
         - I/O: (title: str, items: listof NoEscape) -> NoEscape
     """
 
-    wrapper_code: str
-    item_height_calculator: Callable
+
+    def __init__(self, resume_style: ResumeStyle) -> None:
+        '''
+        Init the class, set resume style
+        This will only need to be done once when creating the resume class
+        '''
+        self.style_sheet = resume_style
+
+    def item_height_calculator(self, item: 'Item') -> int:
+        """
+        Function to calculate the height of an item.
+        :param item: An instance of Item.
+        :return: Height of the item in some unit (e.g., points).
+        """
+        total_height = 0
+        titles = item.titles
+        line_width = (
+            A4[0]
+            - 2 * self.style_sheet.default_section_attributes.side_margin
+            - self.style_sheet.default_section_attributes.wrap_forgive
+        )
+        if len(titles) == 0:
+            raise ValueError("Item must have at least one title")
+        # Adding the item title height
+        total_height += self.style_sheet.font_lib["subtitle_font"].space_before
+        total_height += self.style_sheet.font_lib["subright_font"].leading
+        if len(titles) > 3:
+            # Assume 2 rows since 3 rows is basically never used
+            total_height += self.style_sheet.font_lib["subtitle2_font"].space_before
+            total_height += self.style_sheet.font_lib["subright2_font"].leading
+        for line in item.line_objs:
+            line_rstring = line.content
+            line_style = self.style_sheet.font_lib['standard_text_font'].get_paragraph_style()
+            line_para = Paragraph(line_rstring, line_style)
+            _, line_height = line_style.wrap(line_width, 69420)
+            total_height += line_height
+        return total_height
+        
+        
     remaining_height_calculator: Callable
     item_builder: Callable
     section_builder: Callable

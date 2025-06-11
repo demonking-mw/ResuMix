@@ -225,3 +225,17 @@ class Resume:
             section_id = ids[0]
             self.optimization_result[section_id].append(ids)
         return True
+
+    def build(self) -> bytes:
+        '''
+        Build the resume using the template and the optimization result
+        First runs build on each item
+        '''
+        section_NEs = []
+        for section in self.sections:
+            if not section.items:
+                print(f"DEBUG: Section {section.sect_id} has no items, skipping")
+                continue
+            section_build = section.build(self.optimization_result[section.sect_id], self.template)
+            section_NEs.append(section_build)
+        
