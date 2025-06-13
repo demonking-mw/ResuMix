@@ -99,7 +99,7 @@ class Item:
         lines_content_list = []
         for line in selected_lines:
             lines_content_list.append(line.content)
-        latex_obj: NoEscape = templ.item_builder(
+        latex_obj = templ.item_builder(
             self.titles, lines_content_list
         )
         # THE BELOW BLOCK WILL BE USED IN item_builder IN LTEMPLATE.

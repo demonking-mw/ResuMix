@@ -8,7 +8,7 @@ Note: template is now for reportlab, latex might be added later
 from dataclasses import dataclass
 from typing import Callable
 from reportlab.pdfbase.pdfmetric import stringWidth
-from reportlab.platypus import Paragraph
+from reportlab.platypus import Paragraph, HRFlowable
 from reportlab.lib.pagesizes import A4
 
 from .styles import ResumeStyle
@@ -37,14 +37,17 @@ class LTemplate:
     - preamble: latex code that needs to be inserted at the top of the doc
     - item_height_calculator: function taking in an item and returning its height
         - I/O: (item: Item) -> int
-    - remaining_height_calculator: function taking in the number of sections and return the total height allowed
+    - remaining_height_calculator:
+            function taking in the number of sections and return the total height allowed
         - I/O: (sections: int) -> int
             - Note: section count should exclude static sections
-    - item_builder: function taking in a list of headings and a list of items, builds the Reportlab paragraphs
+    - item_builder:
+            function taking in a list of headings and a list of items, builds the Reportlab paragraphs
         - I/O: (headings: list, items: listof lstr) -> listof Paragraphs
-    - section_builder: function taking in a title and a list of NoEscape Item builds, builds a NoEscape
+    - section_builder:
+            function taking in a title and a list of Item builds, builds a big list of Paragraphs and shinanigans
         - Note: the divider and the title are handled by this function
-        - I/O: (title: str, items: listof NoEscape) -> NoEscape
+        - I/O: (title: str, items: listof Paragraph) -> listof Paragraph
     """
 
 
@@ -120,8 +123,8 @@ class LTemplate:
         for line in item.line_objs:
             line_rstring = line.content
             line_style = self.style_sheet.font_lib['standard_text_font'].get_paragraph_style()
-            line_para = Paragraph(line_rstring, line_style)
-            _, line_height = line_style.wrap(line_width, 694200)
+            line_para = Paragraph('- ' + line_rstring, line_style)
+            _, line_height = line_para.wrap(line_width, 694200)
             total_height += line_height
         return total_height
 
@@ -142,7 +145,8 @@ class LTemplate:
             - multiple can be read if in content list
                 - useful for skills section perhaps
             - the paragraph will be styled with standard_text_font
-        Add more if reqd
+
+        RETURN: a list of Paragraphs
         '''
         if not headings and not content:
             raise ValueError("Headings list must not be empty")
@@ -240,7 +244,10 @@ class LTemplate:
         for line in content:
             line_result = r''
             if bullet_point:
-                bullet_style = self.style_sheet.section_style_lib.get(section_style_name, self.style_sheet.section_style_lib['default'])
+                bullet_style = self.style_sheet.section_style_lib.get(
+                    section_style_name,
+                    self.style_sheet.section_style_lib['default']
+                )
                 line_result += bullet_style.bullet_symbol
             line_result += line
             item_content += line_result + r'\n'
@@ -254,13 +261,51 @@ class LTemplate:
             )
         return section_content
 
-    
-                
+    def section_builder(self, title: str, items: list, section_style_type: str = None) -> list:
+        '''
+        builds the section in the form of a list of items.
+        styling:
+        - prioritize section_style_type
+        - then try to search with title
+        - then use default section style
+        '''
+        # Try to get section style by priority
+        sect_style_lib = self.style_sheet.section_style_lib
+        if section_style_type and section_style_type in sect_style_lib:
+            sect_style = sect_style_lib[section_style_type]
+        elif title and title in sect_style_lib:
+            sect_style = sect_style_lib[title]
+        else:
+            sect_style = sect_style_lib['default']
+        # Create the actual section
+        section_content = []
+        # Add the section title and the bar line
+        section_content.append(
+            Paragraph(
+                title,
+                self.style_sheet.font_lib['section_title_font'].get_paragraph_style()
+            )
+        )
+        # Add that damn line
+        section_content.append(
+            HRFlowable(
+                width=self.style_sheet.resume_style['split_line_width'],
+                thickness=self.style_sheet.resume_style['split_line_thickness'],
+                spaceBefore=self.style_sheet.resume_style['split_line_space_before'],
+                spaceAfter= self.style_sheet.resume_style['split_line_space_after'],
+            )
+        )
+        for item_build in items:
+            section_content.extend(item_build)
+            # DEPRECIATING SECTION STYLE
+            # indentation is styled with the font
+        return section_content
+
+        
+        
 
     section_builder: Callable
     # resume_builder: Callable?
-
-
 
     # This class is for internal use only, handling bad input is not done AT ALL
 

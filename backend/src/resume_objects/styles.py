@@ -18,8 +18,7 @@ class ResumeStyle:
     font_lib: dict[str, style_info.StyleInfo]
     section_style_lib: dict
     default_section_style: style_info.SectionAttributes
-    bullet_point: str
-    section_att_lib: dict[str, style_info.StyleInfo]
+    # section_att_lib: dict[str, style_info.StyleInfo]
     resume_style: dict
 
 resume_style_0 = ResumeStyle(
@@ -139,7 +138,6 @@ resume_style_0 = ResumeStyle(
             left_indent=A4[0] / 2,
         )),
     },
-    bullet_point="- ",
     # Change: here side_margin represents the left side margin for content, title is separate
     default_section_style=style_info.SectionAttributes(
         side_margin=20,
@@ -170,71 +168,78 @@ resume_style_0 = ResumeStyle(
             paper_width=A4[0],
         )
     },
-    section_att_lib={
-        "HEADING": style_info.StyleInfo(
-            section_attributes=style_info.SectionAttributes(
-                side_margin=20,
-                title_side_margin=20,
-                top_margin=5,
-                height_buffer=10,
-                wrap_forgive=20,
-                paper_width=A4[0],
-            ),
-            subStyleInfo=None  # You can set this to the font_lib dict if needed
-        ),
-        "SKILLS": style_info.StyleInfo(
-            section_attributes=style_info.SectionAttributes(
-                side_margin=20,
-                title_side_margin=20,
-                top_margin=5,
-                height_buffer=3,
-                wrap_forgive=5,
-                bullet_symbol="• ",
-                paper_width=A4[0],
-            ),
-            subStyleInfo=None
-        ),
-        "EDUCATION": style_info.StyleInfo(
-            section_attributes=style_info.SectionAttributes(
-                side_margin=20,
-                title_side_margin=20,
-                top_margin=5,
-                height_buffer=10,
-                wrap_forgive=20,
-                paper_width=A4[0],
-            ),
-            subStyleInfo=None
-        ),
-        "EXPERIENCE": style_info.StyleInfo(
-            section_attributes=style_info.SectionAttributes(
-                side_margin=20,
-                title_side_margin=20,
-                top_margin=5,
-                height_buffer=3,
-                wrap_forgive=5,
-                bullet_symbol="• ",
-                paper_width=A4[0],
-            ),
-            subStyleInfo=None
-        ),
-        "PROJECTS": style_info.StyleInfo(
-            section_attributes=style_info.SectionAttributes(
-                side_margin=20,
-                title_side_margin=20,
-                top_margin=5,
-                height_buffer=3,
-                wrap_forgive=5,
-                bullet_symbol="• ",
-                paper_width=A4[0],
-            ),
-            subStyleInfo=None
-        ),
-    },
+    # section_att_lib={
+    #     "HEADING": style_info.StyleInfo(
+    #         section_attributes=style_info.SectionAttributes(
+    #             side_margin=20,
+    #             title_side_margin=20,
+    #             top_margin=5,
+    #             height_buffer=10,
+    #             wrap_forgive=20,
+    #             paper_width=A4[0],
+    #         ),
+    #         subStyleInfo=None  # You can set this to the font_lib dict if needed
+    #     ),
+    #     "SKILLS": style_info.StyleInfo(
+    #         section_attributes=style_info.SectionAttributes(
+    #             side_margin=20,
+    #             title_side_margin=20,
+    #             top_margin=5,
+    #             height_buffer=3,
+    #             wrap_forgive=5,
+    #             bullet_symbol="• ",
+    #             paper_width=A4[0],
+    #         ),
+    #         subStyleInfo=None
+    #     ),
+    #     "EDUCATION": style_info.StyleInfo(
+    #         section_attributes=style_info.SectionAttributes(
+    #             side_margin=20,
+    #             title_side_margin=20,
+    #             top_margin=5,
+    #             height_buffer=10,
+    #             wrap_forgive=20,
+    #             paper_width=A4[0],
+    #         ),
+    #         subStyleInfo=None
+    #     ),
+    #     "EXPERIENCE": style_info.StyleInfo(
+    #         section_attributes=style_info.SectionAttributes(
+    #             side_margin=20,
+    #             title_side_margin=20,
+    #             top_margin=5,
+    #             height_buffer=3,
+    #             wrap_forgive=5,
+    #             bullet_symbol="• ",
+    #             paper_width=A4[0],
+    #         ),
+    #         subStyleInfo=None
+    #     ),
+    #     "PROJECTS": style_info.StyleInfo(
+    #         section_attributes=style_info.SectionAttributes(
+    #             side_margin=20,
+    #             title_side_margin=20,
+    #             top_margin=5,
+    #             height_buffer=3,
+    #             wrap_forgive=5,
+    #             bullet_symbol="• ",
+    #             paper_width=A4[0],
+    #         ),
+    #         subStyleInfo=None
+    #     ),
+    # },
+
+    # resume_style is the style for the whole resume
+    # more specifically, it's for universal settings that needs no variants
     resume_style={
         'left_margin': 5,
         'right_margin': 5,
         'top_margin': 5,
         'bottom_margin': 5,
+        'split_line_width': '90%',
+        'split_line_thickness': 1,
+        'split_line_space_before': 2,
+        'split_line_space_after': 2,
     }
 )
     
