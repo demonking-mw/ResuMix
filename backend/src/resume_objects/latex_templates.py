@@ -1,6 +1,8 @@
 """
 dataclass to store latex templates for resumes
-Note: it also contains two functions to calculate the height of an item and the remaining height of a doc.
+Note: it also contains two functions to calculate the height of an item
+    and the remaining height of a doc.
+Note: template is now for reportlab, latex might be added later
 """
 
 from dataclasses import dataclass
@@ -10,7 +12,7 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.pagesizes import A4
 
 from .styles import ResumeStyle
-import styles
+
 
 
 @dataclass
@@ -41,6 +43,7 @@ class LTemplate:
     - item_builder: function taking in a list of headings and a list of items, builds the Reportlab paragraphs
         - I/O: (headings: list, items: listof lstr) -> listof Paragraphs
     - section_builder: function taking in a title and a list of NoEscape Item builds, builds a NoEscape
+        - Note: the divider and the title are handled by this function
         - I/O: (title: str, items: listof NoEscape) -> NoEscape
     """
 
@@ -52,7 +55,47 @@ class LTemplate:
         '''
         self.style_sheet = resume_style
 
-    def remaining_height_calculator(self, item: 'Item') -> int:
+    def remaining_height_calculator(self, sections: int) -> int:
+        '''
+        calculates the allocatable height for the resume
+        ignore the heading, which is fixed height
+        also ignore space taken for heading of each section
+        sections: the number of sections in the resume other than the haeding
+        ASSUMES: each section are styled like 'default' in terms of spacing
+        POTENTIAL BUG: if assumption not hold, some content might not show up
+        returns: the height of the resume in points
+        '''
+        if sections <= 0:
+            raise ValueError("Sections count must be non-negative")
+        # Calculate the dead height per section
+        default_sect_style = self.style_sheet.section_style_lib['default']
+        # default MUST exist in any resume style
+
+        dead_height_per_section = (
+            default_sect_style.height_buffer
+            + default_sect_style.top_margin
+            + self.style_sheet.font_lib['section_title_font'].space_before
+            + self.style_sheet.font_lib['section_title_font'].leading
+        )
+        header_style = self.style_sheet.section_style_lib['header']
+        header_height = (
+            header_style.top_margin
+            + self.style_sheet.font_lib['resume_heading_name_font'].space_before
+            + self.style_sheet.font_lib['resume_heading_name_font'].leading
+            + self.style_sheet.font_lib['resume_heading_desc_font'].space_before
+            + self.style_sheet.font_lib['resume_heading_desc_font'].leading
+        )
+        rem_height = (
+            int(A4[1])
+            - self.style_sheet.resume_style['top_margin']
+            - self.style_sheet.resume_style['bottom_margin']
+            - header_height
+            - sections * dead_height_per_section
+        )
+        return rem_height
+
+
+    def item_height_calculator(self, item: 'Item') -> int:
         """
         Function to calculate the height of an item.
         :param item: An instance of Item.
@@ -78,11 +121,11 @@ class LTemplate:
             line_rstring = line.content
             line_style = self.style_sheet.font_lib['standard_text_font'].get_paragraph_style()
             line_para = Paragraph(line_rstring, line_style)
-            _, line_height = line_style.wrap(line_width, 69420)
+            _, line_height = line_style.wrap(line_width, 694200)
             total_height += line_height
         return total_height
 
-    def item_builder(self, headings: list, content: list = None, item_type: str = 'n', bullet_point: bool = True) -> list:
+    def item_builder(self, headings: list, content: list = None, item_type: str = 'n', bullet_point: bool = True, section_style_name: str = 'default') -> list:
         '''
         builds the item in the form of a list of Paragraph class(es)
         CONTENT IS ALLOWED TO BE NONE!!
@@ -123,7 +166,7 @@ class LTemplate:
                 if head_len == 4:
                     para3 = headings[2]
                     para4 = headings[3]
-                
+
             if head_len == 3 or head_len == 5 or head_len == 6:
                 # First item with augmentation
                 first_str = headings[0]
@@ -197,7 +240,8 @@ class LTemplate:
         for line in content:
             line_result = r''
             if bullet_point:
-                line_result += self.style_sheet.bullet_point
+                bullet_style = self.style_sheet.section_style_lib.get(section_style_name, self.style_sheet.section_style_lib['default'])
+                line_result += bullet_style.bullet_symbol
             line_result += line
             item_content += line_result + r'\n'
         item_content = item_content.strip()
@@ -209,13 +253,15 @@ class LTemplate:
                 )
             )
         return section_content
-                
-                
+
+    
                 
 
-
-    item_builder: Callable
     section_builder: Callable
+    # resume_builder: Callable?
+
+
+
     # This class is for internal use only, handling bad input is not done AT ALL
 
 

@@ -16,14 +16,17 @@ class ResumeStyle:
     A dataclass that strores resume style info
     '''
     font_lib: dict[str, style_info.StyleInfo]
+    section_style_lib: dict
     default_section_style: style_info.SectionAttributes
     bullet_point: str
     section_att_lib: dict[str, style_info.StyleInfo]
+    resume_style: dict
 
 resume_style_0 = ResumeStyle(
     font_lib={
-        "title_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="title_font",
+        # This is for the section title
+        "section_title_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
+            name="section_title_font",
             font_name="Helvetica-Bold",
             font_size=13,
             text_color_hex="#000000",
@@ -94,7 +97,7 @@ resume_style_0 = ResumeStyle(
             space_after=0,
             leading=14,
         )),
-        "heading_name_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
+        "resume_heading_name_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
             name="name_font",
             font_name="Helvetica-Bold",
             font_size=16,
@@ -104,7 +107,7 @@ resume_style_0 = ResumeStyle(
             space_after=0,
             leading=25,
         )),
-        "heading_desc_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
+        "resume_heading_desc_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
             name="personal_info_font",
             font_name="Helvetica",
             font_size=11,
@@ -147,6 +150,26 @@ resume_style_0 = ResumeStyle(
         bullet_symbol="• ",
         paper_width=A4[0],
     ),
+    section_style_lib={
+        'default': style_info.SectionAttributes(
+            side_margin=20,
+            title_side_margin=20,
+            top_margin=5,
+            height_buffer=3,
+            wrap_forgive=5,
+            bullet_symbol="• ",
+            paper_width=A4[0],
+        ),
+        'heading': style_info.SectionAttributes(
+            side_margin=20,
+            title_side_margin=20,
+            top_margin=20,
+            height_buffer=3,
+            wrap_forgive=5,
+            bullet_symbol="• ",
+            paper_width=A4[0],
+        )
+    },
     section_att_lib={
         "HEADING": style_info.StyleInfo(
             section_attributes=style_info.SectionAttributes(
@@ -206,6 +229,12 @@ resume_style_0 = ResumeStyle(
             ),
             subStyleInfo=None
         ),
+    },
+    resume_style={
+        'left_margin': 5,
+        'right_margin': 5,
+        'top_margin': 5,
+        'bottom_margin': 5,
     }
 )
     
