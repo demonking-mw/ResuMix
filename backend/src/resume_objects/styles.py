@@ -2,11 +2,13 @@
 A class that stores all custom fonts 
 """
 
+from dataclasses import dataclass
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 
 from . import style_info
+
 
 @dataclass
 class ResumeStyle:
@@ -15,6 +17,7 @@ class ResumeStyle:
     '''
     font_lib: dict[str, style_info.StyleInfo]
     default_section_style: style_info.SectionAttributes
+    bullet_point: str
     section_att_lib: dict[str, style_info.StyleInfo]
 
 resume_style_0 = ResumeStyle(
@@ -30,7 +33,7 @@ resume_style_0 = ResumeStyle(
             leading=17,
         )),
         "subtitle_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subsection_title_font",
+            name="subtitle_font",
             font_name="Times-Bold",
             font_size=12,
             text_color_hex="#000000",
@@ -49,9 +52,20 @@ resume_style_0 = ResumeStyle(
             space_after=0,
             leading=16,
         )),
+        # for middle, only font_name and font_size should be used
+        "submiddle_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
+            name="submiddle_font",
+            font_name="Times-Roman",
+            font_size=11,
+            text_color_hex="#000000",
+            alignment=2,
+            space_before=0,
+            space_after=0,
+            leading=16,
+        )),
         # 2 means the second title column in 4/5 heading scenarios
         "subtitle2_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subsection_title_font",
+            name="subtitle2_font",
             font_name="Times-Bold",
             font_size=12,
             text_color_hex="#000000",
@@ -61,7 +75,7 @@ resume_style_0 = ResumeStyle(
             leading=0,
         )),
         "subright2_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subright_font",
+            name="subright2_font",
             font_name="Times-Bold",
             font_size=12,
             text_color_hex="#000000",
@@ -71,7 +85,7 @@ resume_style_0 = ResumeStyle(
             leading=16,
         )),
         "standard_text_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="text_font_standard_sec",
+            name="standard_text_font",
             font_name="Times-Roman",
             font_size=11,
             text_color_hex="#000000",
@@ -122,6 +136,7 @@ resume_style_0 = ResumeStyle(
             left_indent=A4[0] / 2,
         )),
     },
+    bullet_point="- ",
     # Change: here side_margin represents the left side margin for content, title is separate
     default_section_style=style_info.SectionAttributes(
         side_margin=20,
