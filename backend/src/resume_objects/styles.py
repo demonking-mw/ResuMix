@@ -24,119 +24,143 @@ class ResumeStyle:
 resume_style_0 = ResumeStyle(
     font_lib={
         # This is for the section title
-        "section_title_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="section_title_font",
-            font_name="Helvetica-Bold",
-            font_size=13,
-            text_color_hex="#000000",
-            alignment=1,
-            space_before=1,
-            space_after=0,
-            leading=17,
-        )),
-        "subtitle_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subtitle_font",
-            font_name="Times-Bold",
-            font_size=12,
-            text_color_hex="#000000",
-            alignment=0,
-            space_before=5,
-            space_after=0,
-            leading=0,
-        )),
-        "subright_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subright_font",
-            font_name="Times-Bold",
-            font_size=12,
-            text_color_hex="#000000",
-            alignment=2,
-            space_before=0,
-            space_after=0,
-            leading=16,
-        )),
+        "section_title_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="section_title_font",
+                font_name="Helvetica-Bold",
+                font_size=13,
+                text_color_hex="#000000",
+                alignment=1,
+                space_before=1,
+                space_after=0,
+                leading=17,
+            )
+        ),
+        "subtitle_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="subtitle_font",
+                font_name="Times-Bold",
+                font_size=12,
+                text_color_hex="#000000",
+                alignment=0,
+                space_before=5,
+                space_after=0,
+                leading=0,
+            )
+        ),
+        "subright_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="subright_font",
+                font_name="Times-Bold",
+                font_size=12,
+                text_color_hex="#000000",
+                alignment=2,
+                space_before=0,
+                space_after=0,
+                leading=16,
+            )
+        ),
         # for middle, only font_name and font_size should be used
-        "submiddle_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="submiddle_font",
-            font_name="Times-Roman",
-            font_size=11,
-            text_color_hex="#000000",
-            alignment=2,
-            space_before=0,
-            space_after=0,
-            leading=16,
-        )),
+        "submiddle_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="submiddle_font",
+                font_name="Times-Roman",
+                font_size=11,
+                text_color_hex="#000000",
+                alignment=2,
+                space_before=0,
+                space_after=0,
+                leading=16,
+                left_indent=0,
+            )
+        ),
         # 2 means the second title column in 4/5 heading scenarios
-        "subtitle2_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subtitle2_font",
-            font_name="Times-Bold",
-            font_size=12,
-            text_color_hex="#000000",
-            alignment=0,
-            space_before=5,
-            space_after=0,
-            leading=0,
-        )),
-        "subright2_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="subright2_font",
-            font_name="Times-Bold",
-            font_size=12,
-            text_color_hex="#000000",
-            alignment=2,
-            space_before=0,
-            space_after=0,
-            leading=16,
-        )),
-        "standard_text_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="standard_text_font",
-            font_name="Times-Roman",
-            font_size=11,
-            text_color_hex="#000000",
-            alignment=0,
-            space_before=0,
-            space_after=0,
-            leading=14,
-        )),
-        "resume_heading_name_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="name_font",
-            font_name="Helvetica-Bold",
-            font_size=16,
-            text_color_hex="#000000",
-            alignment=1,
-            space_before=5,
-            space_after=0,
-            leading=25,
-        )),
-        "resume_heading_desc_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="personal_info_font",
-            font_name="Helvetica",
-            font_size=11,
-            text_color_hex="#000000",
-            alignment=1,
-            space_before=0,
-            space_after=0,
-            leading=15,
-        )),
-        "point_left_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="point_left",
-            font_name="Times-Roman",
-            font_size=11,
-            text_color_hex="#000000",
-            alignment=0,
-            space_before=0,
-            space_after=0,
-            leading=0,
-        )),
-        "point_right_font": style_info.StyleInfo(font_attributes=style_info.FontAttributes(
-            name="point_right",
-            font_name="Times-Roman",
-            font_size=11,
-            text_color_hex="#000000",
-            alignment=0,
-            space_before=0,
-            space_after=0,
-            leading=14,
-            left_indent=A4[0] / 2,
-        )),
+        "subtitle2_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="subtitle2_font",
+                font_name="Times-Bold",
+                font_size=12,
+                text_color_hex="#000000",
+                alignment=0,
+                space_before=5,
+                space_after=0,
+                leading=0,
+            )
+        ),
+        "subright2_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="subright2_font",
+                font_name="Times-Bold",
+                font_size=12,
+                text_color_hex="#000000",
+                alignment=2,
+                space_before=0,
+                space_after=0,
+                leading=16,
+            )
+        ),
+        "standard_text_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="standard_text_font",
+                font_name="Times-Roman",
+                font_size=11,
+                text_color_hex="#000000",
+                alignment=0,
+                space_before=0,
+                space_after=0,
+                leading=14,
+                left_indent=5,
+            )
+        ),
+        "resume_heading_name_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="name_font",
+                font_name="Helvetica-Bold",
+                font_size=16,
+                text_color_hex="#000000",
+                alignment=1,
+                space_before=5,
+                space_after=0,
+                leading=25,
+            )
+        ),
+        "resume_heading_desc_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="personal_info_font",
+                font_name="Helvetica",
+                font_size=11,
+                text_color_hex="#000000",
+                alignment=1,
+                space_before=0,
+                space_after=0,
+                leading=15,
+            )
+        ),
+        "point_left_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="point_left",
+                font_name="Times-Roman",
+                font_size=11,
+                text_color_hex="#000000",
+                alignment=0,
+                space_before=0,
+                space_after=0,
+                leading=0,
+            )
+        ),
+        "point_right_font": style_info.StyleInfo(
+            font_attributes=style_info.FontAttributes(
+                name="point_right",
+                font_name="Times-Roman",
+                font_size=11,
+                text_color_hex="#000000",
+                alignment=0,
+                space_before=0,
+                space_after=0,
+                leading=14,
+                left_indent=A4[0] / 2,
+            )
+        ),
     },
     # Change: here side_margin represents the left side margin for content, title is separate
     default_section_style=style_info.SectionAttributes(
@@ -149,7 +173,7 @@ resume_style_0 = ResumeStyle(
         paper_width=A4[0],
     ),
     section_style_lib={
-        'default': style_info.SectionAttributes(
+        "default": style_info.SectionAttributes(
             side_margin=20,
             title_side_margin=20,
             top_margin=5,
@@ -158,7 +182,7 @@ resume_style_0 = ResumeStyle(
             bullet_symbol="• ",
             paper_width=A4[0],
         ),
-        'heading': style_info.SectionAttributes(
+        "heading": style_info.SectionAttributes(
             side_margin=20,
             title_side_margin=20,
             top_margin=20,
@@ -166,7 +190,7 @@ resume_style_0 = ResumeStyle(
             wrap_forgive=5,
             bullet_symbol="• ",
             paper_width=A4[0],
-        )
+        ),
     },
     # section_att_lib={
     #     "HEADING": style_info.StyleInfo(
@@ -228,21 +252,20 @@ resume_style_0 = ResumeStyle(
     #         subStyleInfo=None
     #     ),
     # },
-
     # resume_style is the style for the whole resume
     # more specifically, it's for universal settings that needs no variants
     resume_style={
-        'left_margin': 5,
-        'right_margin': 5,
-        'top_margin': 5,
-        'bottom_margin': 5,
-        'split_line_width': '90%',
-        'split_line_thickness': 1,
-        'split_line_space_before': 2,
-        'split_line_space_after': 2,
-    }
+        "left_margin": 5,
+        "right_margin": 5,
+        "top_margin": 5,
+        "bottom_margin": 5,
+        "split_line_width": "90%",
+        "split_line_thickness": 1,
+        "split_line_space_before": 2,
+        "split_line_space_after": 2,
+    },
 )
-    
+
 class AllFonts:
     """
     Stores all font info

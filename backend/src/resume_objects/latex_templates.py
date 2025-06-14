@@ -12,6 +12,7 @@ from reportlab.platypus import Paragraph, HRFlowable
 from reportlab.lib.pagesizes import A4
 
 from .styles import ResumeStyle
+from .resume import Resume
 
 
 
@@ -101,6 +102,8 @@ class LTemplate:
     def item_height_calculator(self, item: 'Item') -> int:
         """
         Function to calculate the height of an item.
+        Uses info from default_section
+        Deprecate the use of section_style, move to having left_indent for paragraphs
         :param item: An instance of Item.
         :return: Height of the item in some unit (e.g., points).
         """
@@ -108,9 +111,10 @@ class LTemplate:
         titles = item.titles
         line_width = (
             A4[0]
-            - 2 * self.style_sheet.default_section_attributes.side_margin
             - self.style_sheet.default_section_attributes.wrap_forgive
         )
+        # wrap_forgive will be deprecated once proven useless
+
         if len(titles) == 0:
             raise ValueError("Item must have at least one title")
         # Adding the item title height
@@ -301,11 +305,10 @@ class LTemplate:
             # indentation is styled with the font
         return section_content
 
-        
-        
-
-    section_builder: Callable
-    # resume_builder: Callable?
+    def resume_builder(self, resume_class: Resume) -> bytes:
+        '''
+        Makes the resume, then hand it back as bytes
+        '''
 
     # This class is for internal use only, handling bad input is not done AT ALL
 
