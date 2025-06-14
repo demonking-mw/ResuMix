@@ -75,11 +75,15 @@ class LTemplate:
         default_sect_style = self.style_sheet.section_style_lib['default']
         # default MUST exist in any resume style
 
+        # Here sect_style top margin is moved to resume_style for consistency
+        # Only consider to maintain height_buffer for failsafe
         dead_height_per_section = (
             default_sect_style.height_buffer
-            + default_sect_style.top_margin
             + self.style_sheet.font_lib['section_title_font'].space_before
             + self.style_sheet.font_lib['section_title_font'].leading
+            + self.style_sheet.resume_style['split_line_space_before']
+            + self.style_sheet.resume_style['split_line_after']
+            + self.style_sheet.resume_style['split_line_height']
         )
         header_style = self.style_sheet.section_style_lib['header']
         header_height = (
@@ -248,6 +252,7 @@ class LTemplate:
         for line in content:
             line_result = r''
             if bullet_point:
+                # Allowed use of section_style
                 bullet_style = self.style_sheet.section_style_lib.get(
                     section_style_name,
                     self.style_sheet.section_style_lib['default']
@@ -265,7 +270,7 @@ class LTemplate:
             )
         return section_content
 
-    def section_builder(self, title: str, items: list, section_style_type: str = None) -> list:
+    def section_builder(self, title: str, items: list) -> list:
         '''
         builds the section in the form of a list of items.
         styling:
@@ -273,14 +278,7 @@ class LTemplate:
         - then try to search with title
         - then use default section style
         '''
-        # Try to get section style by priority
-        sect_style_lib = self.style_sheet.section_style_lib
-        if section_style_type and section_style_type in sect_style_lib:
-            sect_style = sect_style_lib[section_style_type]
-        elif title and title in sect_style_lib:
-            sect_style = sect_style_lib[title]
-        else:
-            sect_style = sect_style_lib['default']
+        # sect_style_lib was removed due to redundancy
         # Create the actual section
         section_content = []
         # Add the section title and the bar line

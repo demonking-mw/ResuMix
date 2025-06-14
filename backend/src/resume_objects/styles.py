@@ -164,34 +164,40 @@ resume_style_0 = ResumeStyle(
     },
     # Change: here side_margin represents the left side margin for content, title is separate
     default_section_style=style_info.SectionAttributes(
-        side_margin=20,
-        title_side_margin=20,
-        top_margin=5,
         height_buffer=3,
         wrap_forgive=5,
         bullet_symbol="• ",
-        paper_width=A4[0],
     ),
-    section_style_lib={
-        "default": style_info.SectionAttributes(
-            side_margin=20,
-            title_side_margin=20,
-            top_margin=5,
-            height_buffer=3,
-            wrap_forgive=5,
-            bullet_symbol="• ",
-            paper_width=A4[0],
-        ),
-        "heading": style_info.SectionAttributes(
-            side_margin=20,
-            title_side_margin=20,
-            top_margin=20,
-            height_buffer=3,
-            wrap_forgive=5,
-            bullet_symbol="• ",
-            paper_width=A4[0],
-        ),
+    resume_style={
+        "left_margin": 5,
+        "right_margin": 5,
+        "top_margin": 5,
+        "bottom_margin": 5,
+        "split_line_width": "90%",
+        "split_line_thickness": 1,
+        "split_line_space_before": 2,
+        "split_line_space_after": 2,
     },
+    # section_style_lib={
+    #     "default": style_info.SectionAttributes(
+    #         side_margin=20,
+    #         title_side_margin=20,
+    #         top_margin=5,
+    #         height_buffer=3,
+    #         wrap_forgive=5,
+    #         bullet_symbol="• ",
+    #         paper_width=A4[0],
+    #     ),
+    #     "heading": style_info.SectionAttributes(
+    #         side_margin=20,
+    #         title_side_margin=20,
+    #         top_margin=20,
+    #         height_buffer=3,
+    #         wrap_forgive=5,
+    #         bullet_symbol="• ",
+    #         paper_width=A4[0],
+    #     ),
+    # },
     # section_att_lib={
     #     "HEADING": style_info.StyleInfo(
     #         section_attributes=style_info.SectionAttributes(
@@ -254,16 +260,6 @@ resume_style_0 = ResumeStyle(
     # },
     # resume_style is the style for the whole resume
     # more specifically, it's for universal settings that needs no variants
-    resume_style={
-        "left_margin": 5,
-        "right_margin": 5,
-        "top_margin": 5,
-        "bottom_margin": 5,
-        "split_line_width": "90%",
-        "split_line_thickness": 1,
-        "split_line_space_before": 2,
-        "split_line_space_after": 2,
-    },
 )
 
 class AllFonts:
