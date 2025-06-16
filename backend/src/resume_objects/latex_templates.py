@@ -5,31 +5,16 @@ Note: it also contains two functions to calculate the height of an item
 Note: template is now for reportlab, latex might be added later
 """
 
-from dataclasses import dataclass
-from typing import Callable
+import io
+
+from reportlab.pdfgen import canvas
 from reportlab.pdfbase.pdfmetric import stringWidth
-from reportlab.platypus import Paragraph, HRFlowable
+from reportlab.platypus import Paragraph, HRFlowable, Frame
 from reportlab.lib.pagesizes import A4
 
 from .styles import ResumeStyle
 from .resume import Resume
 
-
-
-@dataclass
-class PageData:
-    '''
-    A dataclass to store resume page info
-    Contains:
-    - height
-    - width
-    - item_margin
-    - wrap_forgive
-    '''
-    height: int
-    width: int
-    item_margin: int
-    wrap_forgive: int
 
 class LTemplate:
     """
@@ -303,33 +288,57 @@ class LTemplate:
             # indentation is styled with the font
         return section_content
 
-    def resume_builder(self, resume_class: Resume) -> bytes:
+    def resume_builder(self, resume_object: Resume) -> bytes:
         '''
         Makes the resume, then hand it back as bytes
+        Using section_build_results: listof(Paragraph() or equivalent reportlab items)
         '''
-        
+        main_content = resume_object.section_build_results
+        # All the content in the middle
 
-    # This class is for internal use only, handling bad input is not done AT ALL
+        # Buffer to return resume instead of saving
+        buffer = io.BytesIO()
 
+        # Preping canvas
+        c = canvas.Canvas(buffer, pagesize=A4)
+        c.setLineWidth(self.style_sheet.resume_style['split_line_thickness'])
 
-# # Example usage of LTemplate
+        margin_l = self.style_sheet.resume_style['left_margin']
+        margin_r = self.style_sheet.resume_style['right_margin']
+        margin_t = self.style_sheet.resume_style['top_margin']
+        margin_b = self.style_sheet.resume_style['bottom_margin']
 
-# def sample_item_height_calculator(item):
-#     # Assume each item has a 'lines' attribute
-#     return getattr(item, 'lines', 1) * 10
+        master_frame = Frame(
+            margin_l,
+            margin_b,
+            A4[0] - margin_l - margin_r,
+            A4[1] - margin_t - margin_b
+        )
 
-# def sample_remaining_height_calculator(sections):
-#     # Assume each section gets 100 units of height
-#     return 100 * sections
+        full_content_list = []
+        # It's a 1d list, build directly
+        title_para = Paragraph(
+            resume_object.heading_name,
+            self.style_sheet.font_lib['resume_heading_name_font'].get_paragraph_style()
+        )
+        # In this template, join the heading subsequent list
+        subsequent_text = " | ".join(resume_object.heading_subsequent_content)
+        sub_para = Paragraph(
+            subsequent_text,
+            self.style_sheet.font_lib['resume_heading_desc_font'].get_paragraph_style()
+        )
+        full_content_list.append(title_para)
+        full_content_list.append(sub_para)
 
-# sample_wrapper_code = r"""
-# \documentclass{article}
-# \usepackage{geometry}
-# \geometry{margin=1in}
-# """
+        # build the rest
+        if not main_content:
+            print("No content to render in the resume.")
+        full_content_list.extend(main_content)
 
-# sample_template = LTemplate(
-#     wrapper_code=sample_wrapper_code,
-#     item_height_calculator=sample_item_height_calculator,
-#     remaining_height_calculator=sample_remaining_height_calculator
-# )
+        # add list to frame, save, and extract the bytes
+        master_frame.addFromList(full_content_list, c)
+        c.save()
+        pdf_bytes = buffer.getvalue()
+        buffer.close()
+        return pdf_bytes
+

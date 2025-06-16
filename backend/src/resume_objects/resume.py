@@ -21,6 +21,7 @@ class Resume:
         self.sections = []
         self.aux_info = {"type": "resume"}
         self.section_make_results = []
+        self.section_build_results = []
         self.requirements = {}
         self.attribute_targets = {} # dict of cate -> list of attributes
         self.bot = AIBot()  # AI bot for generating scores
@@ -237,14 +238,20 @@ class Resume:
     def build(self) -> bytes:
         '''
         Build the resume using the template and the optimization result
-        First runs build on each item
+        Procedure:
+        1. builde each section, extend the build list
+        2. toss the section_build_results into the template's build function
+        3. pass the result on by returning it
         Use template's resume build function to build
         '''
-        section_NEs = []
+        self.section_build_results = []
         for section in self.sections:
             if not section.items:
                 print(f"DEBUG: Section {section.sect_id} has no items, skipping")
                 continue
             section_build = section.build(self.optimization_result[section.sect_id], self.template)
-            section_NEs.append(section_build)
+            # Result of seciton_build should be a 1d list
+            self.section_build_results.extend(section_build)
+        # Call the resume build function in the template
+        
         

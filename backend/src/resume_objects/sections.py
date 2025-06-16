@@ -121,9 +121,10 @@ class Section:
             item_count += 1
         return results
 
-    def build(self, decision: list, templ: LTemplate) -> NoEscape:
+    def build(self, decision: list, templ: LTemplate) -> list:
         """
         Builds the section with template into pylatex object
+        Using a decision list: a list of ids(list of 3 ints)
         THIS IS AFTER THE OPTIMIZATION PROCESS
         Takes in a list of item_version_ids (augmented with section id) called decision
         """
