@@ -37,6 +37,9 @@ resumeinfo -> sections -> items -> lines
     |- Style_info: dict
     |- Category_scoring_functions: dict
     |- Aux_info: dict
+    |- Heading_info: dict:
+    |       |- first_line: str (name)
+    |       |- subsequent_content: listof(lstr)
 Note: all contents should be in the form of latex code segments, so things like hyperlink is easy
 
 Lines' cate_scores: a dict of dicts: {technical: {}, soft: {}}

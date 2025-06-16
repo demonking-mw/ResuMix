@@ -14,6 +14,7 @@ class Resume:
     - sections: list of Section objects
     - template: LTemplate
     - aux_info: dict with type as resume
+    NOTE: to_dict not built yet
     '''
     def __init__(self, template, class_dict=None):
         self.template = template
@@ -25,6 +26,8 @@ class Resume:
         self.bot = AIBot()  # AI bot for generating scores
         self.optimization_result = None # set by optimize(), see docstring for shape
         self.make_results_flattened = [] # Flattened list of item_core_info for optimization
+        self.heading_name = ""
+        self.heading_subsequent_content = []
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "resume":
                 raise ValueError(
@@ -34,6 +37,11 @@ class Resume:
             self.sections = [
                 Section(template, sect["sect_id"], sect) for sect in class_dict["sections"]
             ]
+            if 'heading_info' in class_dict:
+                self.heading_name = class_dict['heading_info']['heading_name']
+                self.heading_subsequent_content = class_dict['heading_info']['subsequent_content']
+            # accessing keys in class_dict is deliberately with [],
+            #   as missing keys should result in error
         else:
             self.aux_info = {"type": "resume"}
 
@@ -230,6 +238,7 @@ class Resume:
         '''
         Build the resume using the template and the optimization result
         First runs build on each item
+        Use template's resume build function to build
         '''
         section_NEs = []
         for section in self.sections:

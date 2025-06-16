@@ -307,6 +307,7 @@ class LTemplate:
         '''
         Makes the resume, then hand it back as bytes
         '''
+        
 
     # This class is for internal use only, handling bad input is not done AT ALL
 

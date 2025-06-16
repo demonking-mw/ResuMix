@@ -16,7 +16,6 @@ class ResumeStyle:
     A dataclass that strores resume style info
     '''
     font_lib: dict[str, style_info.StyleInfo]
-    section_style_lib: dict
     default_section_style: style_info.SectionAttributes
     # section_att_lib: dict[str, style_info.StyleInfo]
     resume_style: dict
