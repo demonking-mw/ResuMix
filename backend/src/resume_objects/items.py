@@ -10,10 +10,10 @@ Listof item objects(dicts):
 - Latex code for item
 - Height
 """
+
 import warnings
 
 from itertools import combinations
-from pylatex import NoEscape  # pylint: disable=import-error
 
 from .lines import Line
 from .latex_templates import LTemplate
@@ -78,7 +78,6 @@ class Item:
                 },
             }
 
-
     def make_specific(
         self, lines_score: dict, lines_sel: list, templ: LTemplate
     ) -> dict:
@@ -99,9 +98,7 @@ class Item:
         lines_content_list = []
         for line in selected_lines:
             lines_content_list.append(line.content)
-        latex_obj = templ.item_builder(
-            self.titles, lines_content_list
-        )
+        latex_obj = templ.item_builder(self.titles, lines_content_list)
         # THE BELOW BLOCK WILL BE USED IN item_builder IN LTEMPLATE.
         # # Append the \resumeSubheading command
         # if len(self.titles) == 4:
@@ -145,9 +142,7 @@ class Item:
                 # allows empty selection
                 if sel_size == 0:
                     # empty selection, no lines selected
-                    results.append(
-                        self.make_specific(0, [], templ)
-                    )
+                    results.append(self.make_specific(0, [], templ))
                     continue
                 max_score = -100000
                 max_lines_sel = []
@@ -158,7 +153,11 @@ class Item:
                         max_score = curr_score
                         max_lines_sel = lines_sel
                 results.append(
-                    self.make_specific(self.calc_scores(max_lines_sel, requirements), max_lines_sel, templ)
+                    self.make_specific(
+                        self.calc_scores(max_lines_sel, requirements),
+                        max_lines_sel,
+                        templ,
+                    )
                 )
             return results
 
@@ -167,7 +166,7 @@ class Item:
         get the skills dict for the item
         returns a dict of skills (not overlapping)
         """
-        skills_dict =  {"technical": [], "soft": [], "relevance": []}
+        skills_dict = {"technical": [], "soft": [], "relevance": []}
         cate_list = ["technical", "soft", "relevance"]
         for line_obj in self.line_objs:
             if not line_obj.cate_score:
@@ -179,11 +178,11 @@ class Item:
         return skills_dict
 
     def __calc_score(self, lines_sel: list, requirement: dict) -> int:
-        '''
+        """
         calculate the actual score of the item in approximation
         using the assumption that the actual scoring funciton is near linear
         ONLY FOR INTERNAL USE!!
-        '''
+        """
         result = 0
         if not lines_sel:
             # This is the case if the item is a paragraph
@@ -209,9 +208,7 @@ class Item:
                         )
         return result
 
-    def calc_scores(
-        self, lines_sel: list, requirement: dict
-    ) -> dict:
+    def calc_scores(self, lines_sel: list, requirement: dict) -> dict:
         """
         returns the category scores of the item under a specific build (given by lines_sel)
 
@@ -219,7 +216,7 @@ class Item:
         requirements: dict
         {cate: {}}
         each sub dict is attribute: score
-        
+
         Action of this function:
         - sum each attribute's score in each category
         - add the weight to it
@@ -230,15 +227,15 @@ class Item:
         """
 
         results = {
-            'technical': {'scores': {}, 'bias': self.cate_scores['technical']['bias']},
-            'soft': {'scores': {}, 'bias': self.cate_scores['soft']['bias']},
-            'relevance': {'scores': {}, 'bias': self.cate_scores['relevance']['bias']}
+            "technical": {"scores": {}, "bias": self.cate_scores["technical"]["bias"]},
+            "soft": {"scores": {}, "bias": self.cate_scores["soft"]["bias"]},
+            "relevance": {"scores": {}, "bias": self.cate_scores["relevance"]["bias"]},
         }
         cate_list = ["technical", "soft", "relevance"]
         for cate_name in cate_list:
             # put every item in requirements into the results
             for item, value in requirement[cate_name]:
-                results[cate_name]['scores'][item] = 0
+                results[cate_name]["scores"][item] = 0
         # Check if lines_sel is empty
         if not lines_sel:
             # This is the case if the item is a paragraph
@@ -258,9 +255,9 @@ class Item:
                     )
                     line_obj.gen_score()
                 for item, value in line_obj.cate_score[cate_name].items():
-                    if item in results[cate_name]['scores']:
-                        results[cate_name]['scores'][item] += (
-                            value * self.cate_scores[cate_name]['weight']
+                    if item in results[cate_name]["scores"]:
+                        results[cate_name]["scores"][item] += (
+                            value * self.cate_scores[cate_name]["weight"]
                         )
                     else:
                         warnings.warn(

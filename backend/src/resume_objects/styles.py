@@ -1,5 +1,5 @@
 """
-A class that stores all custom fonts 
+A class that stores all custom fonts
 """
 
 from dataclasses import dataclass
@@ -12,13 +12,15 @@ from . import style_info
 
 @dataclass
 class ResumeStyle:
-    '''
+    """
     A dataclass that strores resume style info
-    '''
+    """
+
     font_lib: dict[str, style_info.StyleInfo]
     default_section_style: style_info.SectionAttributes
     # section_att_lib: dict[str, style_info.StyleInfo]
     resume_style: dict
+
 
 resume_style_0 = ResumeStyle(
     font_lib={
@@ -261,10 +263,12 @@ resume_style_0 = ResumeStyle(
     # more specifically, it's for universal settings that needs no variants
 )
 
+
 class AllFonts:
     """
     Stores all font info
     """
+
     resume_title = ParagraphStyle(
         name="SectTitleFont",
         fontName="Times-Bold",

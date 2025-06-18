@@ -91,7 +91,7 @@ class Line:
             "Note: the dictionary should contain keys of type string and values of type int. "
             "Do not output anything else. Also, whenever giving something a score, make it out of 3"
         )
-        if not self.cate_score['technical'] or forced:
+        if not self.cate_score["technical"] or forced:
             tech_prompt = (
                 f"Analyze for me what technical skills (for the {industry} industry) "
                 "it demonstrates. Select up to 4, then give each a score that "
@@ -99,26 +99,30 @@ class Line:
                 "The line is: "
             )
             success, technical_scores = self.bot.python_response_instruction(
-                pre_prompt + tech_prompt + self.content_str + reminder, prompt_instruction, retries=3
+                pre_prompt + tech_prompt + self.content_str + reminder,
+                prompt_instruction,
+                retries=3,
             )
             if success:
                 new_cate_score["technical"] = technical_scores
                 result = True
 
-        if not self.cate_score['soft'] or forced:
+        if not self.cate_score["soft"] or forced:
             soft_prompt = (
                 "Analyze the line for soft skills it demonstrates. "
                 "Select up to 2, then give each a score that represents how strong "
                 "the line demonstrates the skill. The line is: "
             )
             success, soft_scores = self.bot.python_response_instruction(
-                pre_prompt + soft_prompt + self.content_str + reminder, prompt_instruction, retries=3
+                pre_prompt + soft_prompt + self.content_str + reminder,
+                prompt_instruction,
+                retries=3,
             )
             if success:
                 new_cate_score["soft"] = soft_scores
                 result = True
 
-        if not self.cate_score['relevance'] or forced:
+        if not self.cate_score["relevance"] or forced:
             relevance_prompt = (
                 "Identify the person's passion mentioned from this line that is "
                 "irrelevant to the core technical skills and soft skills shown in the "
@@ -127,7 +131,9 @@ class Line:
                 "values. The line is: "
             )
             success, relevance_scores = self.bot.python_response_instruction(
-                pre_prompt + relevance_prompt + self.content_str + reminder, prompt_instruction, retries=3
+                pre_prompt + relevance_prompt + self.content_str + reminder,
+                prompt_instruction,
+                retries=3,
             )
             if success:
                 new_cate_score["relevance"] = relevance_scores

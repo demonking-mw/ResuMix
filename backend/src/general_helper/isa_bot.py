@@ -4,6 +4,7 @@ POTENTIALLY build encorporation of multiple AI sources to facilitate uses
 USAGE:
 
 """
+
 import ast
 import os
 from dotenv import load_dotenv
@@ -90,16 +91,16 @@ class AIBot:
         token_limit: int = 2000,
         retries: int = 3,
         temperature: float = 0.1,
-    ) -> 'datatype':
-        '''
+    ) -> "datatype":
+        """
         Get a response from the AI with an instruction and parse it into a specific type
         Have up to retries attempts to get valid response
-        '''
+        """
         if model is None:
             model = self.default_model
-        messages=[
-                    {"role": "system", "content": instruction},
-                    {"role": "user", "content": prompt},
+        messages = [
+            {"role": "system", "content": instruction},
+            {"role": "user", "content": prompt},
         ]
         for attempt in range(retries):
             resp = self.ai_client.chat.completions.create(
@@ -115,23 +116,20 @@ class AIBot:
                 if isinstance(parsed, datatype):
                     return parsed
                 else:
-                    print(f"Attempt {attempt + 1}: Parsed type mismatch. Expected {datatype}, got {type(parsed)}")
+                    print(
+                        f"Attempt {attempt + 1}: Parsed type mismatch. Expected {datatype}, got {type(parsed)}"
+                    )
             except (SyntaxError, ValueError) as e:
                 print(f"Attempt {attempt + 1}: Error parsing response: {e}")
-                messages.append(
-                    {"role": "assistant", "content": reply}
-                )
+                messages.append({"role": "assistant", "content": reply})
                 correction = (
-                    f'Your last response was not a valid {datatype.__name__}. \n'
-                    f'Please ensure your response is a valid Python {datatype.__name__}.\n'
+                    f"Your last response was not a valid {datatype.__name__}. \n"
+                    f"Please ensure your response is a valid Python {datatype.__name__}.\n"
                 )
-                message.append(
-                    {"role": "user", "content": correction}
-                )
+                message.append({"role": "user", "content": correction})
                 time.sleep(0.1)  # Optional: wait before retrying
         print(f"Failed to get a valid response after {retries} attempts.")
         return None
-        
 
     def response_dict(
         self,

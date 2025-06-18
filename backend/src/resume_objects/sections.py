@@ -4,7 +4,7 @@ The section class
 represents a section in a resume. Abstracts the building process for the resume.
 for the optimization process, only the scores and heights are passed on to the resume class
 
-variables needed: 
+variables needed:
 - template: LTemplate
 - items: list of Item objects
 - aux_info with type as section
@@ -15,7 +15,7 @@ variables needed:
     - l: dotted list section
     - l2: dotted list section with 2 columns
 
-functions needed: 
+functions needed:
 - build: builds the section with template into pylatex object
     - builds from a given list of item-versions
 - make: make items build ready, stores the item builds and returns score-height dict for optimization
