@@ -89,8 +89,8 @@ class Section:
         make items build ready
         stores the item builds and returns score-height dict for optimization
         DOES NOT BUILD THE SECTION
-        requirements is a dict storing AI decision of skills,
-            and scoring function for each category.
+        requirements is a dict storing AI decision of skills
+        Shape of requirements: dict of {cate: {skill: score}}
         Returns:
         - list of list of item_core_info
         item_core_info is a dict with keys:
@@ -105,7 +105,7 @@ class Section:
         results = []
         item_count = 0
         for item in self.items:
-            item_build = item.build(requirements, self.template)
+            item_build = item.build(self.template, requirements)
             self.item_make_results.append(item_build)
             version_icis = []
             version_count = 0

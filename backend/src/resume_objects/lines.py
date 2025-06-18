@@ -98,9 +98,10 @@ class Line:
                 "represents how impressive and strong the line demonstrates the skill. "
                 "The line is: "
             )
-            success, technical_scores = self.bot.python_response_instruction(
+            success, technical_scores = self.bot.pythoned_response_instruction(
                 pre_prompt + tech_prompt + self.content_str + reminder,
                 prompt_instruction,
+                datatype=dict,
                 retries=3,
             )
             if success:
@@ -113,9 +114,10 @@ class Line:
                 "Select up to 2, then give each a score that represents how strong "
                 "the line demonstrates the skill. The line is: "
             )
-            success, soft_scores = self.bot.python_response_instruction(
+            success, soft_scores = self.bot.pythoned_response_instruction(
                 pre_prompt + soft_prompt + self.content_str + reminder,
                 prompt_instruction,
+                datatype=dict,
                 retries=3,
             )
             if success:
@@ -130,17 +132,18 @@ class Line:
                 "the topic. Output it in a dict with the keywords as keys and 1 as "
                 "values. The line is: "
             )
-            success, relevance_scores = self.bot.python_response_instruction(
+            success, relevance_scores = self.bot.pythoned_response_instruction(
                 pre_prompt + relevance_prompt + self.content_str + reminder,
                 prompt_instruction,
+                datatype=dict,
                 retries=3,
             )
             if success:
                 new_cate_score["relevance"] = relevance_scores
                 self.keywords = list(relevance_scores.keys())
                 result = True
-
-        self.cate_score = new_cate_score
+        if result:
+            self.cate_score = new_cate_score
         return result
 
     def to_dict(self) -> dict:

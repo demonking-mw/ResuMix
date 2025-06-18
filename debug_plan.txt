@@ -10,3 +10,9 @@ Debug procedure:
 3. test make
 4. make sure optimization works, DO NOT SKIP! (make a simple score function)
 5. finally, try to build a resume
+
+
+
+CURRENT ISSUE:
+
+Depreciation of section_style_lib not fully done right

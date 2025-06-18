@@ -57,26 +57,34 @@ class LTemplate:
         if sections <= 0:
             raise ValueError("Sections count must be non-negative")
         # Calculate the dead height per section
-        default_sect_style = self.style_sheet.section_style_lib["default"]
+        default_sect_style = self.style_sheet.default_section_style
         # default MUST exist in any resume style
 
         # Here sect_style top margin is moved to resume_style for consistency
         # Only consider to maintain height_buffer for failsafe
         dead_height_per_section = (
-            default_sect_style.height_buffer
-            + self.style_sheet.font_lib["section_title_font"].space_before
-            + self.style_sheet.font_lib["section_title_font"].leading
+            +self.style_sheet.font_lib[
+                "section_title_font"
+            ].font_attributes.space_before
+            + self.style_sheet.font_lib["section_title_font"].font_attributes.leading
             + self.style_sheet.resume_style["split_line_space_before"]
             + self.style_sheet.resume_style["split_line_after"]
             + self.style_sheet.resume_style["split_line_height"]
         )
-        header_style = self.style_sheet.section_style_lib["header"]
+        # Page side margin not included
         header_height = (
-            header_style.top_margin
-            + self.style_sheet.font_lib["resume_heading_name_font"].space_before
-            + self.style_sheet.font_lib["resume_heading_name_font"].leading
-            + self.style_sheet.font_lib["resume_heading_desc_font"].space_before
-            + self.style_sheet.font_lib["resume_heading_desc_font"].leading
+            +self.style_sheet.font_lib[
+                "resume_heading_name_font"
+            ].font_attributes.space_before
+            + self.style_sheet.font_lib[
+                "resume_heading_name_font"
+            ].font_attributes.leading
+            + self.style_sheet.font_lib[
+                "resume_heading_desc_font"
+            ].font_attributes.space_before
+            + self.style_sheet.font_lib[
+                "resume_heading_desc_font"
+            ].font_attributes.leading
         )
         rem_height = (
             int(A4[1])
@@ -97,18 +105,26 @@ class LTemplate:
         """
         total_height = 0
         titles = item.titles
-        line_width = A4[0] - self.style_sheet.default_section_attributes.wrap_forgive
+        line_width = A4[0] - self.style_sheet.default_section_style.wrap_forgive
         # wrap_forgive will be deprecated once proven useless
 
         if len(titles) == 0:
             raise ValueError("Item must have at least one title")
         # Adding the item title height
-        total_height += self.style_sheet.font_lib["subtitle_font"].space_before
-        total_height += self.style_sheet.font_lib["subright_font"].leading
+        total_height += self.style_sheet.font_lib[
+            "subtitle_font"
+        ].font_attributes.space_before
+        total_height += self.style_sheet.font_lib[
+            "subright_font"
+        ].font_attributes.leading
         if len(titles) > 3:
             # Assume 2 rows since 3 rows is basically never used
-            total_height += self.style_sheet.font_lib["subtitle2_font"].space_before
-            total_height += self.style_sheet.font_lib["subright2_font"].leading
+            total_height += self.style_sheet.font_lib[
+                "subtitle2_font"
+            ].font_attributes.space_before
+            total_height += self.style_sheet.font_lib[
+                "subright2_font"
+            ].font_attributes.leading
         for line in item.line_objs:
             line_rstring = line.content
             line_style = self.style_sheet.font_lib[
@@ -172,8 +188,11 @@ class LTemplate:
             if head_len == 3 or head_len == 5 or head_len == 6:
                 # First item with augmentation
                 first_str = headings[0]
-                subsequent_size = self.style_sheet.font_lib["subtitle_middle"].font_size
-                subsequent_font = self.style_sheet.font_lib["subtitle_middle"].font_name
+                subsequent_style = self.style_sheet.font_lib[
+                    "subtitle_middle"
+                ].font_attributes
+                subsequent_size = subsequent_style.font_size
+                subsequent_font = subsequent_style.font_name
                 styled_subsequent = (
                     f'<font name="{subsequent_font}" size="{subsequent_size}">'
                     f"{headings[2]}</font>"
@@ -253,9 +272,7 @@ class LTemplate:
             line_result = r""
             if bullet_point:
                 # Allowed use of section_style
-                bullet_style = self.style_sheet.section_style_lib.get(
-                    section_style_name, self.style_sheet.section_style_lib["default"]
-                )
+                bullet_style = self.style_sheet.default_section_style
                 line_result += bullet_style.bullet_symbol
             line_result += line
             item_content += line_result + r"\n"

@@ -72,6 +72,7 @@ class Resume:
             for cate, _ in full_attributes.items():
                 full_attributes[cate].extend(section_skills[cate])
                 full_attributes[cate] = list(set(full_attributes[cate]))
+        self.attribute_targets = full_attributes
         return True
 
     def make(self, job_req: str) -> bool:
@@ -98,6 +99,7 @@ class Resume:
             "Note that you must cover every attribute in the attributes dictionary I provided,\n"
         )
         job_prompt = "The following is a job description for a position: " + job_req
+
         instruction = (
             "Generate me a python dictionary reflecting "
             "how much each of these attributes matters for the job "
@@ -106,7 +108,7 @@ class Resume:
             "they are divided into categories, note that soft means soft skills, "
             "and relevance contains passions/interest "
             "that the person might showcase in the resume.\n"
-            f"Attributes: {self.template.attribute_targets}\n"
+            f"Attributes: {self.attribute_targets}\n"
         )
         response_spec = (
             "Your response should be a python dictionary with the following structure:\n"
@@ -130,7 +132,7 @@ class Resume:
         prompt = job_prompt + instruction + response_spec + reminder
         prompt_instruction = (
             "When you are asked a question, first analyze it, then output ONLY a python "
-            "dictionary that contains the answer. Sample output "
+            "dictionary that contains the answer. Sample output: "
             "(NEGLECT THE CONTENT OF THE DICT BELOW, only look at how it is formatted):\n"
             "{\n"
             '    "technical": {"python": 4, "java": 1},\n'
@@ -140,18 +142,20 @@ class Resume:
             "Note: the dictionary should contain keys of type string and values of type int. "
             "Do not output anything else. Also, whenever giving something a score, make it out of 3"
         )
-        requirements_dict = self.bot.pythoned_response_instruction(
+        req_status, requirements_dict = self.bot.pythoned_response_instruction(
             prompt,
             prompt_instruction,
             datatype=dict,
-            model=self.template.model,
+            # model=self.template.model,
             token_limit=2000,
             retries=3,
             temperature=0.1,
         )
-        if not requirements_dict:
+        # Note: for now, use default AI model
+        if not req_status:
             print("DEBUG: Failed to get requirements from AI")
             return False
+        print("DEBUG: Requirements generated in resume:", requirements_dict)
         self.requirements = requirements_dict
         make_results_flattened = []  # Flattened list of item_core_info for optimization
         # Make each section using self.requirements
@@ -170,8 +174,11 @@ class Resume:
     def optimize(self, evaluator: callable, shuffle_times=2) -> bool:
         """
         Optimize the resume using the AI decision generated in make()
+
         Input: evaluator:
-        (section_make_results: list of item_core_info) -> score: int
+        (section_make_results: list of item_core_info, ai_result: dict of str -> dict)
+        -> score: int
+
         GIVEN: evaluator is very close to a linear function, and it is none-decreasing
         Result:
         - updates self.optimization_result
@@ -198,7 +205,7 @@ class Resume:
             for w in range(width):
                 for h in range(height):
                     max_score = (
-                        evaluator([item["score"] for item in dp_list[h][w - 1]])
+                        evaluator([item["score"] for item in dp_list[h][w]], self.requirements)
                         if w > 0
                         else 0
                     )
@@ -207,21 +214,22 @@ class Resume:
                     for version in data_list[w]:
                         if version["height"] <= h:
                             if w == 0:
-                                score = evaluator([version["score"]])
+                                score = evaluator([version["score"]], self.requirements)
                             else:
                                 resume_score_list = [
                                     item["score"]
                                     for item in dp_list[h - version["height"]][w - 1]
                                 ]
                                 resume_score_list.append(version["score"])
-                                score = evaluator(resume_score_list)
+                                score = evaluator(resume_score_list, self.requirements)
                             if score > max_score:
                                 max_score = score
                                 dp_list[h][w] = dp_list[h - version["height"]][
                                     w - 1
                                 ] + [version["id"]]
             current_max_score = evaluator(
-                [item["score"] for item in dp_list[height - 1][width - 1]]
+                [item["score"] for item in dp_list[height - 1][width - 1]],
+                self.requirements
             )
             if current_max_score > max_variant_score:
                 max_variant_score = current_max_score

@@ -5,8 +5,10 @@ USAGE:
 
 """
 
+import time
 import ast
 import os
+
 from dotenv import load_dotenv
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
@@ -91,7 +93,7 @@ class AIBot:
         token_limit: int = 2000,
         retries: int = 3,
         temperature: float = 0.1,
-    ) -> "datatype":
+    ) -> tuple[bool, "datatype"]:
         """
         Get a response from the AI with an instruction and parse it into a specific type
         Have up to retries attempts to get valid response
@@ -103,6 +105,7 @@ class AIBot:
             {"role": "user", "content": prompt},
         ]
         for attempt in range(retries):
+            print(f"Attempt {attempt + 1} to get a valid response...")
             resp = self.ai_client.chat.completions.create(
                 model=model,
                 messages=messages,
@@ -114,10 +117,12 @@ class AIBot:
             try:
                 parsed = ast.literal_eval(reply)
                 if isinstance(parsed, datatype):
-                    return parsed
+                    print("DEBUG: Parsed response successfully:" + str(parsed))
+                    return True, parsed
                 else:
                     print(
-                        f"Attempt {attempt + 1}: Parsed type mismatch. Expected {datatype}, got {type(parsed)}"
+                        f"Attempt {attempt + 1}: Parsed type mismatch. "
+                        f"Expected {datatype}, got {type(parsed)}"
                     )
             except (SyntaxError, ValueError) as e:
                 print(f"Attempt {attempt + 1}: Error parsing response: {e}")
@@ -126,10 +131,10 @@ class AIBot:
                     f"Your last response was not a valid {datatype.__name__}. \n"
                     f"Please ensure your response is a valid Python {datatype.__name__}.\n"
                 )
-                message.append({"role": "user", "content": correction})
+                messages.append({"role": "user", "content": correction})
                 time.sleep(0.1)  # Optional: wait before retrying
         print(f"Failed to get a valid response after {retries} attempts.")
-        return None
+        return False, None
 
     def response_dict(
         self,

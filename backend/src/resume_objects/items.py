@@ -123,6 +123,8 @@ class Item:
     def build(self, templ: LTemplate, requirement: dict) -> list:
         """
         build the item with given requirement (AI generated item weights)
+        shape of requirement: same as in section.make():
+        - dict of {cate: {skill: score}}
         template is used to calculate the height of the item
         ASSUMPTION: using different lines won't make major difference in height
         right here, throw error if information is missing and build is impossible
@@ -154,7 +156,7 @@ class Item:
                         max_lines_sel = lines_sel
                 results.append(
                     self.make_specific(
-                        self.calc_scores(max_lines_sel, requirements),
+                        self.calc_scores(max_lines_sel, requirement),
                         max_lines_sel,
                         templ,
                     )
@@ -169,7 +171,7 @@ class Item:
         skills_dict = {"technical": [], "soft": [], "relevance": []}
         cate_list = ["technical", "soft", "relevance"]
         for line_obj in self.line_objs:
-            if not line_obj.cate_score:
+            if not line_obj.cate_score or not line_obj.cate_score.get("technical"):
                 line_obj.gen_score()
             for cate_name in cate_list:
                 for skill, _ in line_obj.cate_score[cate_name].items():
@@ -181,6 +183,7 @@ class Item:
         """
         calculate the actual score of the item in approximation
         using the assumption that the actual scoring funciton is near linear
+        Shape of requirements: dict of {cate: {skill: score}}
         ONLY FOR INTERNAL USE!!
         """
         result = 0
@@ -234,7 +237,9 @@ class Item:
         cate_list = ["technical", "soft", "relevance"]
         for cate_name in cate_list:
             # put every item in requirements into the results
-            for item, value in requirement[cate_name]:
+            print("DEBUG: requirement[cate_name]:", requirement[cate_name])
+            print()
+            for item, value in requirement[cate_name].items():
                 results[cate_name]["scores"][item] = 0
         # Check if lines_sel is empty
         if not lines_sel:
