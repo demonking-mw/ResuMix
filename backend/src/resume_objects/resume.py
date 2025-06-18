@@ -205,7 +205,9 @@ class Resume:
             for w in range(width):
                 for h in range(height):
                     max_score = (
-                        evaluator([item["score"] for item in dp_list[h][w]], self.requirements)
+                        evaluator(
+                            [item["score"] for item in dp_list[h][w]], self.requirements
+                        )
                         if w > 0
                         else 0
                     )
@@ -229,7 +231,7 @@ class Resume:
                                 ] + [version["id"]]
             current_max_score = evaluator(
                 [item["score"] for item in dp_list[height - 1][width - 1]],
-                self.requirements
+                self.requirements,
             )
             if current_max_score > max_variant_score:
                 max_variant_score = current_max_score
