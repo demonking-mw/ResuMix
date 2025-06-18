@@ -167,7 +167,7 @@ class Resume:
         print("DEBUG: ready for optimization")
         return True
 
-    def optimize(self, evaluator: callable, shuffle_times=2, swap_times=2) -> bool:
+    def optimize(self, evaluator: callable, shuffle_times=2) -> bool:
         """
         Optimize the resume using the AI decision generated in make()
         Input: evaluator:
@@ -260,3 +260,5 @@ class Resume:
             # Result of seciton_build should be a 1d list
             self.section_build_results.extend(section_build)
         # Call the resume build function in the template
+        print("DEBUG: Building resume with template")
+        return self.template.resume_builder(self)

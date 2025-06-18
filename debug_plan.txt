@@ -1,0 +1,12 @@
+Take the top down approach
+
+1. Reconstruct how a resume would be make.
+2. Make sure each step works.
+3. If something does not work, fix instead of delay the triggering of issue
+
+Debug procedure:
+1. make sure the dict works upon creation. 
+2. make sure nothing goes wrong with creating everything
+3. test make
+4. make sure optimization works, DO NOT SKIP! (make a simple score function)
+5. finally, try to build a resume

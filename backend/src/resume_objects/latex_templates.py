@@ -309,6 +309,7 @@ class LTemplate:
         Makes the resume, then hand it back as bytes
         Using section_build_results: listof(Paragraph() or equivalent reportlab items)
         """
+        print("Building resume...")
         main_content = resume_object.section_build_results
         # All the content in the middle
 
@@ -353,4 +354,5 @@ class LTemplate:
         c.save()
         pdf_bytes = buffer.getvalue()
         buffer.close()
+        print("pdf generated successfully")
         return pdf_bytes

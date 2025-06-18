@@ -3,6 +3,7 @@ testing the item builder
 """
 
 from ..resume_objects.resume import Resume
+from ..resume_objects.latex_templates import LTemplate
 
 
 test_resume_dict = {
@@ -35,14 +36,22 @@ test_resume_dict = {
                             "aux_info": {"type": "lines"},
                             "content": r"\item Developed feature X that improved performance by 30\%",
                             "content_str": "Developed feature X that improved performance by 30%",
-                            "cate_score": {},
+                            "cate_score": {
+                                "technical": {},
+                                "soft": {},
+                                "relevance": {},
+                            },
                             "keywords": [],
                         },
                         {
                             "aux_info": {"type": "lines"},
                             "content": r"\item Led a team of 5 engineers",
                             "content_str": "Led a team of 5 engineers",
-                            "cate_score": {},
+                            "cate_score": {
+                                "technical": {},
+                                "soft": {},
+                                "relevance": {},
+                            },
                             "keywords": [],
                         },
                     ],
@@ -58,11 +67,17 @@ test_resume_dict = {
     ],
 }
 
-my_resume = Resume(test_resume_dict)
+template = LTemplate()
+
+my_resume = Resume(template, test_resume_dict)
+my_resume.make(
+    "This is a typical backend software engineer role requiring Python, SQL, and team leadership skills. "
+)
+print("Resume made successfully")
 optimization_result = [
     # Section 0: we keep item 0 at version 2, and item 1 at version 0
     [
-        [0, 0, 2],
+        [0, 0, 1],
         [0, 1, 0],
     ],
     # Section 1: we keep only item 0 at version 1
