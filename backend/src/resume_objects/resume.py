@@ -157,7 +157,6 @@ class Resume:
             return False
         print("DEBUG: Requirements generated in resume:", requirements_dict)
         self.requirements = requirements_dict
-        make_results_flattened = []  # Flattened list of item_core_info for optimization
         # Make each section using self.requirements
         for section in self.sections:
             item_core_info = section.make(self.requirements)
@@ -167,7 +166,6 @@ class Resume:
                 print(f"DEBUG: Failed to make section {section.sect_id}")
                 return False
             self.section_make_results.append(item_core_info)
-        self.make_results_flattened = make_results_flattened
         print("DEBUG: ready for optimization")
         return True
 
@@ -190,8 +188,14 @@ class Resume:
 
         Process: apply the algorithm on the flattened list, then sort them to sections and return
         """
+        print(
+            "DEBUG: Optimizing resume with evaluator, make_results:flattened is:",
+            self.make_results_flattened,
+        )
         width = len(self.make_results_flattened)
+        # Width is the number of items in the resume
         height = self.template.remaining_height_calculator(len(self.sections))
+        # Height is the physical height of the resume in pixels
         if not self.make_results_flattened:
             print("DEBUG: No items to optimize, empty resume")
             return False
@@ -206,7 +210,8 @@ class Resume:
                 for h in range(height):
                     max_score = (
                         evaluator(
-                            [item["score"] for item in dp_list[h][w]], self.requirements
+                            [item["score"] for item in dp_list[h][w - 1]],
+                            self.requirements,
                         )
                         if w > 0
                         else 0
@@ -215,22 +220,27 @@ class Resume:
                     # This represents not adding the item in question
                     for version in data_list[w]:
                         if version["height"] <= h:
+                            # If first item
                             if w == 0:
-                                score = evaluator([version["score"]], self.requirements)
+                                score = evaluator([version], self.requirements)
+                                if score > max_score:
+                                    max_score = score
+                                    dp_list[h][w] = [version]
+                            # If not first item
                             else:
                                 resume_score_list = [
-                                    item["score"]
+                                    item
                                     for item in dp_list[h - version["height"]][w - 1]
                                 ]
-                                resume_score_list.append(version["score"])
+                                resume_score_list.append(version)
                                 score = evaluator(resume_score_list, self.requirements)
-                            if score > max_score:
-                                max_score = score
-                                dp_list[h][w] = dp_list[h - version["height"]][
-                                    w - 1
-                                ] + [version["id"]]
+                                if score > max_score:
+                                    max_score = score
+                                    dp_list[h][w] = dp_list[h - version["height"]][
+                                        w - 1
+                                    ] + [version]
             current_max_score = evaluator(
-                [item["score"] for item in dp_list[height - 1][width - 1]],
+                [item for item in dp_list[height - 1][width - 1]],
                 self.requirements,
             )
             if current_max_score > max_variant_score:
@@ -245,6 +255,7 @@ class Resume:
             ids = ici["id"]
             section_id = ids[0]
             self.optimization_result[section_id].append(ids)
+        print("DEBUG: Optimization FINISHED")
         return True
 
     def build(self) -> bytes:

@@ -144,7 +144,7 @@ class Item:
                 # allows empty selection
                 if sel_size == 0:
                     # empty selection, no lines selected
-                    results.append(self.make_specific(0, [], templ))
+                    results.append(self.make_specific({}, [], templ))
                     continue
                 max_score = -100000
                 max_lines_sel = []

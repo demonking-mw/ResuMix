@@ -31,10 +31,11 @@ resume_style_0 = ResumeStyle(
                 font_name="Helvetica-Bold",
                 font_size=13,
                 text_color_hex="#000000",
-                alignment=1,
+                alignment=0,
                 space_before=1,
                 space_after=0,
-                leading=17,
+                leading=13,
+                left_indent=40,
             )
         ),
         "subtitle_font": style_info.StyleInfo(
@@ -47,6 +48,7 @@ resume_style_0 = ResumeStyle(
                 space_before=5,
                 space_after=0,
                 leading=0,
+                left_indent=10,
             )
         ),
         "subright_font": style_info.StyleInfo(
@@ -58,7 +60,7 @@ resume_style_0 = ResumeStyle(
                 alignment=2,
                 space_before=0,
                 space_after=0,
-                leading=16,
+                leading=14,
             )
         ),
         # for middle, only font_name and font_size should be used
@@ -86,6 +88,7 @@ resume_style_0 = ResumeStyle(
                 space_before=5,
                 space_after=0,
                 leading=0,
+                left_indent=10,
             )
         ),
         "subright2_font": style_info.StyleInfo(
@@ -110,7 +113,7 @@ resume_style_0 = ResumeStyle(
                 space_before=0,
                 space_after=0,
                 leading=14,
-                left_indent=5,
+                left_indent=30,
             )
         ),
         "resume_heading_name_font": style_info.StyleInfo(
@@ -170,14 +173,14 @@ resume_style_0 = ResumeStyle(
         bullet_symbol="• ",
     ),
     resume_style={
-        "left_margin": 5,
-        "right_margin": 5,
+        "left_margin": 15,
+        "right_margin": 15,
         "top_margin": 5,
         "bottom_margin": 5,
-        "split_line_width": "90%",
+        "split_line_width": "97%",
         "split_line_thickness": 1,
         "split_line_space_before": 2,
-        "split_line_space_after": 2,
+        "split_line_space_after": 6,
     },
     # section_style_lib={
     #     "default": style_info.SectionAttributes(

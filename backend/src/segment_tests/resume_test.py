@@ -4,6 +4,7 @@ testing the item builder
 
 from ..resume_objects.resume import Resume
 from ..resume_objects.latex_templates import LTemplate
+from ..resume_objects.implementations.scoring_functions import simple_sum_function
 
 
 test_resume_dict = {
@@ -17,7 +18,7 @@ test_resume_dict = {
             # this will be passed as sect_id to Section(...)
             "sect_id": 0,
             "aux_info": {"type": "section"},
-            "title": "Experience",
+            "title": "EXPERIENCE",
             "items": [
                 {
                     # aux_info must include type "items" and a style (here 'l' = bullet list)
@@ -34,7 +35,7 @@ test_resume_dict = {
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"\item Developed feature X that improved performance by 30\%",
+                            "content": r"Developed feature 'random skibidi shinanigan' that improved performance by 69% and resulted in a 100 percent increase in monkey production. Let's just say that this line is really long and takes up multiple lines",
                             "content_str": "Developed feature X that improved performance by 30%",
                             "cate_score": {
                                 "technical": {},
@@ -45,7 +46,7 @@ test_resume_dict = {
                         },
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"\item Led a team of 5 engineers",
+                            "content": r"Led a team of 5 engineers",
                             "content_str": "Led a team of 5 engineers",
                             "cate_score": {
                                 "technical": {},
@@ -74,21 +75,38 @@ my_resume.make(
     "This is a typical backend software engineer role requiring Python, SQL, and team leadership skills. "
 )
 print("Resume made successfully")
-optimization_result = [
-    # Section 0: we keep item 0 at version 2, and item 1 at version 0
-    [
-        [0, 0, 1],
-        [0, 1, 0],
-    ],
-    # Section 1: we keep only item 0 at version 1
-    [
-        [1, 0, 1],
-    ],
-    # Section 2: no items fit, so an empty list
-    [],
-]
-my_resume.optimization_result = optimization_result
+my_resume.optimize(simple_sum_function)
+print("Optimization result, here is the result:")
+print(my_resume.optimization_result)
+print("Building the resume PDF...")
 resume_pdf = my_resume.build()
 with open("test_resume.pdf", "wb") as f:
     f.write(resume_pdf)
 print("Wrote test_resume.pdf")
+
+
+val = {
+    "technical": {
+        "scores": {
+            "problem_solving": 2.0,
+            "team_management": 0,
+            "project_management": 0,
+            "performance_improvement": 3.0,
+            "communication": 0,
+            "feature_development": 3.0,
+            "leadership": 0,
+            "software_engineering": 2.0,
+        },
+        "bias": 1.0,
+    },
+    "soft": {
+        "scores": {
+            "problem_solving": 2.0,
+            "teamwork": 0,
+            "communication": 1.0,
+            "leadership": 0,
+        },
+        "bias": 1.0,
+    },
+    "relevance": {"scores": {"interest": 1.0, "passion": 1.0}, "bias": 1.0},
+}

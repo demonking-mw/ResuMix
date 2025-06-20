@@ -68,8 +68,8 @@ class LTemplate:
             ].font_attributes.space_before
             + self.style_sheet.font_lib["section_title_font"].font_attributes.leading
             + self.style_sheet.resume_style["split_line_space_before"]
-            + self.style_sheet.resume_style["split_line_after"]
-            + self.style_sheet.resume_style["split_line_height"]
+            + self.style_sheet.resume_style["split_line_space_after"]
+            + self.style_sheet.resume_style["split_line_thickness"]
         )
         # Page side margin not included
         header_height = (
@@ -275,17 +275,15 @@ class LTemplate:
                 bullet_style = self.style_sheet.default_section_style
                 line_result += bullet_style.bullet_symbol
             line_result += line
-            item_content += line_result + r"\n"
-        item_content = item_content.strip()
-        if item_content:
-            section_content.append(
-                Paragraph(
-                    item_content,
-                    self.style_sheet.font_lib[
-                        "standard_text_font"
-                    ].get_paragraph_style(),
+            if line_result:
+                section_content.append(
+                    Paragraph(
+                        line_result,
+                        self.style_sheet.font_lib[
+                            "standard_text_font"
+                        ].get_paragraph_style(),
+                    )
                 )
-            )
         return section_content
 
     def section_builder(self, title: str, items: list) -> list:

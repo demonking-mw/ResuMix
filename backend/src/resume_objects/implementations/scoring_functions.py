@@ -5,7 +5,7 @@ FUNCTION DIMENSIONS:
 (section_make_results: list of item_core_info, ai_result: dict of str -> dict)
 -> score: int
 
-item_core_info:
+section_make_results:
 - listof(item_core_info)
     - item_core_info:
     - item_core_info is a dict with keys:
@@ -37,4 +37,19 @@ def simple_sum_function(section_make_results: list, ai_result: dict) -> int:
     :param section_make_results: List of item_core_info dictionaries.
     :return: Total score as an integer.
     """
-    raise NotImplementedError("simple_sum_function is not implemented yet.")
+    # Logic: for each item, take the max of each trait and piecewise multiply with the decision
+    total_score = 0
+    for item_version in section_make_results:
+        print("DEBUG: item_versions id:", item_version["id"])
+        cate_list = ["technical", "soft", "relevance"]
+        for cate in cate_list:
+            if cate not in ai_result:
+                raise ValueError(f"Category '{cate}' not found in AI result")
+            item_score = item_version["score"].get(cate)  # will error if not found
+            if item_score:
+                for skill, score in item_score["scores"].items():
+                    if skill in ai_result[cate]:
+                        total_score += score * ai_result[cate][skill]
+                total_score += item_score["bias"]
+    print("DEBUG: successfully optimized?")
+    return total_score
