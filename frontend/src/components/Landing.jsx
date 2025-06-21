@@ -1,46 +1,41 @@
-import React from 'react'
-import './Landing.css'
-import logo from '../assets/logo.png'
+import React from 'react';
+import './Landing.css';
+import logo from '../assets/ResuMix.png'; // adjust path if needed
 
-export default function Landing() {
+const Landing = () => {
   return (
     <div className="landing-container">
-      {/* NAVIGATION */}
-      <nav className="navbar">
-        <img src={logo} alt="ResuMix Logo" className="logo" />
-        <ul className="nav-links">
-          <li><a href="#how-it-works">How it works</a></li>
-          <li><a href="#help">Help</a></li>
-        </ul>
+      <header className="navbar">
+        <div className="logo-container">
+          <img src={logo} alt="Logo" className="logo" />
+          <span className="brand-name">ResuMix</span>
+        </div>
+        <nav className="nav-links">
+          <a href="#how">How it works</a>
+          <a href="#help">Help</a>
+        </nav>
         <div className="nav-actions">
           <a href="/login" className="login-link">Log in</a>
           <a href="/signup" className="signup-btn">Sign up ↗</a>
         </div>
-      </nav>
+      </header>
 
-      {/* HERO */}
-      <header className="hero">
+      <main className="hero">
         <div className="hero-content">
           <h1>
-            AI-Powered Resumes.<br/>
+            AI-Powered Resumes. <br />
             Tailored to Every Job.
           </h1>
           <p>
-            Upload your master resume once, then generate the perfect,
-            job-specific resume in seconds.
+            Upload your master resume once, then generate the perfect, job-specific resume in seconds.
           </p>
         </div>
-      </header>
+      </main>
 
-      {/* HOW IT WORKS */}
-      <section id="how-it-works" className="placeholder">
-        How It Works section…
-      </section>
-
-      {/* HELP */}
-      <section id="help" className="placeholder">
-        Help section…
-      </section>
+      <section id="how" className="placeholder">How It Works section…</section>
+      <section id="help" className="placeholder">Help section…</section>
     </div>
-  )
-}
+  );
+};
+
+export default Landing;
