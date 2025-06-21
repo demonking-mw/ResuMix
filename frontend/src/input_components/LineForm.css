@@ -1,0 +1,36 @@
+.line-input {
+  margin-left: 40px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  width: 90% !important;
+  max-width: 800px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  resize: vertical; /* allow resizing if needed */
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.line-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background-color: #f9f9ff;
+}
+
+.score-inputs {
+  margin-top: 12px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.score-inputs label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
