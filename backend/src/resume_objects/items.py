@@ -12,7 +12,7 @@ Listof item objects(dicts):
 """
 
 import warnings
-
+from typing import List
 from itertools import combinations
 
 from .lines import Line
@@ -60,19 +60,38 @@ class Item:
             self.aux_info = class_dict.get("aux_info")
         else:
             self.cate_scores = {
-                "technical": {
-                    "weight": 1.0,
-                    "bias": 1.0,
-                },
-                "soft": {
-                    "weight": 1.0,
-                    "bias": 1.0,
-                },
-                "relevance": {
-                    "weight": 1.0,
-                    "bias": 1.0,
-                },
+                "weight": 1.0,
+                "bias": 1.0,
             }
+
+    def top_k_lines(self, lines: List[Line], k: int) -> List[Line]:
+        """
+        returns the top k Line objects with the highest line scores in ascending order
+        """
+        sorted_lines = sorted(lines, key=lambda line: (line.score is not None, line.score if line.score is not None else 0))
+        return sorted_lines[-k:]
+
+    def make(self, templ: LTemplate) -> List[dict]:
+        """
+        returns an array where the ith element is a dict of the total score of
+        using the first i highest scoring lines of this item.
+        """
+        list_of_items: List[dict] = []
+        length = len(self.line_objs)
+        for i in range(1, length + 1):
+            top_k = self.top_k_lines(self.line_objs, i)
+            total_score = 0
+            for j in top_k:
+                total_score += j.score or 0
+            total_score = total_score*self.cate_scores['weight'] + self.cate_scores['bias']
+            item = {
+                "numLines": i,
+                "score": total_score,
+                "height": templ.item_height_calculator(),
+                "lines_selected": top_k,
+            }
+            list_of_items.append(item)
+        return list_of_items
 
     def make_specific(
         self, lines_score: dict, lines_sel: list, templ: LTemplate
