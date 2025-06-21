@@ -76,7 +76,21 @@ class User(Resource):
         """
         Creates a new user and log the user in
         """
+
         args = user_req.user_signup.parse_args()
+
+        # Login via user/password
+        if args["type"] == "up":
+            database = DBConn()
+            user_auth_obj = user_auth.UserAuth(database, args)
+            user_auth_json, login_status = user_auth_obj.login_up()
+            database.close()
+            if login_status == -1:
+                # password mismatch
+                return {"status": False, "detail": {"status": "info mismatch"}}, 400
+            # returns {"status": True, "jwt": "...", ...}, 200
+            return user_auth_json, login_status
+        
         # Check auth type
         if args["type"] == "go":
             return self.__go_auth(args)
