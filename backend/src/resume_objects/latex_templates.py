@@ -181,7 +181,7 @@ class LTemplate:
                 # First item without augmentation
                 para1 = headings[0]
                 if head_len == 1:
-                    para2 = " "
+                    para2 = "-"
                 if head_len > 1:
                     # For length 2 or 4
                     para2 = headings[1]

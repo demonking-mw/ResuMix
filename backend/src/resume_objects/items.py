@@ -45,7 +45,6 @@ class Item:
         self.line_objs = []
         self.cate_scores = {}
         self.aux_info = {}
-        self.paragraph = r""
         self.style = ""
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "items":
@@ -230,8 +229,7 @@ class Item:
         cate_list = ["technical", "soft", "relevance"]
         for cate_name in cate_list:
             # put every item in requirements into the results
-            print("DEBUG: requirement[cate_name]:", requirement[cate_name])
-            print()
+
             for item, value in requirement[cate_name].items():
                 results[cate_name]["scores"][item] = 0
         # Check if lines_sel is empty
@@ -300,7 +298,10 @@ class Item:
         # Ensure aux_info has 'type' and it is 'items'
 
         self.aux_info["type"] = "items"
-        self.aux_info["style"] = self.style
+        if self.style:
+            self.aux_info["style"] = self.style
+        else:
+            self.aux_info["style"] = "n"
 
         return {
             "titles": self.titles if self.titles is not None else [],
@@ -311,5 +312,4 @@ class Item:
             ),
             "cate_scores": self.cate_scores if self.cate_scores is not None else {},
             "aux_info": self.aux_info,
-            "paragraph": self.paragraph,
         }

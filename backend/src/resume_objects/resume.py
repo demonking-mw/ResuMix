@@ -3,9 +3,11 @@ The class that parses the resume from file
 Handlles building, optimizing, etc
 """
 
+import random
+from datetime import datetime
+
 from .sections import Section
 from ..general_helper.isa_bot import AIBot
-import random
 
 
 class Resume:
@@ -188,14 +190,13 @@ class Resume:
 
         Process: apply the algorithm on the flattened list, then sort them to sections and return
         """
-        print(
-            "DEBUG: Optimizing resume with evaluator, make_results:flattened is:",
-            self.make_results_flattened,
-        )
+        start_time = datetime.now()
+        print("DEBUG: Optimizing resume with evaluator")
         width = len(self.make_results_flattened)
         # Width is the number of items in the resume
         height = int(self.template.remaining_height_calculator(len(self.sections)))
         # Height is the physical height of the resume in pixels
+        time_comp_count = 0
         if not self.make_results_flattened:
             print("DEBUG: No items to optimize, empty resume")
             return False
@@ -219,9 +220,11 @@ class Resume:
                     dp_list[h][w] = dp_list[h][w - 1] if w > 0 else []
                     # This represents not adding the item in question
                     for version in data_list[w]:
+                        time_comp_count += 1
                         if version["height"] <= h:
                             # If first item
                             if w == 0:
+                                
                                 score = evaluator([version], self.requirements)
                                 if score > max_score:
                                     max_score = score
@@ -249,6 +252,7 @@ class Resume:
         # ABOVE NOT TESTED, CAN BE VERY WRONG
         # Currently not building the swap algorithm, as DP should be decent for the job.
         # Will implement if need arises
+        print("DEBUG: time complexity:", time_comp_count)
         result_len = len(self.sections)
         self.optimization_result = [[] for _ in range(result_len)]
         for ici in max_result:
@@ -256,6 +260,9 @@ class Resume:
             section_id = ids[0]
             self.optimization_result[section_id].append(ids)
         print("DEBUG: Optimization FINISHED")
+        end_time = datetime.now()
+        elapsed_time = end_time - start_time
+        print("DEBUG: Optimization timespan: ", elapsed_time)
         return True
 
     def build(self) -> bytes:
@@ -283,3 +290,22 @@ class Resume:
         # Call the resume build function in the template
         print("DEBUG: Building resume with template")
         return self.template.resume_builder(self)
+
+    def to_dict(self) -> dict:
+        """
+        Compile the class into a dict for storage
+        """
+        result = {
+            "aux_info": self.aux_info,
+            "heading_info": {
+                "heading_name": self.heading_name,
+                "subsequent_content": self.heading_subsequent_content,
+            },
+            "sections": [section.to_dict() for section in self.sections],
+        }
+        if self.heading_name or self.heading_subsequent_content:
+            result["heading_info"] = {
+                "heading_name": self.heading_name,
+                "subsequent_content": self.heading_subsequent_content,
+            }
+        return result

@@ -47,6 +47,7 @@ class AIBot:
         :param model: The model to use (optional, defaults to self.default_model)
         :return: The AI's response as a string
         """
+        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
 
@@ -69,6 +70,7 @@ class AIBot:
         :param model: The model to use (optional, defaults to self.default_model)
         :return: The AI's response as a string
         """
+        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
 
@@ -98,6 +100,7 @@ class AIBot:
         Get a response from the AI with an instruction and parse it into a specific type
         Have up to retries attempts to get valid response
         """
+        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
         messages = [
@@ -151,6 +154,7 @@ class AIBot:
         :return: The AI's response as a string
         NOTE: the keys in prompt_dict should be 'system', 'user', or 'assistant' and its value is the content
         """
+        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
 

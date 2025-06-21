@@ -128,7 +128,7 @@ class Line:
             relevance_prompt = (
                 "Identify the person's passion mentioned from this line that is "
                 "irrelevant to the core technical skills and soft skills shown in the "
-                "activity. Select the top 2 that demonstrates the person's interest in "
+                "activity. It must be very specific, do not use general words such as 'passion'. Select the top 2 that demonstrates the person's interest in "
                 "the topic. Output it in a dict with the keywords as keys and 1 as "
                 "values. The line is: "
             )
@@ -157,6 +157,8 @@ class Line:
             result["aux_info"] = {"type": "lines"}
         result["content"] = self.content
         result["content_str"] = self.content_str
+        if content is not None:
+            self.gen_score()
         result["cate_score"] = self.cate_score
         result["keywords"] = self.keywords
         return result

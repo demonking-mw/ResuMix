@@ -154,4 +154,5 @@ class Section:
             "title": self.title,
             "items": [item.to_dict() for item in self.items],
             "aux_info": self.aux_info,
+            "sect_id": self.sect_id,
         }
