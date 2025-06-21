@@ -84,7 +84,7 @@ class Section:
                         skills_dict[cate].append(skill)
         return skills_dict
 
-    def make(self, requirements: dict) -> list:
+    def make(self) -> list:
         """
         make items build ready
         stores the item builds and returns score-height dict for optimization
@@ -105,7 +105,7 @@ class Section:
         results = []
         item_count = 0
         for item in self.items:
-            item_build = item.build(self.template, requirements)
+            item_build = item.make(self.template)
             self.item_make_results.append(item_build)
             version_icis = []
             version_count = 0
