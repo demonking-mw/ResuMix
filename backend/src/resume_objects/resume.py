@@ -194,7 +194,7 @@ class Resume:
         )
         width = len(self.make_results_flattened)
         # Width is the number of items in the resume
-        height = self.template.remaining_height_calculator(len(self.sections))
+        height = int(self.template.remaining_height_calculator(len(self.sections)))
         # Height is the physical height of the resume in pixels
         if not self.make_results_flattened:
             print("DEBUG: No items to optimize, empty resume")
