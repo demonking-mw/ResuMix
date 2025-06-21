@@ -11,6 +11,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import Paragraph, HRFlowable, Frame
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.colors import HexColor
 
 from .styles import ResumeStyle, resume_style_0
 
@@ -303,6 +304,11 @@ class LTemplate:
                 thickness=self.style_sheet.resume_style["split_line_thickness"],
                 spaceBefore=self.style_sheet.resume_style["split_line_space_before"],
                 spaceAfter=self.style_sheet.resume_style["split_line_space_after"],
+                color=HexColor(
+                    self.style_sheet.font_lib[
+                        "section_title_font"
+                    ].font_attributes.text_color_hex
+                ),
             )
         )
         for item_build in items:

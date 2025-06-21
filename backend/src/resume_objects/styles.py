@@ -28,14 +28,14 @@ resume_style_0 = ResumeStyle(
         "section_title_font": style_info.StyleInfo(
             font_attributes=style_info.FontAttributes(
                 name="section_title_font",
-                font_name="Helvetica-Bold",
+                font_name="Times-Bold",
                 font_size=13,
                 text_color_hex="#000000",
                 alignment=0,
                 space_before=10,
                 space_after=0,
                 leading=13,
-                left_indent=4,
+                left_indent=8,
             )
         ),
         "subtitle_font": style_info.StyleInfo(
@@ -48,7 +48,7 @@ resume_style_0 = ResumeStyle(
                 space_before=5,
                 space_after=0,
                 leading=0,
-                left_indent=10,
+                left_indent=12,
             )
         ),
         "subright_font": style_info.StyleInfo(
@@ -81,20 +81,20 @@ resume_style_0 = ResumeStyle(
         "subtitle2_font": style_info.StyleInfo(
             font_attributes=style_info.FontAttributes(
                 name="subtitle2_font",
-                font_name="Times-Bold",
+                font_name="Times-Italic",
                 font_size=12,
                 text_color_hex="#000000",
                 alignment=0,
-                space_before=5,
+                space_before=1,
                 space_after=0,
                 leading=0,
-                left_indent=10,
+                left_indent=12,
             )
         ),
         "subright2_font": style_info.StyleInfo(
             font_attributes=style_info.FontAttributes(
                 name="subright2_font",
-                font_name="Times-Bold",
+                font_name="Times-Italic",
                 font_size=12,
                 text_color_hex="#000000",
                 alignment=2,
@@ -113,13 +113,13 @@ resume_style_0 = ResumeStyle(
                 space_before=0,
                 space_after=0,
                 leading=14,
-                left_indent=30,
+                left_indent=20,
             )
         ),
         "resume_heading_name_font": style_info.StyleInfo(
             font_attributes=style_info.FontAttributes(
                 name="name_font",
-                font_name="Helvetica-Bold",
+                font_name="Times-Bold",
                 font_size=16,
                 text_color_hex="#000000",
                 alignment=1,
@@ -131,7 +131,7 @@ resume_style_0 = ResumeStyle(
         "resume_heading_desc_font": style_info.StyleInfo(
             font_attributes=style_info.FontAttributes(
                 name="personal_info_font",
-                font_name="Helvetica",
+                font_name="Times-Roman",
                 font_size=11,
                 text_color_hex="#000000",
                 alignment=1,
@@ -173,12 +173,12 @@ resume_style_0 = ResumeStyle(
         bullet_symbol="• ",
     ),
     resume_style={
-        "left_margin": 15,
+        "left_margin": 10,
         "right_margin": 15,
         "top_margin": 5,
         "bottom_margin": 5,
         "split_line_width": "97%",
-        "split_line_thickness": 1,
+        "split_line_thickness": 0.6,
         "split_line_space_before": 2,
         "split_line_space_after": 6,
     },
