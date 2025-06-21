@@ -54,14 +54,11 @@ class Item:
                     f"'{class_dict['aux_info']['type']}' instead"
                 )
             self.style = class_dict["aux_info"]["style"]
-            if self.style == "p":
-                self.paragraph = class_dict.get("paragraph")
-            else:
-                self.titles = class_dict.get("titles")
-                for line_dict in class_dict.get("lines"):
-                    self.line_objs.append(Line(line_dict))
-                self.cate_scores = class_dict.get("cate_scores")
-                self.aux_info = class_dict.get("aux_info")
+            self.titles = class_dict.get("titles")
+            for line_dict in class_dict.get("lines"):
+                self.line_objs.append(Line(line_dict))
+            self.cate_scores = class_dict.get("cate_scores")
+            self.aux_info = class_dict.get("aux_info")
         else:
             self.cate_scores = {
                 "technical": {
@@ -89,16 +86,15 @@ class Item:
         selected_lines = []
         if lines_sel is not None:
             lines_sel = sorted(lines_sel)
-        if self.style == "p":
-            raise RuntimeError("NOT IMPLEMENTED YET.")
-        else:
-            for line_no in lines_sel:
-                selected_lines.append(self.line_objs[line_no])
+        for line_no in lines_sel:
+            selected_lines.append(self.line_objs[line_no])
         # NoEscape for Latex safety
         lines_content_list = []
         for line in selected_lines:
             lines_content_list.append(line.content)
-        latex_obj = templ.item_builder(self.titles, lines_content_list)
+        latex_obj = templ.item_builder(
+            self.titles, lines_content_list, item_type=self.style
+        )
         # THE BELOW BLOCK WILL BE USED IN item_builder IN LTEMPLATE.
         # # Append the \resumeSubheading command
         # if len(self.titles) == 4:
@@ -129,39 +125,36 @@ class Item:
         ASSUMPTION: using different lines won't make major difference in height
         right here, throw error if information is missing and build is impossible
         """
-        if self.style == "p":
-            raise RuntimeError("NOT IMPLEMENTED YET.")
-        else:
-            # Check for required information
-            if not self.titles or not self.line_objs or not templ or not requirement:
-                raise ValueError(
-                    "Missing required information: titles, lines, template, or processor."
+        # Check for required information
+        if not self.line_objs or not templ or not requirement:
+            raise ValueError(
+                "Missing required information: titles, lines, template, or processor."
+            )
+        # Implement the rest of the build logic here
+        results = []
+        num_lines = len(self.line_objs)
+        for sel_size in range(0, num_lines + 1):
+            # allows empty selection
+            if sel_size == 0:
+                # empty selection, no lines selected
+                results.append(self.make_specific({}, [], templ))
+                continue
+            max_score = -100000
+            max_lines_sel = []
+            for lines_sel_tup in combinations(range(num_lines), sel_size):
+                lines_sel = list(lines_sel_tup)
+                curr_score = self.__calc_score(lines_sel, requirement)
+                if curr_score > max_score:
+                    max_score = curr_score
+                    max_lines_sel = lines_sel
+            results.append(
+                self.make_specific(
+                    self.calc_scores(max_lines_sel, requirement),
+                    max_lines_sel,
+                    templ,
                 )
-            # Implement the rest of the build logic here
-            results = []
-            num_lines = len(self.line_objs)
-            for sel_size in range(0, num_lines + 1):
-                # allows empty selection
-                if sel_size == 0:
-                    # empty selection, no lines selected
-                    results.append(self.make_specific({}, [], templ))
-                    continue
-                max_score = -100000
-                max_lines_sel = []
-                for lines_sel_tup in combinations(range(num_lines), sel_size):
-                    lines_sel = list(lines_sel_tup)
-                    curr_score = self.__calc_score(lines_sel, requirement)
-                    if curr_score > max_score:
-                        max_score = curr_score
-                        max_lines_sel = lines_sel
-                results.append(
-                    self.make_specific(
-                        self.calc_scores(max_lines_sel, requirement),
-                        max_lines_sel,
-                        templ,
-                    )
-                )
-            return results
+            )
+        return results
 
     def get_skills_dict(self) -> dict:
         """

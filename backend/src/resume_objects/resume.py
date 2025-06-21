@@ -210,7 +210,7 @@ class Resume:
                 for h in range(height):
                     max_score = (
                         evaluator(
-                            [item["score"] for item in dp_list[h][w - 1]],
+                            [item for item in dp_list[h][w - 1]],
                             self.requirements,
                         )
                         if w > 0
