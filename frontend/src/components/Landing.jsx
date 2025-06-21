@@ -1,6 +1,6 @@
 import React from 'react';
 import './Landing.css';
-import logo from '../assets/ResuMix.png'; // adjust path if needed
+import logo from '../assets/ResuMix.png'; // adjust if needed
 
 const Landing = () => {
   return (
@@ -10,13 +10,9 @@ const Landing = () => {
           <img src={logo} alt="Logo" className="logo" />
           <span className="brand-name">ResuMix</span>
         </div>
-        <nav className="nav-links">
-          <a href="#how">How it works</a>
-          <a href="#help">Help</a>
-        </nav>
         <div className="nav-actions">
-          <a href="/login" className="login-link">Log in</a>
-          <a href="/signup" className="signup-btn">Sign up ↗</a>
+          <a href="/login" className="landing-button">Log in</a>
+          <a href="/signup" className="landing-button">Sign up ↗</a>
         </div>
       </header>
 
@@ -31,9 +27,6 @@ const Landing = () => {
           </p>
         </div>
       </main>
-
-      <section id="how" className="placeholder">How It Works section…</section>
-      <section id="help" className="placeholder">Help section…</section>
     </div>
   );
 };
