@@ -1,17 +1,18 @@
 // src/components/Login.jsx
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 
 export default function Login() {
-  const [userId, setUserId]         = useState('');
-  const [password, setPassword]     = useState('');
+  const [userId, setUserId]     = useState('');
+  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
     setErrorMessage('');
 
-    // simple client‐side check
     if (!userId || !password) {
       setErrorMessage('Please fill out both User ID and Password.');
       return;
@@ -23,31 +24,22 @@ export default function Login() {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'up',     // “up” = username+password login
-            uid: userId,
-            pwd: password
-          })
+          body: JSON.stringify({ type:'up', uid:userId, pwd:password })
         }
       );
-
       const data = await res.json();
-      console.log('[Login] response:', res.status, data);
 
-      // status=true means success
       if (res.ok && data.status) {
         localStorage.setItem('authToken', data.jwt);
-        // redirect or reload as needed; for now:
-        alert('✅ Logged in successfully!');
+        navigate('/home');
       } else {
-        // Map backend's detail.status to friendly text
         const detail = data.detail?.status || data.message;
         if (detail === 'user not found') {
           setErrorMessage('User not found. Please check your User ID.');
         } else if (detail === 'password incorrect') {
           setErrorMessage('Incorrect password. Please try again.');
         } else {
-          setErrorMessage(`Error: ${detail || 'Login failed'}`);
+          setErrorMessage(`Error: ${detail}`);
         }
       }
     } catch (err) {
@@ -78,7 +70,7 @@ export default function Login() {
         {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         <div className="forgot-link">
-          <a href="/forgot-password">Forgot Password?</a>
+          <Link to="/forgot-password">Forgot Password?</Link>
         </div>
 
         <button type="submit" className="primary-btn">Log In</button>
@@ -87,7 +79,7 @@ export default function Login() {
 
         <div className="signup-prompt">
           Don’t have an account?{' '}
-          <a href="/signup" className="signup-link">Sign Up</a>
+          <Link to="/signup" className="signup-link">Sign Up</Link>
         </div>
       </form>
     </div>

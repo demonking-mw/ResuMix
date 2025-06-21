@@ -1,15 +1,14 @@
+// src/components/CreateProfile.jsx
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './CreateProfile.css';
 
 export default function CreateProfile() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    userId: '',
-    password: ''
+    firstName: '', lastName:'', email:'', userId:'', password:''
   });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = e => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -18,47 +17,33 @@ export default function CreateProfile() {
   const handleSubmit = async e => {
     e.preventDefault();
     const { firstName, lastName, email, userId, password } = formData;
-
-    if (!firstName || !lastName || !email || !userId || !password) {
+    if (!firstName||!lastName||!email||!userId||!password) {
       setMessage('Please fill out all fields.');
       return;
     }
-
     try {
-      // Combine first + last into single user_name field
-      const user_name = `${firstName} ${lastName}`;
-
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/user`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
             type: 'eupn',
             uid: userId,
             pwd: password,
             email,
-            user_name
+            user_name: `${firstName} ${lastName}`
           })
         }
       );
-
       const data = await res.json();
-      console.log('[Signup] response status:', res.status);
-      console.log('[Signup] response JSON:', data);
-
       if (data.status) {
-        setMessage('✅ Profile created! You’re signed in.');
-        // Store your JWT for later authenticated calls:
         localStorage.setItem('authToken', data.jwt);
-        // Optionally redirect to dashboard:
-        // navigate('/dashboard');
+        navigate('/home');
       } else {
-        // The API returns detail.status for errors like "user exists"
         setMessage(`Error: ${data.detail?.status || 'Signup failed'}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setMessage('Network error — please try again.');
     }
   };
@@ -69,51 +54,33 @@ export default function CreateProfile() {
         <h2>Create an account</h2>
         <form onSubmit={handleSubmit} className="profile-form">
           <input
-            name="firstName"
-            type="text"
-            placeholder="First name"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
+            name="firstName" type="text" placeholder="First name"
+            value={formData.firstName} onChange={handleChange} required
           />
           <input
-            name="lastName"
-            type="text"
-            placeholder="Last name"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
+            name="lastName" type="text" placeholder="Last name"
+            value={formData.lastName} onChange={handleChange} required
           />
           <input
-            name="email"
-            type="email"
-            placeholder="Email address"
-            value={formData.email}
-            onChange={handleChange}
-            required
+            name="email" type="email" placeholder="Email address"
+            value={formData.email} onChange={handleChange} required
           />
           <input
-            name="userId"
-            type="text"
-            placeholder="User ID"
-            value={formData.userId}
-            onChange={handleChange}
-            required
+            name="userId" type="text" placeholder="User ID"
+            value={formData.userId} onChange={handleChange} required
           />
           <input
-            name="password"
-            type="password"
-            placeholder="New password"
-            value={formData.password}
-            onChange={handleChange}
-            required
+            name="password" type="password" placeholder="New password"
+            value={formData.password} onChange={handleChange} required
           />
           <button type="submit">Sign Up</button>
         </form>
 
         {message && <p className="profile-message">{message}</p>}
+
         <p className="profile-message">
-          Already have an account? <a href="/login">Log in</a>
+          Already have an account?{' '}
+          <Link to="/login">Log In</Link>
         </p>
       </div>
     </div>
