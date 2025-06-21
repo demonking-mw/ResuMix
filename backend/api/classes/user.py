@@ -11,10 +11,10 @@ dbconn rule:
 
 # pylint: disable=import-error
 from flask_restful import Resource
-from ...src.db_helper.dbconn import DBConn
-from ...src.classes_req import user_req
-from ...src.class_helper import user_auth
-from ...src.general_helper.google_auth_extract import GoogleAuthExtract as gae
+from src.db_helper.dbconn import DBConn
+from src.classes_req import user_req
+from src.class_helper import user_auth
+from src.general_helper.google_auth_extract import GoogleAuthExtract as gae
 
 
 class User(Resource):
