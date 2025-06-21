@@ -1,50 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
 import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+import Landing       from './components/Landing';
+import Login         from './components/Login';
 import CreateProfile from './components/CreateProfile';
-import Login from './components/Login';
 
 export default function App() {
-  // 'login' or 'signup'
-  const [mode, setMode] = useState('login');
-
   return (
-    <div className="App" style={{ padding: '2rem', textAlign: 'center' }}>
-      {/* Toggle buttons */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <button
-          onClick={() => setMode('login')}
-          style={{
-            marginRight: '1rem',
-            padding: '0.5rem 1rem',
-            background: mode === 'login' ? '#6366f1' : '#f0f0f0',
-            color: mode === 'login' ? '#fff' : '#333',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Log In
-        </button>
-        <button
-          onClick={() => setMode('signup')}
-          style={{
-            padding: '0.5rem 1rem',
-            background: mode === 'signup' ? '#6366f1' : '#f0f0f0',
-            color: mode === 'signup' ? '#fff' : '#333',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Sign Up
-        </button>
-      </div>
+    <BrowserRouter>
+      <Routes>
+        {/* 1) Landing page at “/” */}
+        <Route path="/" element={<Landing />} />
 
-      {/* Render the chosen form */}
-      {mode === 'login' ? <Login /> : <CreateProfile />}
-    </div>
+        {/* 2) Login page */}
+        <Route path="/login" element={<Login />} />
+
+        {/* 3) Signup / Create Profile */}
+        <Route path="/signup" element={<CreateProfile />} />
+
+        {/* 4) Placeholder Home after auth */}
+        <Route path="/home" element={<h1>🏠 Home coming soon…</h1>} />
+
+        {/* 5) Fallback: redirect unknown URLs back to landing */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
