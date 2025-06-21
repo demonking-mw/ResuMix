@@ -1,0 +1,117 @@
+/* 0) Full-screen background */
+html, body, #root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background-color: #45e0d8;
+}
+
+/* 1) Card wrapper */
+.auth-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  padding: 1.5rem;
+  max-width: 360px;
+  width: 100%;
+  margin: auto;
+  box-sizing: border-box;
+}
+
+/* 2) Title */
+.auth-title {
+  font-size: 1.5rem;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* 3) Form layout */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Labels */
+.auth-form label {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+/* Inputs */
+.auth-form input {
+  width: 100%;
+  padding: 0.75rem;
+  background: #ffffff;
+  color: #d1d5db;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+.auth-form input::placeholder {
+  color: #9ca3af;
+}
+.auth-form input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+/* Primary button */
+.primary-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms, transform 100ms;
+}
+.primary-btn:hover {
+  background-color: #222;
+  transform: translateY(-1px);
+}
+.primary-btn:active {
+  transform: translateY(1px);
+}
+
+/* Divider */
+.divider {
+  border: none;
+  height: 1px;
+  background: #e5e7eb;  /* light-gray (tailwind gray-200) */
+  margin: 0.5rem 0;     /* vertical spacing around the line */
+}
+
+/* Forgot link (centered) */
+.forgot-link {
+  text-align: center;
+  font-size: 0.85rem;
+}
+.forgot-link a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+.forgot-link a:hover {
+  color: #2563eb;
+}
+
+/* Sign-up prompt (centered text) */
+.signup-prompt {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+
+  /* force a dark color so it doesn’t blend in */
+  color: #374151;  
+}
+.signup-prompt .signup-link {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+.signup-prompt .signup-link:hover {
+  color: #2563eb;
+}
