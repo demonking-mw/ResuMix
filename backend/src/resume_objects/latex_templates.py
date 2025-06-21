@@ -108,15 +108,14 @@ class LTemplate:
         line_width = A4[0] - self.style_sheet.default_section_style.wrap_forgive
         # wrap_forgive will be deprecated once proven useless
 
-        if len(titles) == 0:
-            raise ValueError("Item must have at least one title")
-        # Adding the item title height
-        total_height += self.style_sheet.font_lib[
-            "subtitle_font"
-        ].font_attributes.space_before
-        total_height += self.style_sheet.font_lib[
-            "subright_font"
-        ].font_attributes.leading
+        if len(titles) > 0:
+            # Adding the item title height
+            total_height += self.style_sheet.font_lib[
+                "subtitle_font"
+            ].font_attributes.space_before
+            total_height += self.style_sheet.font_lib[
+                "subright_font"
+            ].font_attributes.leading
         if len(titles) > 3:
             # Assume 2 rows since 3 rows is basically never used
             total_height += self.style_sheet.font_lib[
@@ -130,7 +129,10 @@ class LTemplate:
             line_style = self.style_sheet.font_lib[
                 "standard_text_font"
             ].get_paragraph_style()
-            line_para = Paragraph("- " + line_rstring, line_style)
+            if item.style == "p":
+                line_para = Paragraph(line_rstring, line_style)
+            else:
+                line_para = Paragraph("- " + line_rstring, line_style)
             _, line_height = line_para.wrap(line_width, 694200)
             total_height += line_height
         return total_height
@@ -162,11 +164,10 @@ class LTemplate:
 
         RETURN: a list of Paragraphs
         """
-        if not headings and not content:
-            raise ValueError("Headings list must not be empty")
+        section_content = []
         if item_type == "n":
             # Normal resume build:
-            section_content = []
+
             head_len = len(headings)
             # here number represents paragraph number. looks like:
             # 1   2
@@ -178,6 +179,8 @@ class LTemplate:
             if head_len == 1 or head_len == 2 or head_len == 4:
                 # First item without augmentation
                 para1 = headings[0]
+                if head_len == 1:
+                    para2 = " "
                 if head_len > 1:
                     # For length 2 or 4
                     para2 = headings[1]
@@ -189,13 +192,13 @@ class LTemplate:
                 # First item with augmentation
                 first_str = headings[0]
                 subsequent_style = self.style_sheet.font_lib[
-                    "subtitle_middle"
+                    "submiddle_font"
                 ].font_attributes
                 subsequent_size = subsequent_style.font_size
                 subsequent_font = subsequent_style.font_name
                 styled_subsequent = (
                     f'<font name="{subsequent_font}" size="{subsequent_size}">'
-                    f"{headings[2]}</font>"
+                    f"  |  {headings[1]}</font>"
                 )
                 para1 = first_str + styled_subsequent
                 para2 = headings[2]  # here no augmentation needed
@@ -209,11 +212,11 @@ class LTemplate:
                     second_first_str = headings[3]
                     styled_subsequent2 = (
                         f'<font name="{subsequent_font}" size="{subsequent_size}">'
-                        f"{headings[4]}</font>"
+                        f"  |  {headings[4]}</font>"
                     )
                     para3 = second_first_str + styled_subsequent2
                     para4 = headings[5]
-            if para1:
+            if para1 != None:
                 section_content.append(
                     Paragraph(
                         para1,
@@ -222,7 +225,7 @@ class LTemplate:
                         ].get_paragraph_style(),
                     )
                 )
-            if para2:
+            if para2 != None:
                 section_content.append(
                     Paragraph(
                         para2,
@@ -231,7 +234,7 @@ class LTemplate:
                         ].get_paragraph_style(),
                     )
                 )
-            if para3:
+            if para3 != None:
                 section_content.append(
                     Paragraph(
                         para3,
@@ -240,7 +243,7 @@ class LTemplate:
                         ].get_paragraph_style(),
                     )
                 )
-            if para4:
+            if para4 != None:
                 section_content.append(
                     Paragraph(
                         para4,
@@ -252,25 +255,14 @@ class LTemplate:
         elif item_type == "l":
             raise ValueError("Left-aligned items are not supported yet")
         elif item_type == "p":
-            if headings:
-                # It has at least one line, use it
-                section_content.append(
-                    Paragraph(
-                        headings[0],
-                        self.style_sheet.font_lib[
-                            "standard_text_font"
-                        ].get_paragraph_style(),
-                    )
-                )
-                # Avoid adding any other content
-                # since paragraph is meant for one content
-                return section_content
-
+            print("Paragraph: no titiles")
+        else:
+            raise ValueError(f"Unknown item type: {item_type}")
         # building the content
         item_content = r""
         for line in content:
             line_result = r""
-            if bullet_point:
+            if bullet_point and item_type != "p":
                 # Allowed use of section_style
                 bullet_style = self.style_sheet.default_section_style
                 line_result += bullet_style.bullet_symbol

@@ -32,10 +32,10 @@ resume_style_0 = ResumeStyle(
                 font_size=13,
                 text_color_hex="#000000",
                 alignment=0,
-                space_before=1,
+                space_before=10,
                 space_after=0,
                 leading=13,
-                left_indent=40,
+                left_indent=4,
             )
         ),
         "subtitle_font": style_info.StyleInfo(

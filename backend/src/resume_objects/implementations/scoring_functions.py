@@ -40,7 +40,8 @@ def simple_sum_function(section_make_results: list, ai_result: dict) -> int:
     # Logic: for each item, take the max of each trait and piecewise multiply with the decision
     total_score = 0
     for item_version in section_make_results:
-        print("DEBUG: item_versions id:", item_version["id"])
+        if "id" not in item_version:
+            print("DEBUG: item_version missing 'id':", item_version)
         cate_list = ["technical", "soft", "relevance"]
         for cate in cate_list:
             if cate not in ai_result:
@@ -51,5 +52,4 @@ def simple_sum_function(section_make_results: list, ai_result: dict) -> int:
                     if skill in ai_result[cate]:
                         total_score += score * ai_result[cate][skill]
                 total_score += item_score["bias"]
-    print("DEBUG: successfully optimized?")
     return total_score
