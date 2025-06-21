@@ -26,7 +26,7 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
-  resize: horizontal;
+  resize: none;
   min-width: 10rem;
 }
 
