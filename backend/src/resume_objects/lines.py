@@ -37,6 +37,9 @@ class Line:
         self.keywords = []  # list of pure strings
         self.aux_info = {}
         self.bot = AIBot()  # AI bot for generating scores
+
+        self.score: int = None # Used for optimization
+
         # getter and setters are not needed
         if class_dict is not None:
             if "aux_info" not in class_dict:
@@ -76,7 +79,7 @@ class Line:
         WILL OVERWRITE EXISTING
         Effect: modify self.cate_score
         """
-        new_cate_score = {"technical": {}, "soft": {}, "relevance": {}}
+        new_cate_score = {"technical": {}, "soft": {}, "relevance": {}, 'content': self.content_str}
         result = False
         pre_prompt = (
             "The following line is a description line under an item in a resume. "

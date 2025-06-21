@@ -7,6 +7,7 @@ import random
 from datetime import datetime
 
 from .sections import Section
+from .line_eval import line_eval
 from ..general_helper.isa_bot import AIBot
 
 
@@ -171,7 +172,7 @@ class Resume:
         print("DEBUG: ready for optimization")
         return True
 
-    def optimize(self, evaluator: callable, shuffle_times=2) -> bool:
+    def optimize(self, evaluator: callable, job_req: str, shuffle_times=2) -> bool:
         """
         Optimize the resume using the AI decision generated in make()
 
@@ -180,6 +181,7 @@ class Resume:
         -> score: int
 
         GIVEN: evaluator is very close to a linear function, and it is none-decreasing
+
         Result:
         - updates self.optimization_result
         - returns True if successful, False otherwise
@@ -190,6 +192,31 @@ class Resume:
 
         Process: apply the algorithm on the flattened list, then sort them to sections and return
         """
+        # New version
+        all_sects = self.sections
+        all_items = []
+        for sect in all_sects:
+            all_items.extend(sect.items)
+        all_lines = []
+        for itm in all_items:
+            all_lines.extend(itm.line_objs)
+        # parse the job requirement
+        parse_req = 'generate a list of core requirements, each in a single sentence, from the resume. The list of sentences collectively should reflect all of what the job recruiter is looking for. the length of your result list should be between 1 to 12 items. JOB REQUIREMENT: ' + job_req
+        parse_instruction = 'your response must be strictly a python list of strings, as it will be parsed by a program.'
+        job_requirement_list = self.bot.pythoned_response_instruction(parse_req, req_success, parse_instruction, datatype=list)
+        if not req_success:
+            print("DEBUG: parse requirement failed")
+            return False
+        # parse_instruction is proper
+        # call line_eval
+        if not line_eval(parse_instruction, all_lines):
+            print("DEBUG: line_eval failed")
+            return False
+        # Here it's given that line_eval worked
+        
+
+
+
         start_time = datetime.now()
         print("DEBUG: Optimizing resume with evaluator")
         width = len(self.make_results_flattened)
@@ -224,7 +251,7 @@ class Resume:
                         if version["height"] <= h:
                             # If first item
                             if w == 0:
-                                
+
                                 score = evaluator([version], self.requirements)
                                 if score > max_score:
                                     max_score = score
