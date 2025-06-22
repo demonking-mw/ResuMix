@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+all-mpnet-base-v2-local/
 build/
 develop-eggs/
 dist/

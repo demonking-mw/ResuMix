@@ -96,7 +96,7 @@ class LTemplate:
         )
         return rem_height
 
-    def item_height_calculator(self, item: "Item") -> int:
+    def item_height_calculator(self, item: "Item", top_k_lines) -> int:
         """
         Function to calculate the height of an item.
         Uses info from default_section
@@ -125,7 +125,7 @@ class LTemplate:
             total_height += self.style_sheet.font_lib[
                 "subright2_font"
             ].font_attributes.leading
-        for line in item.line_objs:
+        for line in top_k_lines:
             line_rstring = line.content
             line_style = self.style_sheet.font_lib[
                 "standard_text_font"

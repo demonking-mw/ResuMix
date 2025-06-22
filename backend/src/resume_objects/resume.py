@@ -57,35 +57,12 @@ class Resume:
         else:
             self.aux_info = {"type": "resume"}
 
-    def __pre_make(self) -> bool:
-        """
-        Gget the list of attributes for gpt parsing
-        DOES NOT assume that the resume is not empty
-        Result:
-        - Modifies self.attribute_targets
-        - Returns True if the next step should be done, False otherwise
-        """
-        if not self.sections or not self.template:
-            print("DEBUG: No sections or template found , EMPTY RESUME, cannot make")
-            return False
-
-        # Get the attributes for gpt parsing
-        full_attributes = {"technical": [], "soft": [], "relevance": []}
-        for section in self.sections:
-            section_skills = section.get_skills_dict()
-            for cate, _ in full_attributes.items():
-                full_attributes[cate].extend(section_skills[cate])
-                full_attributes[cate] = list(set(full_attributes[cate]))
-        self.attribute_targets = full_attributes
-        return True
-
     def make(self, job_req: str) -> bool:
         """
         Make the resume build ready
         Using AI, generate the requirement
         Then make each section
         Result:
-        - Calls __pre_make()
         - Makes requirement dict, update self.requirements
         - Calls make() for each section, stores the item_core_info in self.section_make_results
             - Shape of section_make_results:
