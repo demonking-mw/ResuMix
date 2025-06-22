@@ -1,7 +1,7 @@
-// src/components/CreateProfile.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './CreateProfile.css';
+import logo from '../assets/ResuMix.png';
 
 export default function CreateProfile() {
   const [formData, setFormData] = useState({
@@ -49,39 +49,69 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="create-profile-container">
-      <div className="profile-card">
-        <h2>Create an account</h2>
-        <form onSubmit={handleSubmit} className="profile-form">
+    <div className="auth-wrapper">
+      <div className="auth-header">
+        <Link to="/" className="logo-link">
+          <img src={logo} alt="ResuMix Logo" className="logo" />
+          <span className="brand-name">ResuMix</span>
+        </Link>
+      </div>
+
+      <div className="auth-card">
+        <h2 className="auth-title">Create an Account</h2>
+        <form className="auth-form" onSubmit={handleSubmit}>
           <input
-            name="firstName" type="text" placeholder="First name"
-            value={formData.firstName} onChange={handleChange} required
+            name="firstName"
+            type="text"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            required
           />
           <input
-            name="lastName" type="text" placeholder="Last name"
-            value={formData.lastName} onChange={handleChange} required
+            name="lastName"
+            type="text"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            required
           />
           <input
-            name="email" type="email" placeholder="Email address"
-            value={formData.email} onChange={handleChange} required
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
           />
           <input
-            name="userId" type="text" placeholder="User ID"
-            value={formData.userId} onChange={handleChange} required
+            name="userId"
+            type="text"
+            placeholder="User ID"
+            value={formData.userId}
+            onChange={handleChange}
+            required
           />
           <input
-            name="password" type="password" placeholder="New password"
-            value={formData.password} onChange={handleChange} required
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
           />
-          <button type="submit">Sign Up</button>
+
+          {message && <p className="error-message">{message}</p>}
+
+          <button type="submit" className="primary-btn">Sign Up</button>
+
+          <hr className="divider" />
+
+          <div className="signup-prompt">
+            Already have an account?{' '}
+            <Link to="/login" className="signup-link">Log In</Link>
+          </div>
         </form>
-
-        {message && <p className="profile-message">{message}</p>}
-
-        <p className="profile-message">
-          Already have an account?{' '}
-          <Link to="/login">Log In</Link>
-        </p>
       </div>
     </div>
   );
