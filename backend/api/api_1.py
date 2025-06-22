@@ -13,9 +13,9 @@ from .classes.user import User
 from io import BytesIO
 
 # Import your resume-related modules
-from ..src.resume_objects.resume import Resume
-from ..src.resume_objects.latex_templates import LTemplate
-from ..src.resume_objects.implementations.scoring_functions import simple_sum_function
+from src.resume_objects.resume import Resume
+from src.resume_objects.latex_templates import LTemplate
+from src.resume_objects.implementations.scoring_functions import simple_sum_function
 
 app = Flask(__name__)
 
