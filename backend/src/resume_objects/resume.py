@@ -4,6 +4,7 @@ Handlles building, optimizing, etc
 """
 
 import random
+import copy
 from datetime import datetime
 
 from .sections import Section
@@ -113,6 +114,7 @@ class Resume:
                 print(f"DEBUG: Failed to make section {section.sect_id}")
                 return False
             self.section_make_results.append(item_core_info)
+        return True
 
     def optimize(self, evaluator: callable, shuffle_times=2) -> bool:
         """
@@ -133,6 +135,19 @@ class Resume:
             section_decision is a list of item_version_ids
 
         Process: apply the algorithm on the flattened list, then sort them to sections and return
+
+
+        New version:
+        at this point, section_make done, similar to old
+        - score is number now!!
+
+        Side effect:
+        update self.optimization_result
+        shape of self.optimization_result:
+        listof section_decision,
+            section_decision is a list of item_version_ids
+
+        Return: bool for successfullness
         """
 
         # Here it's given that line_eval worked
@@ -143,74 +158,59 @@ class Resume:
         width = len(self.make_results_flattened)
         # Width is the number of items in the resume
         height = int(self.template.remaining_height_calculator(len(self.sections)))
-        # Height is the physical height of the resume in pixels
-        time_comp_count = 0
+
         if not self.make_results_flattened:
             print("DEBUG: No items to optimize, empty resume")
             return False
         data_list = self.make_results_flattened
         max_variant_score = 0
         max_result = []  # a list of ici
-        for _ in range(shuffle_times):
-            random.shuffle(data_list)
-            dp_list = [[[] for _ in range(width)] for _ in range(height)]
-            # Each item in dp_list is a list of ici (with id, score, height)
-            for w in range(width):
-                for h in range(height):
-                    max_score = (
-                        evaluator(
-                            [item for item in dp_list[h][w - 1]],
-                            self.requirements,
-                        )
-                        if w > 0
-                        else 0
-                    )
-                    dp_list[h][w] = dp_list[h][w - 1] if w > 0 else []
-                    # This represents not adding the item in question
-                    for version in data_list[w]:
-                        time_comp_count += 1
-                        if version["height"] <= h:
-                            # If first item
-                            if w == 0:
-
-                                score = evaluator([version], self.requirements)
-                                if score > max_score:
-                                    max_score = score
-                                    dp_list[h][w] = [version]
-                            # If not first item
-                            else:
-                                resume_score_list = [
-                                    item
-                                    for item in dp_list[h - version["height"]][w - 1]
+        dp_list = [[[] for _ in range(width)] for _ in range(height)]
+        # Each item in dp_list is a list of [score, list of ici (with id, score, height)0
+        for w in range(width):
+            for h in range(height):
+                dp_list[h][w] = copy.deepcopy(dp_list[h][w - 1]) if w > 0 else [0, []]
+                # This represents not adding the item in question
+                for version in data_list[w]:
+                    if version["height"] <= h:
+                        # If first item
+                        if w == 0:
+                            score = version["score"]
+                            if score > dp_list[h][w][0]:
+                                dp_list[h][w][0] = score
+                                dp_list[h][w][1] = [
+                                    version["id"],
                                 ]
-                                resume_score_list.append(version)
-                                score = evaluator(resume_score_list, self.requirements)
-                                if score > max_score:
-                                    max_score = score
-                                    dp_list[h][w] = dp_list[h - version["height"]][
-                                        w - 1
-                                    ] + [version]
-            current_max_score = evaluator(
-                [item for item in dp_list[height - 1][width - 1]],
-                self.requirements,
-            )
-            if current_max_score > max_variant_score:
-                max_variant_score = current_max_score
-                max_result = dp_list[height - 1][width - 1]
+                        # If not first item
+                        else:
+                            new_score = (
+                                dp_list[h - version["height"]][w - 1][0]
+                                + version["score"]
+                            )
+                            if new_score > dp_list[h][w][0]:
+                                if dp_list[h - version["height"]][w - 1][1]:
+                                    new_items_list = copy.deepcopy(
+                                        dp_list[h - version["height"]][w - 1][1]
+                                    )
+                                    new_items_list.append(version["id"])
+                                else:
+                                    new_items_list = [
+                                        version["id"],
+                                    ]
+
+                                dp_list[h][w][0] = new_score
+                                dp_list[h][w][1] = new_items_list
         # ABOVE NOT TESTED, CAN BE VERY WRONG
         # Currently not building the swap algorithm, as DP should be decent for the job.
         # Will implement if need arises
-        print("DEBUG: time complexity:", time_comp_count)
+        max_result = dp_list[height - 1][width - 1][1]
         result_len = len(self.sections)
         self.optimization_result = [[] for _ in range(result_len)]
-        for ici in max_result:
-            ids = ici["id"]
+        for ids in max_result:
             section_id = ids[0]
             self.optimization_result[section_id].append(ids)
         print("DEBUG: Optimization FINISHED")
-        end_time = datetime.now()
-        elapsed_time = end_time - start_time
-        print("DEBUG: Optimization timespan: ", elapsed_time)
+        print("DEBUG: optimization result:", self.optimization_result)
         return True
 
     def build(self) -> bytes:
