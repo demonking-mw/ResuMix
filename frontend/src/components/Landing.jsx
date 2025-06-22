@@ -18,9 +18,9 @@ const Landing = () => (
     </header>
     <main className="hero">
       <div className="hero-bubble">
-        <h1>AI-Powered Resumes.<br/>Tailored to Every Job.</h1>
+        <h1>Optimize Your Resume.<br/>Maximize Your Impact.</h1>
         <p>
-          Upload your master resume once, then generate the perfect,
+          Upload your resume once, then generate the perfect,
           job-specific resume in seconds.
         </p>
       </div>
