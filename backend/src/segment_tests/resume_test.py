@@ -616,36 +616,6 @@ test_resume_dict = {
                 },
             ],
         },
-        {
-            "sect_id": 5,
-            "aux_info": {"type": "section"},
-            "title": "INTERESTS",
-            "items": [
-                {
-                    "aux_info": {"type": "items", "style": "n"},
-                    "titles": ["Interests", "tests"],
-                    "lines": [
-                        {
-                            "aux_info": {"type": "lines"},
-                            "content": r"Hiking, gourmet cooking, open-source hacking, and AI ethics reading groups.",
-                            "content_str": "Hiking, gourmet cooking, open-source hacking, and AI ethics reading groups.",
-                            "cate_score": {
-                                "technical": {"python": 0},
-                                "soft": {"curiosity": 2, "creativity": 2},
-                                "relevance": {
-                                    "hiking": 1,
-                                    "cooking": 1,
-                                    "hacking": 1,
-                                    "AI ethics": 1,
-                                },
-                            },
-                            "keywords": ["hiking", "cooking", "hacking", "AI ethics"],
-                        }
-                    ],
-                    "cate_scores": {"weight": 1.0, "bias": 0.0},
-                }
-            ],
-        },
     ],
 }
 

@@ -123,9 +123,10 @@ class Section:
                 )
             item_id = item_version_id[1]
             version_id = item_version_id[2]
-            item_version_build = self.item_make_results[item_id][version_id]
-            item_build = item_version_build.get("object")
-            build_target_NEs.append(item_build)
+            item_version_build = self.item_make_results[item_id][version_id][
+                "version_build"
+            ]
+            build_target_NEs.append(item_version_build)
         # Build the section using the template's section_builder
         section_build = templ.section_builder(self.title, build_target_NEs)
         # NOT TESTED YET!!

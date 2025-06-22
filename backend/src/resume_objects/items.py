@@ -86,11 +86,15 @@ class Item:
             total_score = (
                 total_score * self.cate_scores["weight"] + self.cate_scores["bias"]
             )
+            top_k_contents = [line.content for line in top_k]
+
             item = {
                 "numLines": i,
                 "score": total_score,
                 "height": templ.item_height_calculator(self, top_k),
-                "lines_selected": top_k,
+                "version_build": templ.item_builder(
+                    self.titles, top_k_contents, self.style
+                ),
             }
             list_of_items.append(item)
         return list_of_items
