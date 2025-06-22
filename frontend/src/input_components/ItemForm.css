@@ -1,43 +1,16 @@
-.item-form {
-  margin-left: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 900px;
-}
-
 .item-form input {
   width: 100%;
-  max-width: 800px;
-  padding: 10px;
+  padding: 0.6rem 1rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  color: #111111 !important; /* FORCE black text */
 }
 
 .item-form input:focus {
-  outline: none;
   border-color: #4a90e2;
-  background-color: #f9f9ff;
-}
-
-.item-form button {
-  width: fit-content;
-  padding: 8px 16px;
-  margin-bottom: 4px;
-  font-size: 0.9rem;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.item-form button:hover {
-  background-color: #357ac7;
+  outline: none;
+  background-color: #ffffff;
+  color: #111111 !important;
 }
