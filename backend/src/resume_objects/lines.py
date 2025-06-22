@@ -38,7 +38,7 @@ class Line:
         self.aux_info = {}
         self.bot = AIBot()  # AI bot for generating scores
 
-        self.score: int = None # Used for optimization
+        self.score: int = None  # Used for optimization
 
         # getter and setters are not needed
         if class_dict is not None:
@@ -79,7 +79,12 @@ class Line:
         WILL OVERWRITE EXISTING
         Effect: modify self.cate_score
         """
-        new_cate_score = {"technical": {}, "soft": {}, "relevance": {}, 'content': self.content_str}
+        new_cate_score = {
+            "technical": {},
+            "soft": {},
+            "relevance": {},
+            "content": self.content_str,
+        }
         result = False
         pre_prompt = (
             "The following line is a description line under an item in a resume. "

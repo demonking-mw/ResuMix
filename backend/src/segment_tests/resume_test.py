@@ -82,11 +82,7 @@ test_resume_dict = {
                             "keywords": ["automation"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.2, "bias": 1.0},
-                        "soft": {"weight": 1.0, "bias": 1.0},
-                        "relevance": {"weight": 1.0, "bias": 1.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -145,11 +141,7 @@ test_resume_dict = {
                             "keywords": ["cross-functional"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 1.0},
-                        "soft": {"weight": 0.9, "bias": 1.0},
-                        "relevance": {"weight": 1.0, "bias": 1.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -190,11 +182,7 @@ test_resume_dict = {
                             "keywords": ["quality_assurance"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 1.0, "bias": 0.5},
-                        "relevance": {"weight": 1.0, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -243,11 +231,7 @@ test_resume_dict = {
                             "keywords": ["team_growth"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 0.9, "bias": 0.5},
-                        "soft": {"weight": 1.0, "bias": 0.5},
-                        "relevance": {"weight": 0.8, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -285,11 +269,7 @@ test_resume_dict = {
                             "keywords": ["publication"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.1, "bias": 0.5},
-                        "soft": {"weight": 0.8, "bias": 0.5},
-                        "relevance": {"weight": 0.7, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -330,11 +310,7 @@ test_resume_dict = {
                             "keywords": ["teaching"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.8},
-                        "soft": {"weight": 1.0, "bias": 0.8},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -374,11 +350,7 @@ test_resume_dict = {
                             "keywords": ["community"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.8},
-                        "soft": {"weight": 1.0, "bias": 0.8},
-                        "relevance": {"weight": 0.6, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -418,11 +390,7 @@ test_resume_dict = {
                             "keywords": ["infrastructure"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 0.7, "bias": 0.5},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -444,11 +412,7 @@ test_resume_dict = {
                             "keywords": ["data science"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.2, "bias": 0.5},
-                        "soft": {"weight": 0.5, "bias": 0.5},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -470,11 +434,7 @@ test_resume_dict = {
                             "keywords": ["OSS contribution"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 0.7, "bias": 0.5},
-                        "relevance": {"weight": 0.4, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -492,11 +452,7 @@ test_resume_dict = {
                             "keywords": ["developer tools"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 0.8, "bias": 0.5},
-                        "relevance": {"weight": 0.3, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -525,11 +481,7 @@ test_resume_dict = {
                             "keywords": ["social media"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 0.6, "bias": 0.5},
-                        "relevance": {"weight": 0.3, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -561,11 +513,7 @@ test_resume_dict = {
                             "keywords": ["polyglot"],
                         }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.0},
-                        "soft": {"weight": 0.0, "bias": 0.0},
-                        "relevance": {"weight": 0.0, "bias": 0.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -591,11 +539,7 @@ test_resume_dict = {
                             "keywords": ["devops"],
                         }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.0},
-                        "soft": {"weight": 0.0, "bias": 0.0},
-                        "relevance": {"weight": 0.0, "bias": 0.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -619,11 +563,7 @@ test_resume_dict = {
                             "keywords": ["data_storage"],
                         }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.0},
-                        "soft": {"weight": 0.0, "bias": 0.0},
-                        "relevance": {"weight": 0.0, "bias": 0.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -650,11 +590,7 @@ test_resume_dict = {
                             "keywords": ["community outreach"],
                         }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 0.5, "bias": 0.0},
-                        "soft": {"weight": 1.0, "bias": 0.0},
-                        "relevance": {"weight": 0.5, "bias": 0.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -676,11 +612,7 @@ test_resume_dict = {
                             "keywords": ["open source"],
                         }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.0},
-                        "soft": {"weight": 0.5, "bias": 0.0},
-                        "relevance": {"weight": 0.5, "bias": 0.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -710,11 +642,7 @@ test_resume_dict = {
                             "keywords": ["hiking", "cooking", "hacking", "AI ethics"],
                         }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 0.0, "bias": 0.0},
-                        "soft": {"weight": 0.5, "bias": 0.0},
-                        "relevance": {"weight": 1.0, "bias": 0.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 }
             ],
         },
@@ -725,11 +653,14 @@ test_resume_dict = {
 template = LTemplate()
 
 my_resume = Resume(template, test_resume_dict)
-my_resume.make(
+if not my_resume.make(
     "This is a typical backend software engineer role requiring Python, SQL, and team leadership skills. "
-)
+):
+    print("sadge")
 print("Resume made successfully")
+print(my_resume.section_make_results)
 my_resume.optimize(simple_sum_function)
+
 print("Optimization result, here is the result:")
 print(my_resume.optimization_result)
 print("Building the resume PDF...")

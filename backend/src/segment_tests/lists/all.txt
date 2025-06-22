@@ -1,4 +1,6 @@
 bot_test
 __init__
 lines_class_test
+opt_test2
+opt_test
 resume_test

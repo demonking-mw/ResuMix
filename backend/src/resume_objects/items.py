@@ -68,7 +68,13 @@ class Item:
         """
         returns the top k Line objects with the highest line scores in ascending order
         """
-        sorted_lines = sorted(lines, key=lambda line: (line.score is not None, line.score if line.score is not None else 0))
+        sorted_lines = sorted(
+            lines,
+            key=lambda line: (
+                line.score is not None,
+                line.score if line.score is not None else 0,
+            ),
+        )
         return sorted_lines[-k:]
 
     def make(self, templ: LTemplate) -> List[dict]:
@@ -83,11 +89,13 @@ class Item:
             total_score = 0
             for j in top_k:
                 total_score += j.score or 0
-            total_score = total_score*self.cate_scores['weight'] + self.cate_scores['bias']
+            total_score = (
+                total_score * self.cate_scores["weight"] + self.cate_scores["bias"]
+            )
             item = {
                 "numLines": i,
                 "score": total_score,
-                "height": templ.item_height_calculator(),
+                "height": templ.item_height_calculator(self),
                 "lines_selected": top_k,
             }
             list_of_items.append(item)
