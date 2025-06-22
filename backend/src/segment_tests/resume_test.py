@@ -29,14 +29,14 @@ test_resume_dict = {
                     "titles": [
                         "Senior Software Engineer",
                         "ACME Corp",
-                        "2021 – Present",
+                        "2021–Present",
                         "New York, NY",
                     ],
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Architected and implemented microservices using Python and Docker, reducing deployment time by 75\%.",
-                            "content_str": "Architected and implemented microservices using Python and Docker, reducing deployment time by 75%.",
+                            "content": r"Architected and implemented microservices in Python & Docker, slashing deployment time by 75\%.",
+                            "content_str": "Architected and implemented microservices in Python & Docker, slashing deployment time by 75%.",
                             "cate_score": {
                                 "technical": {
                                     "microservices": 3,
@@ -44,127 +44,104 @@ test_resume_dict = {
                                     "Docker": 3,
                                     "deployment optimization": 2,
                                 },
-                                "soft": {
-                                    "communication": 1,
-                                    "problem_solving": 2,
-                                },
-                                "relevance": {
-                                    "passion": 1,
-                                    "interest": 1,
-                                },
+                                "soft": {"communication": 2, "problem_solving": 2},
+                                "relevance": {"innovation": 1},
                             },
-                            "keywords": ["passion", "interest"],
+                            "keywords": ["innovation"],
                         },
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Led cross-functional teams of up to 8 engineers, sprinters and QA to deliver 5 major features per quarter.",
-                            "content_str": "Led cross-functional teams of up to 8 engineers, sprinters and QA to deliver 5 major features per quarter.",
+                            "content": r"Led a cross-functional team of 12 Engineers and QA to deliver 6 major features per quarter.",
+                            "content_str": "Led a cross-functional team of 12 Engineers and QA to deliver 6 major features per quarter.",
                             "cate_score": {
                                 "technical": {
                                     "leadership": 3,
                                     "teamwork": 3,
                                     "project_management": 3,
-                                    "communication": 2,
+                                    "QA processes": 2,
                                 },
-                                "soft": {
-                                    "leadership": 3,
-                                    "collaboration": 2,
-                                },
-                                "relevance": {
-                                    "sprinters": 1,
-                                    "led": 1,
-                                },
+                                "soft": {"leadership": 3, "collaboration": 2},
+                                "relevance": {"mentorship": 1},
                             },
-                            "keywords": ["sprinters", "led"],
+                            "keywords": ["mentorship"],
                         },
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Introduced CI/CD pipelines with Jenkins and GitHub Actions, improving release frequency by 300\%.",
-                            "content_str": "Introduced CI/CD pipelines with Jenkins and GitHub Actions, improving release frequency by 300%.",
+                            "content": r"Introduced CI/CD pipelines with Jenkins & GitHub Actions, boosting release cadence by 300\%.",
+                            "content_str": "Introduced CI/CD pipelines with Jenkins & GitHub Actions, boosting release cadence by 300%.",
                             "cate_score": {
                                 "technical": {
                                     "CI/CD": 3,
                                     "Jenkins": 3,
                                     "GitHub Actions": 3,
-                                    "Release Management": 2,
+                                    "release engineering": 2,
                                 },
-                                "soft": {
-                                    "communication": 2,
-                                    "problem_solving": 3,
-                                },
-                                "relevance": {
-                                    "passion": 1,
-                                    "interest": 1,
-                                },
+                                "soft": {"initiative": 2, "problem_solving": 2},
+                                "relevance": {"automation": 1},
                             },
-                            "keywords": ["passion", "interest"],
+                            "keywords": ["automation"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.2, "bias": 1.0},
-                        "soft": {"weight": 1.0, "bias": 1.0},
-                        "relevance": {"weight": 1.0, "bias": 1.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
                     "titles": [
                         "Software Engineer",
                         "BetaCorp",
-                        "2019 – 2021",
+                        "2019–2021",
                         "San Francisco, CA",
                     ],
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Designed and built RESTful APIs in Node.js serving 2M+ daily active users.",
-                            "content_str": "Designed and built RESTful APIs in Node.js serving 2M+ daily active users.",
+                            "content": r"Designed & built RESTful APIs in Node.js serving 2M+ DAU with 99.9\% uptime.",
+                            "content_str": "Designed & built RESTful APIs in Node.js serving 2M+ DAU with 99.9% uptime.",
                             "cate_score": {
                                 "technical": {
                                     "RESTful APIs": 3,
                                     "Node.js": 3,
-                                    "Scalability": 2,
-                                    "Backend Development": 3,
+                                    "scalability": 2,
+                                    "uptime engineering": 2,
                                 },
-                                "soft": {
-                                    "communication": 2,
-                                    "problem_solving": 3,
-                                },
-                                "relevance": {
-                                    "passion": 1,
-                                    "interest": 1,
-                                },
+                                "soft": {"communication": 2, "detail_orientation": 2},
+                                "relevance": {"performance": 1},
                             },
-                            "keywords": ["passion", "interest"],
+                            "keywords": ["performance"],
                         },
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Optimized MySQL queries and Redis caching, cutting average response times from 350ms to 50ms.",
-                            "content_str": "Optimized MySQL queries and Redis caching, cutting average response times from 350ms to 50ms.",
+                            "content": r"Optimized MySQL queries and Redis caching, cutting latencies from 350ms to 50ms.",
+                            "content_str": "Optimized MySQL queries and Redis caching, cutting latencies from 350ms to 50ms.",
                             "cate_score": {
                                 "technical": {
                                     "MySQL": 3,
                                     "Redis": 3,
-                                    "Performance Optimization": 3,
-                                    "Query Optimization": 3,
+                                    "query optimization": 3,
+                                    "cache design": 2,
                                 },
-                                "soft": {
-                                    "communication": 1,
-                                    "problem_solving": 3,
-                                },
-                                "relevance": {
-                                    "passion": 1,
-                                    "interest": 1,
-                                },
+                                "soft": {"analysis": 2, "problem_solving": 3},
+                                "relevance": {"efficiency": 1},
                             },
-                            "keywords": ["passion", "interest"],
+                            "keywords": ["efficiency"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Collaborated with frontend team to integrate GraphQL endpoints in React apps.",
+                            "content_str": "Collaborated with frontend team to integrate GraphQL endpoints in React apps.",
+                            "cate_score": {
+                                "technical": {
+                                    "GraphQL": 3,
+                                    "React": 2,
+                                    "API integration": 2,
+                                },
+                                "soft": {"teamwork": 2, "communication": 2},
+                                "relevance": {"cross-functional": 1},
+                            },
+                            "keywords": ["cross-functional"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 1.0},
-                        "soft": {"weight": 0.8, "bias": 1.0},
-                        "relevance": {"weight": 1.0, "bias": 1.0},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
@@ -177,32 +154,122 @@ test_resume_dict = {
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Implemented data visualization dashboards in React.js, increasing data visibility for stakeholders by 40\%.",
-                            "content_str": "Implemented data visualization dashboards in React.js, increasing data visibility for stakeholders by 40%.",
+                            "content": r"Built data-visualization dashboards in React.js, increasing stakeholder visibility by 40\%.",
+                            "content_str": "Built data-visualization dashboards in React.js, increasing stakeholder visibility by 40%.",
                             "cate_score": {
                                 "technical": {
                                     "React.js": 3,
-                                    "Data Visualization": 3,
-                                    "Stakeholder Communication": 2,
-                                    "Performance Improvement": 2,
+                                    "data visualization": 3,
+                                    "UX/UI collaboration": 2,
                                 },
+                                "soft": {"creativity": 2, "communication": 2},
+                                "relevance": {"visual design": 1},
+                            },
+                            "keywords": ["visual design"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Automated end-to-end tests with Selenium, reducing regression bugs by 30\%.",
+                            "content_str": "Automated end-to-end tests with Selenium, reducing regression bugs by 30%.",
+                            "cate_score": {
+                                "technical": {"Selenium": 3, "test automation": 3},
                                 "soft": {
-                                    "communication": 2,
+                                    "attention_to_detail": 2,
                                     "problem_solving": 2,
                                 },
-                                "relevance": {
-                                    "data visualization": 1,
-                                    "React.js": 1,
-                                },
+                                "relevance": {"quality_assurance": 1},
                             },
-                            "keywords": ["data visualization", "React.js"],
+                            "keywords": ["quality_assurance"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 1.0, "bias": 0.5},
-                        "relevance": {"weight": 1.0, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": [
+                        "Junior Developer",
+                        "Delta Tech",
+                        "2016–2018",
+                        "Seattle, WA",
+                    ],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Maintained legacy Java codebase; refactored critical modules to Spring Boot.",
+                            "content_str": "Maintained legacy Java codebase; refactored critical modules to Spring Boot.",
+                            "cate_score": {
+                                "technical": {
+                                    "Java": 3,
+                                    "Spring Boot": 3,
+                                    "legacy systems": 2,
+                                },
+                                "soft": {"adaptability": 2, "analysis": 2},
+                                "relevance": {"system_maintenance": 1},
+                            },
+                            "keywords": ["system_maintenance"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Integrated third-party payment gateway (Stripe) with internal services.",
+                            "content_str": "Integrated third-party payment gateway (Stripe) with internal services.",
+                            "cate_score": {
+                                "technical": {"Stripe": 3, "API integration": 2},
+                                "soft": {"collaboration": 2},
+                                "relevance": {"e-commerce": 1},
+                            },
+                            "keywords": ["e-commerce"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Led weekly code reviews and mentored two new hires.",
+                            "content_str": "Led weekly code reviews and mentored two new hires.",
+                            "cate_score": {
+                                "technical": {"code_review": 3},
+                                "soft": {"mentoring": 3, "leadership": 2},
+                                "relevance": {"team_growth": 1},
+                            },
+                            "keywords": ["team_growth"],
+                        },
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": [
+                        "Research Assistant",
+                        "State University",
+                        "2015–2016",
+                        "College Town, USA",
+                    ],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Built a distributed log-analysis tool in Go processing 10M events/day.",
+                            "content_str": "Built a distributed log-analysis tool in Go processing 10M events/day.",
+                            "cate_score": {
+                                "technical": {
+                                    "Go": 3,
+                                    "distributed systems": 3,
+                                    "log analysis": 2,
+                                },
+                                "soft": {"research": 2},
+                                "relevance": {"data_pipelines": 1},
+                            },
+                            "keywords": ["data_pipelines"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Published findings in ACM symposium on large-scale system monitoring.",
+                            "content_str": "Published findings in ACM symposium on large-scale system monitoring.",
+                            "cate_score": {
+                                "technical": {"academic writing": 2},
+                                "soft": {"communication": 2},
+                                "relevance": {"publication": 1},
+                            },
+                            "keywords": ["publication"],
+                        },
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -214,63 +281,76 @@ test_resume_dict = {
                 {
                     "aux_info": {"type": "items", "style": "n"},
                     "titles": [
+                        "M.S. in Computer Science",
+                        "Ivy University",
+                        "2019–2021",
+                        "GPA: 3.9/4.0",
+                    ],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Thesis: “Scalable Stream Processing in Kubernetes” supervised by Prof. X.",
+                            "content_str": "Thesis: “Scalable Stream Processing in Kubernetes” supervised by Prof. X.",
+                            "cate_score": {
+                                "technical": {"stream processing": 3, "Kubernetes": 3},
+                                "soft": {"research": 2},
+                                "relevance": {"academic_interest": 1},
+                            },
+                            "keywords": ["academic_interest"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Graduate TA for Distributed Systems course (graded 200+ assignments).",
+                            "content_str": "Graduate TA for Distributed Systems course (graded 200+ assignments).",
+                            "cate_score": {
+                                "technical": {"distributed systems": 3},
+                                "soft": {"mentoring": 2, "organization": 2},
+                                "relevance": {"teaching": 1},
+                            },
+                            "keywords": ["teaching"],
+                        },
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": [
                         "B.S. in Computer Science",
-                        "MARMOSET!!!",
                         "State University",
-                        "2015 – 2019",
+                        "2011–2015",
                         "GPA: 3.8/4.0",
                     ],
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Relevant Coursework: Algorithms, Data Structures, Databases, Operating Systems, AI.",
-                            "content_str": "Relevant Coursework: Algorithms, Data Structures, Databases, Operating Systems, AI.",
+                            "content": r"Relevant coursework: Algorithms, Data Structures, OS, DB, AI.",
+                            "content_str": "Relevant coursework: Algorithms, Data Structures, OS, DB, AI.",
                             "cate_score": {
                                 "technical": {
                                     "Algorithms": 3,
                                     "Data Structures": 3,
-                                    "Databases": 2,
                                     "Operating Systems": 2,
+                                    "Databases": 2,
+                                    "AI": 2,
                                 },
-                                "soft": {
-                                    "problem_solving": 2,
-                                    "critical_thinking": 2,
-                                },
-                                "relevance": {
-                                    "Algorithms": 1,
-                                    "AI": 1,
-                                },
+                                "soft": {"analysis": 2},
+                                "relevance": {"academic_interest": 1},
                             },
-                            "keywords": ["Algorithms", "AI"],
+                            "keywords": ["academic_interest"],
                         },
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"President of Programming Club; organized hackathons with 200+ participants.",
-                            "content_str": "President of Programming Club; organized hackathons with 200+ participants.",
+                            "content": r"President, Programming Club: organized hackathons with 300+ participants.",
+                            "content_str": "President, Programming Club: organized hackathons with 300+ participants.",
                             "cate_score": {
-                                "technical": {
-                                    "leadership": 3,
-                                    "event_organization": 3,
-                                    "community_engagement": 2,
-                                    "programming": 1,
-                                },
-                                "soft": {
-                                    "leadership": 3,
-                                    "organizational_skills": 3,
-                                },
-                                "relevance": {
-                                    "hackathons": 1,
-                                    "Programming Club": 1,
-                                },
+                                "technical": {"event_planning": 2},
+                                "soft": {"leadership": 3, "organization": 2},
+                                "relevance": {"community": 1},
                             },
-                            "keywords": ["hackathons", "Programming Club"],
+                            "keywords": ["community"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.8},
-                        "soft": {"weight": 1.0, "bias": 0.8},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -281,95 +361,127 @@ test_resume_dict = {
             "items": [
                 {
                     "aux_info": {"type": "items", "style": "n"},
-                    "titles": ["Real-Time Chat App", "React, Typescript", "2020"],
+                    "titles": ["Real-Time Chat App", "Go, Vue.js", "2020"],
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Built a WebSocket-based chat application in Go and Vue.js, supporting 1000 concurrent users.",
-                            "content_str": "Built a WebSocket-based chat application in Go and Vue.js, supporting 1000 concurrent users.",
+                            "content": r"Built WebSocket chat server in Go, supporting 10k+ concurrent users.",
+                            "content_str": "Built WebSocket chat server in Go, supporting 10k+ concurrent users.",
                             "cate_score": {
                                 "technical": {
                                     "WebSocket": 3,
                                     "Go": 3,
-                                    "Vue.js": 3,
-                                    "Scalability": 2,
+                                    "concurrency": 2,
                                 },
-                                "soft": {
-                                    "communication": 2,
-                                    "problem_solving": 3,
-                                },
-                                "relevance": {
-                                    "WebSocket": 1,
-                                    "chat application": 1,
-                                },
+                                "soft": {"initiative": 2},
+                                "relevance": {"real-time systems": 1},
                             },
-                            "keywords": ["WebSocket", "chat application"],
+                            "keywords": ["real-time systems"],
                         },
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Deployed on AWS with Terraform and Docker Compose.",
-                            "content_str": "Deployed on AWS with Terraform and Docker Compose.",
+                            "content": r"Deployed via Docker Compose on AWS EC2, automated with Terraform.",
+                            "content_str": "Deployed via Docker Compose on AWS EC2, automated with Terraform.",
                             "cate_score": {
-                                "technical": {
-                                    "AWS": 3,
-                                    "Terraform": 3,
-                                    "Docker": 3,
-                                    "Deployment": 2,
-                                },
-                                "soft": {
-                                    "communication": 1,
-                                    "problem_solving": 2,
-                                },
-                                "relevance": {
-                                    "passion": 1,
-                                    "interest": 1,
-                                },
+                                "technical": {"Docker": 3, "AWS": 3, "Terraform": 3},
+                                "soft": {"operations": 2},
+                                "relevance": {"infrastructure": 1},
                             },
-                            "keywords": ["passion", "interest"],
+                            "keywords": ["infrastructure"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.5},
-                        "soft": {"weight": 0.7, "bias": 0.5},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
                 {
                     "aux_info": {"type": "items", "style": "n"},
-                    "titles": [
-                        "Machine Learning Pipeline",
-                        "Kaggle Competition",
-                        "2019",
-                    ],
+                    "titles": ["ML Pipeline", "Kaggle Competition", "2019"],
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"Designed end-to-end ML pipeline in Python with scikit-learn, achieving top 5\% placement.",
-                            "content_str": "Designed end-to-end ML pipeline in Python with scikit-learn, achieving top 5% placement.",
+                            "content": r"Built end-to-end ML pipeline in Python with scikit-learn; top 5\% finish.",
+                            "content_str": "Built end-to-end ML pipeline in Python with scikit-learn; top 5% finish.",
                             "cate_score": {
                                 "technical": {
                                     "Python": 3,
-                                    "Machine Learning": 3,
                                     "scikit-learn": 3,
-                                    "Pipeline Design": 2,
+                                    "ML pipeline": 2,
                                 },
-                                "soft": {
-                                    "problem_solving": 3,
-                                    "technical_skills": 3,
-                                },
-                                "relevance": {
-                                    "passion": 1,
-                                    "interest": 1,
-                                },
+                                "soft": {"problem_solving": 3},
+                                "relevance": {"data science": 1},
                             },
-                            "keywords": ["passion", "interest"],
+                            "keywords": ["data science"],
                         },
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.2, "bias": 0.5},
-                        "soft": {"weight": 0.5, "bias": 0.5},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Distributed Logging System", "Open Source", "2018"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Authored an open-source log aggregator in Rust, 1k+ GitHub stars.",
+                            "content_str": "Authored an open-source log aggregator in Rust, 1k+ GitHub stars.",
+                            "cate_score": {
+                                "technical": {
+                                    "Rust": 3,
+                                    "open source": 2,
+                                    "log aggregation": 2,
+                                },
+                                "soft": {"community": 1},
+                                "relevance": {"OSS contribution": 1},
+                            },
+                            "keywords": ["OSS contribution"],
+                        },
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Automated Testing Framework", "Personal", "2017"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Designed a plug-in based test framework in Python, used by 50+ devs.",
+                            "content_str": "Designed a plug-in based test framework in Python, used by 50+ devs.",
+                            "cate_score": {
+                                "technical": {"Python": 3, "test frameworks": 3},
+                                "soft": {"automation": 2},
+                                "relevance": {"developer tools": 1},
+                            },
+                            "keywords": ["developer tools"],
+                        },
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Personal Blog Platform", "Django, React", "2016"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Built full-stack blogging platform in Django with React front-end.",
+                            "content_str": "Built full-stack blogging platform in Django with React front-end.",
+                            "cate_score": {
+                                "technical": {"Django": 3, "React": 3, "full stack": 2},
+                                "soft": {"initiative": 2},
+                                "relevance": {"content management": 1},
+                            },
+                            "keywords": ["content management"],
+                        },
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Integrated markdown editor and social share APIs.",
+                            "content_str": "Integrated markdown editor and social share APIs.",
+                            "cate_score": {
+                                "technical": {"Markdown": 2, "API integration": 2},
+                                "soft": {"problem_solving": 2},
+                                "relevance": {"social media": 1},
+                            },
+                            "keywords": ["social media"],
+                        },
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
                 },
             ],
         },
@@ -379,51 +491,176 @@ test_resume_dict = {
             "title": "SKILLS",
             "items": [
                 {
-                    "aux_info": {"type": "items", "style": "p"},
+                    "aux_info": {"type": "items", "style": "n"},
                     "titles": [],
                     "lines": [
                         {
                             "aux_info": {"type": "lines"},
-                            "content": r"The humble onion is a global culinary cornerstone. Its pungent, sweet, and savory layers add versatile depth to countless dishes, from raw salads to caramelized bases. An indispensable kitchen staple, it's known for its flavor… and those infamous tear-jerking fumes. A small price for its kitchen dominance!",
-                            "content_str": "The humble onion is a global culinary cornerstone. Its pungent, sweet, and savory layers add versatile depth to countless dishes, from raw salads to caramelized bases. An indispensable kitchen staple, it's known for its flavor… and those infamous tear-jerking fumes. A small price for its kitchen dominance!",
+                            "content": r"Python, Go, Java, C\+\+, JavaScript, Rust",
+                            "content_str": "Python, Go, Java, C++, JavaScript, Rust",
                             "cate_score": {
                                 "technical": {
-                                    "Algorithms": 3,
-                                    "Data Structures": 3,
-                                    "Databases": 2,
-                                    "Operating Systems": 2,
+                                    "Python": 3,
+                                    "Go": 3,
+                                    "Java": 3,
+                                    "C++": 2,
+                                    "JavaScript": 3,
+                                    "Rust": 2,
                                 },
-                                "soft": {
-                                    "problem_solving": 2,
-                                    "critical_thinking": 2,
+                                "soft": {"adaptability": 1},
+                                "relevance": {"polyglot": 1},
+                            },
+                            "keywords": ["polyglot"],
+                        }
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Frameworks & Tools", "test"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Docker, Kubernetes, AWS, Jenkins, Terraform, React, Vue",
+                            "content_str": "Docker, Kubernetes, AWS, Jenkins, Terraform, React, Vue",
+                            "cate_score": {
+                                "technical": {
+                                    "Docker": 3,
+                                    "Kubernetes": 3,
+                                    "AWS": 3,
+                                    "Jenkins": 2,
+                                    "Terraform": 2,
+                                    "React": 2,
+                                    "Vue": 2,
                                 },
+                                "soft": {"learning": 1},
+                                "relevance": {"devops": 1},
+                            },
+                            "keywords": ["devops"],
+                        }
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Databases", "test"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"PostgreSQL, MySQL, MongoDB, Redis, Cassandra",
+                            "content_str": "PostgreSQL, MySQL, MongoDB, Redis, Cassandra",
+                            "cate_score": {
+                                "technical": {
+                                    "PostgreSQL": 3,
+                                    "MySQL": 3,
+                                    "MongoDB": 2,
+                                    "Redis": 2,
+                                    "Cassandra": 1,
+                                },
+                                "soft": {"reliability": 1},
+                                "relevance": {"data_storage": 1},
+                            },
+                            "keywords": ["data_storage"],
+                        }
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+            ],
+        },
+        # (Sections 4–8: Certifications, Honors, Volunteer, Publications, Interests)
+        # these have no "lines" or already have no lines so they won’t trigger AI
+        {
+            "sect_id": 4,
+            "aux_info": {"type": "section"},
+            "title": "VOLUNTEER",
+            "items": [
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Coding Mentor", "Girls Who Code", "2017–Present"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Mentored 50+ high-school students in Python & web development.",
+                            "content_str": "Mentored 50+ high-school students in Python & web development.",
+                            "cate_score": {
+                                "technical": {"Python": 2, "web development": 2},
+                                "soft": {"mentoring": 3, "communication": 2},
+                                "relevance": {"community outreach": 1},
+                            },
+                            "keywords": ["community outreach"],
+                        }
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": [
+                        "Open-Source Contributor",
+                        "Mozilla Foundation",
+                        "2016–Present",
+                    ],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Contributed patches to Firefox & Rust projects; fixed 20+ bugs.",
+                            "content_str": "Contributed patches to Firefox & Rust projects; fixed 20+ bugs.",
+                            "cate_score": {
+                                "technical": {"Rust": 2, "bug fixing": 3},
+                                "soft": {"collaboration": 2},
+                                "relevance": {"open source": 1},
+                            },
+                            "keywords": ["open source"],
+                        }
+                    ],
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                },
+            ],
+        },
+        {
+            "sect_id": 5,
+            "aux_info": {"type": "section"},
+            "title": "INTERESTS",
+            "items": [
+                {
+                    "aux_info": {"type": "items", "style": "n"},
+                    "titles": ["Interests", "tests"],
+                    "lines": [
+                        {
+                            "aux_info": {"type": "lines"},
+                            "content": r"Hiking, gourmet cooking, open-source hacking, and AI ethics reading groups.",
+                            "content_str": "Hiking, gourmet cooking, open-source hacking, and AI ethics reading groups.",
+                            "cate_score": {
+                                "technical": {"python": 0},
+                                "soft": {"curiosity": 2, "creativity": 2},
                                 "relevance": {
-                                    "Algorithms": 1,
-                                    "AI": 1,
+                                    "hiking": 1,
+                                    "cooking": 1,
+                                    "hacking": 1,
+                                    "AI ethics": 1,
                                 },
                             },
-                            "keywords": ["Algorithms", "AI"],
-                        },
+                            "keywords": ["hiking", "cooking", "hacking", "AI ethics"],
+                        }
                     ],
-                    "cate_scores": {
-                        "technical": {"weight": 1.0, "bias": 0.8},
-                        "soft": {"weight": 1.0, "bias": 0.8},
-                        "relevance": {"weight": 0.5, "bias": 0.5},
-                    },
-                },
+                    "cate_scores": {"weight": 1.0, "bias": 0.0},
+                }
             ],
         },
     ],
 }
 
+
 template = LTemplate()
 
 my_resume = Resume(template, test_resume_dict)
-my_resume.make(
+if not my_resume.make(
     "This is a typical backend software engineer role requiring Python, SQL, and team leadership skills. "
-)
+):
+    print("sadge")
 print("Resume made successfully")
+print(my_resume.section_make_results)
 my_resume.optimize(simple_sum_function)
+
 print("Optimization result, here is the result:")
 print(my_resume.optimization_result)
 print("Building the resume PDF...")

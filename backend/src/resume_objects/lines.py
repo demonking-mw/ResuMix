@@ -37,6 +37,9 @@ class Line:
         self.keywords = []  # list of pure strings
         self.aux_info = {}
         self.bot = AIBot()  # AI bot for generating scores
+
+        self.score: int = None  # Used for optimization
+
         # getter and setters are not needed
         if class_dict is not None:
             if "aux_info" not in class_dict:
@@ -76,7 +79,12 @@ class Line:
         WILL OVERWRITE EXISTING
         Effect: modify self.cate_score
         """
-        new_cate_score = {"technical": {}, "soft": {}, "relevance": {}}
+        new_cate_score = {
+            "technical": {},
+            "soft": {},
+            "relevance": {},
+            "content": self.content_str,
+        }
         result = False
         pre_prompt = (
             "The following line is a description line under an item in a resume. "
@@ -128,7 +136,7 @@ class Line:
             relevance_prompt = (
                 "Identify the person's passion mentioned from this line that is "
                 "irrelevant to the core technical skills and soft skills shown in the "
-                "activity. Select the top 2 that demonstrates the person's interest in "
+                "activity. It must be very specific, do not use general words such as 'passion'. Select the top 2 that demonstrates the person's interest in "
                 "the topic. Output it in a dict with the keywords as keys and 1 as "
                 "values. The line is: "
             )
@@ -157,6 +165,8 @@ class Line:
             result["aux_info"] = {"type": "lines"}
         result["content"] = self.content
         result["content_str"] = self.content_str
+        if content is not None:
+            self.gen_score()
         result["cate_score"] = self.cate_score
         result["keywords"] = self.keywords
         return result

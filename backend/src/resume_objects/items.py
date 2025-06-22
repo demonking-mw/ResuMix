@@ -12,7 +12,7 @@ Listof item objects(dicts):
 """
 
 import warnings
-
+from typing import List
 from itertools import combinations
 
 from .lines import Line
@@ -22,16 +22,10 @@ from .latex_templates import LTemplate
 class Item:
     """
     Functions needed:
-    - build: takes in a weight set, make the best item with different length
-        - result of build: list of dictionaries
-            - each dict contains the latex object,
-    - make_specific: make a specific item with selected lines, mainly for inter
     - to_dict: convert back to dictionary
     - calc_score: calculate the score of the item
         - the function is an input!!
         - takes the data of each Line object and cook
-    - get_skills_dict: get the skills dict for the item
-        - gets from each line object, and returns a dict of skills (not overlapping)
     Variables needed:
     - Title: list
     - Lines: list of Lines class
@@ -45,7 +39,6 @@ class Item:
         self.line_objs = []
         self.cate_scores = {}
         self.aux_info = {}
-        self.paragraph = r""
         self.style = ""
         if class_dict is not None:
             if class_dict["aux_info"]["type"] != "items":
@@ -61,237 +54,46 @@ class Item:
             self.aux_info = class_dict.get("aux_info")
         else:
             self.cate_scores = {
-                "technical": {
-                    "weight": 1.0,
-                    "bias": 1.0,
-                },
-                "soft": {
-                    "weight": 1.0,
-                    "bias": 1.0,
-                },
-                "relevance": {
-                    "weight": 1.0,
-                    "bias": 1.0,
-                },
+                "weight": 1.0,
+                "bias": 1.0,
             }
 
-    def make_specific(
-        self, lines_score: dict, lines_sel: list, templ: LTemplate
-    ) -> dict:
+    def top_k_lines(self, lines: List[Line], k: int) -> List[Line]:
         """
-        make a build dict with selected lines and given score
-        dictionary contains: pylatex object, scores
-        scores won't be calculated if processor is None
+        returns the top k Line objects with the highest line scores in ascending order
         """
-        selected_lines = []
-        if lines_sel is not None:
-            lines_sel = sorted(lines_sel)
-        for line_no in lines_sel:
-            selected_lines.append(self.line_objs[line_no])
-        # NoEscape for Latex safety
-        lines_content_list = []
-        for line in selected_lines:
-            lines_content_list.append(line.content)
-        latex_obj = templ.item_builder(
-            self.titles, lines_content_list, item_type=self.style
+        sorted_lines = sorted(
+            lines,
+            key=lambda line: (
+                line.score is not None,
+                line.score if line.score is not None else 0,
+            ),
         )
-        # THE BELOW BLOCK WILL BE USED IN item_builder IN LTEMPLATE.
-        # # Append the \resumeSubheading command
-        # if len(self.titles) == 4:
-        #     latex = (
-        #         r"\resumeSubheading"
-        #         f"{{{self.titles[0]}}}{{{self.titles[1]}}}{{{self.titles[2]}}}{{{self.titles[3]}}}\n"
-        #         r"\resumeItemListStart"
-        #         "\n"
-        #     )
-        #     for line in selected_lines:
-        #         latex += f"    \\resumeItem{{{line.content}}}\n"
-        #     latex += r"\resumeItemListEnd" "\n"
-        #     latex_obj = NoEscape(latex)
-        # else:
-        #     raise NotImplementedError("ERROR: OTHER LENGTHS ARE NOT IMPLEMENTED")
-        return {
-            "object": latex_obj,
-            "score": lines_score,
-            "height": templ.item_height_calculator(self),
-        }
+        return sorted_lines[-k:]
 
-    def build(self, templ: LTemplate, requirement: dict) -> list:
+    def make(self, templ: LTemplate) -> List[dict]:
         """
-        build the item with given requirement (AI generated item weights)
-        shape of requirement: same as in section.make():
-        - dict of {cate: {skill: score}}
-        template is used to calculate the height of the item
-        ASSUMPTION: using different lines won't make major difference in height
-        right here, throw error if information is missing and build is impossible
+        returns an array where the ith element is a dict of the total score of
+        using the first i highest scoring lines of this item.
         """
-        # Check for required information
-        if not self.line_objs or not templ or not requirement:
-            raise ValueError(
-                "Missing required information: titles, lines, template, or processor."
+        list_of_items: List[dict] = []
+        length = len(self.line_objs)
+        for i in range(1, length + 1):
+            top_k = self.top_k_lines(self.line_objs, i)
+            total_score = 0
+            for j in top_k:
+                total_score += j.score or 0
+            total_score = (
+                total_score * self.cate_scores["weight"] + self.cate_scores["bias"]
             )
-        # Implement the rest of the build logic here
-        results = []
-        num_lines = len(self.line_objs)
-        for sel_size in range(0, num_lines + 1):
-            # allows empty selection
-            if sel_size == 0:
-                # empty selection, no lines selected
-                results.append(self.make_specific({}, [], templ))
-                continue
-            max_score = -100000
-            max_lines_sel = []
-            for lines_sel_tup in combinations(range(num_lines), sel_size):
-                lines_sel = list(lines_sel_tup)
-                curr_score = self.__calc_score(lines_sel, requirement)
-                if curr_score > max_score:
-                    max_score = curr_score
-                    max_lines_sel = lines_sel
-            results.append(
-                self.make_specific(
-                    self.calc_scores(max_lines_sel, requirement),
-                    max_lines_sel,
-                    templ,
-                )
-            )
-        return results
-
-    def get_skills_dict(self) -> dict:
-        """
-        get the skills dict for the item
-        returns a dict of skills (not overlapping)
-        """
-        skills_dict = {"technical": [], "soft": [], "relevance": []}
-        cate_list = ["technical", "soft", "relevance"]
-        for line_obj in self.line_objs:
-            if not line_obj.cate_score or not line_obj.cate_score.get("technical"):
-                line_obj.gen_score()
-            for cate_name in cate_list:
-                for skill, _ in line_obj.cate_score[cate_name].items():
-                    if skill not in skills_dict[cate_name]:
-                        skills_dict[cate_name].append(skill)
-        return skills_dict
-
-    def __calc_score(self, lines_sel: list, requirement: dict) -> int:
-        """
-        calculate the actual score of the item in approximation
-        using the assumption that the actual scoring funciton is near linear
-        Shape of requirements: dict of {cate: {skill: score}}
-        ONLY FOR INTERNAL USE!!
-        """
-        result = 0
-        if not lines_sel:
-            # This is the case if the item is a paragraph
-            return result
-        target_lines = []
-        for line_no in lines_sel:
-            target_lines.append(self.line_objs[line_no])
-        cate_list = ["technical", "soft", "relevance"]
-        for line_obj in target_lines:
-            if not line_obj.cate_score:
-                warnings.warn(
-                    f"Line {line_obj.content_str} has no category scores, generating them."
-                )
-                line_obj.gen_score()
-            for cate_name in cate_list:
-                for item, value in line_obj.cate_score[cate_name].items():
-                    if item in requirement[cate_name]:
-                        result += value * requirement[cate_name][item]
-                    else:
-                        warnings.warn(
-                            f"Skill '{item}' not in requirement for category "
-                            f"'{cate_name}', neglecting it."
-                        )
-        return result
-
-    def calc_scores(self, lines_sel: list, requirement: dict) -> dict:
-        """
-        returns the category scores of the item under a specific build (given by lines_sel)
-
-        TO REPLACE Processor:
-        requirements: dict
-        {cate: {}}
-        each sub dict is attribute: score
-
-        Action of this function:
-        - sum each attribute's score in each category
-        - add the weight to it
-        - append bias to the result as it
-        - return WITHOUT calculating anything
-
-        return value: dict of category -> dict of score, bias
-        """
-
-        results = {
-            "technical": {"scores": {}, "bias": self.cate_scores["technical"]["bias"]},
-            "soft": {"scores": {}, "bias": self.cate_scores["soft"]["bias"]},
-            "relevance": {"scores": {}, "bias": self.cate_scores["relevance"]["bias"]},
-        }
-        cate_list = ["technical", "soft", "relevance"]
-        for cate_name in cate_list:
-            # put every item in requirements into the results
-            print("DEBUG: requirement[cate_name]:", requirement[cate_name])
-            print()
-            for item, value in requirement[cate_name].items():
-                results[cate_name]["scores"][item] = 0
-        # Check if lines_sel is empty
-        if not lines_sel:
-            # This is the case if the item is a paragraph
-            return results
-        # ASSUME requirement is valid
-        # also ASSUME line_sel is sorted already, note that it CAN be empty
-        target_lines = []
-        for line_no in lines_sel:
-            target_lines.append(self.line_objs[line_no])
-        # Add each score to the results
-        for line_obj in target_lines:
-            for cate_name in cate_list:
-                if not line_obj.cate_score:
-                    warnings.warn(
-                        f"Line {line_obj.content_str} has no category scores, "
-                        "generating them."
-                    )
-                    line_obj.gen_score()
-                for item, value in line_obj.cate_score[cate_name].items():
-                    if item in results[cate_name]["scores"]:
-                        results[cate_name]["scores"][item] += (
-                            value * self.cate_scores[cate_name]["weight"]
-                        )
-                    else:
-                        warnings.warn(
-                            f"Skill '{item}' not in requirement for category "
-                            f"'{cate_name}', neglecting it."
-                        )
-        return results
-        # overall_scores = {}
-        # defaulted_count = 0
-        # lines_sel = sorted(lines_sel)
-        # target_lines = []
-        # for line_no in lines_sel:
-        #     target_lines.append(self.line_objs[line_no])
-        # cate_list = ["technical", "soft", "relevance"]
-        # for cate_name in cate_list:
-        #     cate_score = []
-        #     cate_weights = processor["values"][
-        #         cate_name
-        #     ]  # the weights of each attribute assigned by AI
-        #     for line_obj in target_lines:
-        #         line_prod_list = []
-        #         for cate, value in line_obj.cate_score[cate_name].items():
-        #             if cate in cate_weights:
-        #                 line_prod_list.append(value * cate_weights[cate])
-        #             else:
-        #                 line_prod_list.append(value * default_weight)
-        #                 defaulted_count += 1
-        #         cate_score.append(line_prod_list)
-        #     cate_funcn = processor["functions"][cate_name]
-        #     overall_scores[cate_name] = cate_funcn(
-        #         self.cate_scores[cate_name]["weight"],
-        #         self.cate_scores[cate_name]["bias"],
-        #         cate_score,
-        #     )
-        # # overall_score is a dict of category(str) -> score(int)
-        # return overall_scores
+            item = {
+                "numLines": i,
+                "score": total_score,
+                "height": templ.item_height_calculator(self, top_k),
+                "lines_selected": top_k,
+            }
+            list_of_items.append(item)
+        return list_of_items
 
     def to_dict(self) -> dict:
         """
@@ -300,7 +102,10 @@ class Item:
         # Ensure aux_info has 'type' and it is 'items'
 
         self.aux_info["type"] = "items"
-        self.aux_info["style"] = self.style
+        if self.style:
+            self.aux_info["style"] = self.style
+        else:
+            self.aux_info["style"] = "n"
 
         return {
             "titles": self.titles if self.titles is not None else [],
@@ -311,5 +116,4 @@ class Item:
             ),
             "cate_scores": self.cate_scores if self.cate_scores is not None else {},
             "aux_info": self.aux_info,
-            "paragraph": self.paragraph,
         }
