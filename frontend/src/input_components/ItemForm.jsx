@@ -49,6 +49,7 @@ export default function ItemForm({
           placeholder={label}
           value={data.titles[i] || ""}
           onChange={(e) => updateTitle(i, e.target.value)}
+          required
         />
       ))}
 

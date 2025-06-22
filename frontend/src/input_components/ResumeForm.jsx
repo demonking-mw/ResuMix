@@ -101,6 +101,7 @@ export default function ResumeForm() {
             placeholder="Your Name"
             value={headingName}
             onChange={(e) => setHeadingName(e.target.value)}
+            required
           />
           <textarea
             placeholder={`Enter one item per line (e.g. Links, Email, Phone...)`}
@@ -122,6 +123,7 @@ export default function ResumeForm() {
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             style={{ minHeight: "120px" }}
+            required
           />
 
           {sections.map((section, idx) => (

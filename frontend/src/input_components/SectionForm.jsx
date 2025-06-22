@@ -46,6 +46,7 @@ export default function SectionForm({
           placeholder="Section Title"
           value={data.title}
           onChange={updateTitle}
+          required
         />
         <Trash2 className="trash-button" onClick={deleteSection} />
       </div>

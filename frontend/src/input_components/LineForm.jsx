@@ -11,6 +11,7 @@ export default function LineForm({ data, updateLine, deleteLine }) {
           value={data.content_str}
           onChange={(e) => updateLine({ ...data, content_str: e.target.value })}
           rows={1}
+          required
         />
         <Trash2 className="trash-button" onClick={deleteLine} />
       </div>
