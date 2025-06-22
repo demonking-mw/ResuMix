@@ -1,0 +1,16 @@
+.item-form input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  color: #111111 !important; /* FORCE black text */
+}
+
+.item-form input:focus {
+  border-color: #4a90e2;
+  outline: none;
+  background-color: #ffffff;
+  color: #111111 !important;
+}

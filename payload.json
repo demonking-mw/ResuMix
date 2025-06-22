@@ -1,0 +1,46 @@
+{
+  "resume_dict": {
+    "aux_info": { "type": "resume" },
+    "heading_info": {
+      "heading_name": "John Doe",
+      "subsequent_content": ["Software Engineer", "john.doe@example.com", "555-1234"]
+    },
+    "sections": [
+      {
+        "sect_id": 0,
+        "aux_info": { "type": "section" },
+        "title": "EXPERIENCE",
+        "items": [
+          {
+            "aux_info": { "type": "items", "style": "l" },
+            "titles": [
+              "Software Engineer",
+              "ACME Corp",
+              "2019 – 2021",
+              "New York, NY"
+            ],
+            "lines": [
+              {
+                "aux_info": { "type": "lines" },
+                "content": "Developed skibidi feature",
+                "content_str": "Developed skibidi feature",
+                "cate_score": {
+                  "technical": {},
+                  "soft": {},
+                  "relevance": {}
+                },
+                "keywords": []
+              }
+            ],
+            "cate_scores": {
+              "technical": { "weight": 1.0, "bias": 1.0 },
+              "soft": { "weight": 1.0, "bias": 1.0 },
+              "relevance": { "weight": 1.0, "bias": 1.0 }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "job_description": "We are looking for a backend software engineer."
+}

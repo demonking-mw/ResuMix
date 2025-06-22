@@ -1,0 +1,23 @@
+.line-input {
+  margin-top: 4px;
+  margin-bottom: 6px;
+  width: 100%;
+  max-width: 800px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  resize: vertical;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #111111 !important; /* Force visible text */
+}
+
+.line-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background-color: #ffffff;
+  color: #111111 !important; /* Force text visible on focus */
+}

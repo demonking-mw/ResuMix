@@ -1,0 +1,44 @@
+.section-form {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #ffffff;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.section-form input {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: #f9fafb;
+  color: #111111; 
+}
+
+.section-form select {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.section-form button {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.section-form button:hover {
+  background-color: #357ac7;
+}

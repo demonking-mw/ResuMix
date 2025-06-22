@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-style {
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+  font-size: 2.25rem;
+  padding-top: 2rem;
+  letter-spacing: -0.5px;
+  color:#111;
+}
+
+.form-bg {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #e0f2fe, #e9d5ff);
+}
+
+.form-style {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 720px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.form-style input,
+.form-style textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-sizing: border-box;
+  resize: none;
+  background-color: #f9fafb;
+  color: #111111; /* Dark text for better contrast */
+}
+
+.form-style input:focus,
+.form-style textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  background-color: #ffffff;
+}
+
+.form-style button {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.form-style button:hover {
+  background-color: #4f46e5;
+}
+
+.resume-button {
+  background-color: #16a34a !important;
+}
+
+.resume-button:hover {
+  background-color: #15803d !important;
+}
+.logo-link {
+  gap: 0.4rem;
+}
+
+.home-logo {
+  height: 5rem;
+  width: auto;
+}
+
+.brand-name {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #111;
+  font-family: 'Playfair Display', serif;
+}
