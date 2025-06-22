@@ -624,7 +624,7 @@ template = LTemplate()
 
 my_resume = Resume(template, test_resume_dict)
 if not my_resume.make(
-    "This is a typical backend software engineer role requiring Python, SQL, and team leadership skills. "
+    "This is a frontend software engineer role, candidate need to revamp the company website and build a new web app for the company. The candidate should have experience in web development, especially with React and Node.js. They should also be familiar with RESTful APIs and have a good understanding of UI/UX principles."
 ):
     print("sadge")
 print("Resume made successfully")
