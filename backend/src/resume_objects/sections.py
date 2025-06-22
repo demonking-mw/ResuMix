@@ -69,21 +69,6 @@ class Section:
         else:
             self.aux_info = {"type": "section"}
 
-    def get_skills_dict(self) -> dict:
-        """
-        get all skills from items in the section
-        uses item.get_skills_dict() to get the skills
-        """
-        skills_dict = {"technical": [], "soft": [], "relevance": []}
-        cate_list = ["technical", "soft", "relevance"]
-        for item in self.items:
-            item_skills = item.get_skills_dict()
-            for cate in cate_list:
-                for skill in item_skills[cate]:
-                    if skill not in skills_dict[cate]:
-                        skills_dict[cate].append(skill)
-        return skills_dict
-
     def make(self) -> list:
         """
         make items build ready
