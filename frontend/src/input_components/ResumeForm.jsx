@@ -54,9 +54,8 @@ export default function ResumeForm() {
             keywords: [],
           })),
           cate_scores: {
-            technical: { weight: 1.0, bias: 1.0 },
-            soft: { weight: 1.0, bias: 1.0 },
-            relevance: { weight: 1.0, bias: 1.0 },
+            weight: 1.0,
+            bias: 1.0,
           },
         })),
       })),
@@ -67,11 +66,15 @@ export default function ResumeForm() {
     };
 
     try {
-      const response = await fetch("http://localhost:5001/api/generate-resume", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "http://localhost:5001/api/generate-resume",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) throw new Error("Resume generation failed");
 
@@ -92,7 +95,15 @@ export default function ResumeForm() {
   return (
     <div className="layout">
       <header style={{ position: "absolute", top: "1rem", left: "1.5rem" }}>
-        <Link to="/" className="logo-link" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+        <Link
+          to="/"
+          className="logo-link"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+        >
           <img src={logo} alt="ResuMix Logo" className="home-logo" />
           <span className="brand-name">ResuMix</span>
         </Link>
@@ -114,7 +125,10 @@ export default function ResumeForm() {
             onChange={(e) => {
               const raw = e.target.value;
               setSubsequentContentRaw(raw);
-              const lines = raw.split("\n").map((line) => line.trim()).filter((line) => line !== "");
+              const lines = raw
+                .split("\n")
+                .map((line) => line.trim())
+                .filter((line) => line !== "");
               setSubsequentContent(lines);
             }}
             rows={Math.max(subsequentContent.length, 3)}
@@ -136,8 +150,12 @@ export default function ResumeForm() {
               deleteSection={() => deleteSection(idx)}
             />
           ))}
-          <button type="button" onClick={addSection}>Add Section</button>
-          <button className="resume-button" type="submit">Generate Resume</button>
+          <button type="button" onClick={addSection}>
+            Add Section
+          </button>
+          <button className="resume-button" type="submit">
+            Generate Resume
+          </button>
         </form>
       </div>
     </div>

@@ -13,9 +13,11 @@ from .classes.user import User
 from io import BytesIO
 
 # Import your resume-related modules
-from src.resume_objects.resume import Resume
-from src.resume_objects.latex_templates import LTemplate
-from src.resume_objects.implementations.scoring_functions import simple_sum_function
+from backend.src.resume_objects.resume import Resume
+from backend.src.resume_objects.latex_templates import LTemplate
+from backend.src.resume_objects.implementations.scoring_functions import (
+    simple_sum_function,
+)
 
 app = Flask(__name__)
 
@@ -55,7 +57,7 @@ def generate_resume():
         BytesIO(pdf_bytes),
         mimetype="application/pdf",
         as_attachment=True,
-        download_name="resume.pdf"
+        download_name="resume.pdf",
     )
 
 
