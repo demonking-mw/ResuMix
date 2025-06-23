@@ -51,9 +51,6 @@ class Line:
                 raise ValueError("Invalid input: 'type' must be 'lines'")
             # At this point, info is a Lines class
             self.content = class_dict["content"] if "content" in class_dict else r""
-            self.cate_score = (
-                class_dict["cate_score"] if "cate_score" in class_dict else {}
-            )
             self.content_str = (
                 class_dict["content_str"] if "content_str" in class_dict else ""
             )
@@ -79,80 +76,8 @@ class Line:
         WILL OVERWRITE EXISTING
         Effect: modify self.cate_score
         """
-        new_cate_score = {
-            "technical": {},
-            "soft": {},
-            "relevance": {},
-            "content": self.content_str,
-        }
-        result = False
-        pre_prompt = (
-            "The following line is a description line under an item in a resume. "
-        )
-        reminder = (
-            "Remember, your answer MUST be ONLY a python dictionary, "
-            "as it will be parsed by a program"
-        )
-        prompt_instruction = (
-            "When you are asked a question, first analyze it, then output ONLY a python "
-            "dictionary that contains the answer. Sample output: {'something': 1, 'your_answer': 1}. "
-            "Note: the dictionary should contain keys of type string and values of type int. "
-            "Do not output anything else. Also, whenever giving something a score, make it out of 3"
-        )
-        if not self.cate_score["technical"] or forced:
-            tech_prompt = (
-                f"Analyze for me what technical skills (for the {industry} industry) "
-                "it demonstrates. Select up to 4, then give each a score that "
-                "represents how impressive and strong the line demonstrates the skill. "
-                "The line is: "
-            )
-            success, technical_scores = self.bot.pythoned_response_instruction(
-                pre_prompt + tech_prompt + self.content_str + reminder,
-                prompt_instruction,
-                datatype=dict,
-                retries=3,
-            )
-            if success:
-                new_cate_score["technical"] = technical_scores
-                result = True
-
-        if not self.cate_score["soft"] or forced:
-            soft_prompt = (
-                "Analyze the line for soft skills it demonstrates. "
-                "Select up to 2, then give each a score that represents how strong "
-                "the line demonstrates the skill. The line is: "
-            )
-            success, soft_scores = self.bot.pythoned_response_instruction(
-                pre_prompt + soft_prompt + self.content_str + reminder,
-                prompt_instruction,
-                datatype=dict,
-                retries=3,
-            )
-            if success:
-                new_cate_score["soft"] = soft_scores
-                result = True
-
-        if not self.cate_score["relevance"] or forced:
-            relevance_prompt = (
-                "Identify the person's passion mentioned from this line that is "
-                "irrelevant to the core technical skills and soft skills shown in the "
-                "activity. It must be very specific, do not use general words such as 'passion'. Select the top 2 that demonstrates the person's interest in "
-                "the topic. Output it in a dict with the keywords as keys and 1 as "
-                "values. The line is: "
-            )
-            success, relevance_scores = self.bot.pythoned_response_instruction(
-                pre_prompt + relevance_prompt + self.content_str + reminder,
-                prompt_instruction,
-                datatype=dict,
-                retries=3,
-            )
-            if success:
-                new_cate_score["relevance"] = relevance_scores
-                self.keywords = list(relevance_scores.keys())
-                result = True
-        if result:
-            self.cate_score = new_cate_score
-        return result
+        print("DEBUG: CATE_SCORE SHOULD BE DEPRECATED")
+        return False
 
     def to_dict(self) -> dict:
         """
@@ -165,10 +90,6 @@ class Line:
             result["aux_info"] = {"type": "lines"}
         result["content"] = self.content
         result["content_str"] = self.content_str
-        if content is not None:
-            self.gen_score()
-        result["cate_score"] = self.cate_score
-        result["keywords"] = self.keywords
         return result
 
     # def __get_dict(self, prompt: str, retries: int) -> tuple[bool, dict]:

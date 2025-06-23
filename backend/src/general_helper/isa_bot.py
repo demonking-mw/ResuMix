@@ -5,6 +5,7 @@ USAGE:
 
 """
 
+import datetime
 import time
 import ast
 import os
@@ -101,6 +102,7 @@ class AIBot:
         Have up to retries attempts to get valid response
         """
         print("DEBUG: AI CALL")
+        t0 = datetime.datetime.now()
         if model is None:
             model = self.default_model
         messages = [
@@ -121,6 +123,8 @@ class AIBot:
                 parsed = ast.literal_eval(reply)
                 if isinstance(parsed, datatype):
                     print("DEBUG: Parsed response successfully:" + str(parsed))
+                    t1 = datetime.datetime.now()
+                    print(f"Time taken to get gpt response: {t1 - t0}")
                     return True, parsed
                 else:
                     print(

@@ -51,7 +51,7 @@ def line_eval(requirements: list[str], lines: list) -> bool:
             )  # shape (N, D)
             # put that shit back in
             for ln, vec in zip(lines, line_vecs):
-                if not hasattr(ln, "aux_data"):
+                if not hasattr(ln, "aux_info"):
                     print("DEBUG: BAD AUX INFO")
                     ln.aux_info = {}
                 ln.aux_info["vec"] = vec

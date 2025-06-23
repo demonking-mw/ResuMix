@@ -116,15 +116,9 @@ class Resume:
             self.section_make_results.append(item_core_info)
         return True
 
-    def optimize(self, evaluator: callable, shuffle_times=2) -> bool:
+    def optimize(self, shuffle_times=2) -> bool:
         """
         Optimize the resume using the AI decision generated in make()
-
-        Input: evaluator:
-        (section_make_results: list of item_core_info, ai_result: dict of str -> dict)
-        -> score: int
-
-        GIVEN: evaluator is very close to a linear function, and it is none-decreasing
 
         Result:
         - updates self.optimization_result
@@ -154,7 +148,6 @@ class Resume:
         #
 
         start_time = datetime.now()
-        print("DEBUG: Optimizing resume with evaluator")
         width = len(self.make_results_flattened)
         # Width is the number of items in the resume
         height = int(self.template.remaining_height_calculator(len(self.sections)))
@@ -245,10 +238,7 @@ class Resume:
         """
         result = {
             "aux_info": self.aux_info,
-            "heading_info": {
-                "heading_name": self.heading_name,
-                "subsequent_content": self.heading_subsequent_content,
-            },
+            "heading_info": {"heading_name": "", "subsequent_content": []},
             "sections": [section.to_dict() for section in self.sections],
         }
         if self.heading_name or self.heading_subsequent_content:
