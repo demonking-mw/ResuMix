@@ -40,11 +40,23 @@ def line_eval(requirements: list[str], lines: list) -> bool:
             requirements, normalize_embeddings=True, show_progress_bar=False
         )  # shape (R, D)
 
-        # 2) pull out all texts and embed in one batch
-        texts = [line.content_str for line in lines]
-        line_vecs = model.encode(
-            texts, normalize_embeddings=True, show_progress_bar=False
-        )  # shape (N, D)
+        # 2.0) use cache if possible
+        if not hasattr(lines[0], "aux_info") or "vec" not in lines[0].aux_info:
+            print("DEBUG: Re-generating vectors")
+            # no cache, encode everything
+            # 2) pull out all texts and embed in one batch
+            texts = [line.content_str for line in lines]
+            line_vecs = model.encode(
+                texts, normalize_embeddings=True, show_progress_bar=False
+            )  # shape (N, D)
+            # put that shit back in
+            for ln, vec in zip(lines, line_vecs):
+                if not hasattr(ln, "aux_info"):
+                    print("DEBUG: BAD AUX INFO")
+                    ln.aux_info = {}
+                ln.aux_info["vec"] = vec
+        else:
+            line_vecs = np.vstack([ln.aux_info["vec"] for ln in lines])
 
         # 3) compute sim‐matrix (N_lines × N_requirements)
         sim_matrix = line_vecs @ req_vecs.T
