@@ -90,7 +90,7 @@ class User(Resource):
                 return {"status": False, "detail": {"status": "info mismatch"}}, 400
             # returns {"status": True, "jwt": "...", ...}, 200
             return user_auth_json, login_status
-        
+
         # Check auth type
         if args["type"] == "go":
             return self.__go_auth(args)
