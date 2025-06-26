@@ -58,7 +58,7 @@ class Resume:
         else:
             self.aux_info = {"type": "resume"}
 
-    def make(self, job_req: str) -> bool:
+    def make(self, job_req: str, no_cache: bool = False) -> bool:
         """
         Make the resume build ready
         Using AI, generate the requirement
@@ -103,7 +103,7 @@ class Resume:
             return False
         # parse_instruction is proper
         # call line_eval
-        if not line_eval(job_requirement_list, all_lines):
+        if not line_eval(job_requirement_list, all_lines, no_cache):
             print("DEBUG: line_eval failed")
             return False
         for section in self.sections:

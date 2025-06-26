@@ -12,7 +12,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 
-def line_eval(requirements: list[str], lines: list) -> bool:
+def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> bool:
     """
     Evaluates each Line in `lines` against the set of `requirements` and
     writes back a normalized score in line.score (0–10 scale).
@@ -41,7 +41,7 @@ def line_eval(requirements: list[str], lines: list) -> bool:
         )  # shape (R, D)
 
         # 2.0) use cache if possible
-        if not hasattr(lines[0], "aux_info") or "vec" not in lines[0].aux_info:
+        if no_cache or not hasattr(lines[0], "aux_info") or "vec" not in lines[0].aux_info:
             print("DEBUG: Re-generating vectors")
             # no cache, encode everything
             # 2) pull out all texts and embed in one batch
