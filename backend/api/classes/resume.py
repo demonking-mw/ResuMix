@@ -18,12 +18,14 @@ from backend.src.classes_req import resume_req
 from backend.src.class_helper import resume_handle
 from backend.src.general_helper.google_auth_extract import GoogleAuthExtract as gae
 
+
 class ResumeHandle(Resource):
     """
     CLASS USAGE:
     update resume dict: POST
     get resume pdf: GET
     """
+
     def get(self) -> tuple[dict, int]:
         """
         Get the resume to download
@@ -56,4 +58,3 @@ class ResumeHandle(Resource):
         if not success:
             return {"status": False, "message": message}, 400
         {"status": True, "message": f"Resume updated successfully: {message}"}, 200
-

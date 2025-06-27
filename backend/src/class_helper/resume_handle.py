@@ -53,7 +53,7 @@ class ResumeHandle:
         # Here you would generate the resume PDF from resume_dict
         templ = LTemplate()
         my_resume = Resume(templ, resume_dict)
-        if not my_resume.make(args['job_description'], no_cache=args['no_cache']):
+        if not my_resume.make(args["job_description"], no_cache=args["no_cache"]):
             print("ERROR: failed to make resume")
             return False, None
         my_resume.optimize()
@@ -63,9 +63,7 @@ class ResumeHandle:
             # Update the resume info in the database if there are changes
             query = f"UPDATE data SET resumeinfo = %s WHERE uid = %s"
             values = (json.dumps(new_resume_dict), user_auth_json["uid"])
-            self.database.run_sql(
-                query, values
-            )
+            self.database.run_sql(query, values)
         return True, resume_pdf_bytes
 
     def set_resume_dict(self, args: dict) -> tuple[bool, str]:
@@ -88,15 +86,13 @@ class ResumeHandle:
         templ = LTemplate()
         try:
             my_resume = Resume(templ, new_resume_dict)
-            if not my_resume.make(args['job_description'], no_cache=True):
+            if not my_resume.make(args["job_description"], no_cache=True):
                 print("ERROR: failed to make resume")
-                return False, 'Failed to make resume'
+                return False, "Failed to make resume"
         except Exception as e:
             print(f"ERROR: failed to load resume dict: {e}")
             return False, f"Failed to load resume dict: {str(e)}"
         processed_resume_dict = my_resume.to_dict()
         query = f"UPDATE data SET resumeinfo = %s WHERE uid = %s"
         values = (json.dumps(processed_resume_dict), user_auth_json["uid"])
-        self.database.run_sql(
-            query, values
-        )
+        self.database.run_sql(query, values)

@@ -25,7 +25,10 @@ resume_get.add_argument(
     default=False,
 )
 resume_get.add_argument(
-    "job_description", type=str, help="Job description used to generate resume", required=True,
+    "job_description",
+    type=str,
+    help="Job description used to generate resume",
+    required=True,
 )
 
 resume_post = reqparse.RequestParser()
