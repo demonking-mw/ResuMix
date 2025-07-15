@@ -91,7 +91,7 @@ class Resume:
             all_lines.extend(itm.line_objs)
         # parse the job requirement
         parse_req = (
-            "generate a list of core requirements, each in a single sentence, from the resume. The list of sentences collectively should reflect all of what the job recruiter is looking for. the length of your result list should be between 1 to 12 items. JOB REQUIREMENT: "
+            "generate a list of core requirements, each in a single sentence and outlines the requirement of a single skill, from the resume. The list of sentences collectively should reflect all of what the job recruiter is looking for. the length of your result list should be between 1 to 12 items. JOB REQUIREMENT: "
             + job_req
         )
         parse_instruction = "your response must be strictly a python list of strings, as it will be parsed by a program."

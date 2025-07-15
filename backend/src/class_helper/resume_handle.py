@@ -32,6 +32,23 @@ class ResumeHandle:
         self.database = database
         self.args = args
 
+    def __convert_ndarray(self, obj):
+        """
+        get the resume info object ready for json serialization
+        """
+        try:
+            import numpy as np
+        except ImportError:
+            np = None
+        if np and isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, dict):
+            return {k: self.__convert_ndarray(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self.__convert_ndarray(v) for v in obj]
+        else:
+            return obj
+
     def get_resume(self, args: dict) -> tuple[bool, bytes]:
         """
         generate resume from info stored in db
@@ -46,7 +63,15 @@ class ResumeHandle:
         ):  # Login_status SHOULD be defined if this is reached
             print("ERROR: something is cooked for login")
             return False, None
-        resume_dict = user_auth_json.get("resumeinfo")
+        resumeinfo_raw = user_auth_json["detail"].get("resumeinfo")
+        if isinstance(resumeinfo_raw, str):
+            try:
+                resume_dict = json.loads(resumeinfo_raw)
+            except Exception:
+                print("ERROR: resumeinfo could not be decoded from JSON string")
+                resume_dict = None
+        else:
+            resume_dict = resumeinfo_raw
         if not resume_dict:
             print("ERROR: no resume info found for user")
             return False, None
@@ -59,8 +84,10 @@ class ResumeHandle:
         my_resume.optimize()
         resume_pdf_bytes = my_resume.build()
         new_resume_dict = my_resume.to_dict()
+        new_resume_dict = self.__convert_ndarray(new_resume_dict)
         if resume_dict != new_resume_dict:
             # Update the resume info in the database if there are changes
+            print("DEBUG: hashing resume info to db")
             query = f"UPDATE data SET resumeinfo = %s WHERE uid = %s"
             values = (json.dumps(new_resume_dict), user_auth_json["uid"])
             self.database.run_sql(query, values)
@@ -86,7 +113,10 @@ class ResumeHandle:
         templ = LTemplate()
         try:
             my_resume = Resume(templ, new_resume_dict)
-            if not my_resume.make(args["job_description"], no_cache=True):
+            if not my_resume.make(
+                "This is a backend software engineer role, where the candidate will be instrumental in developing, hosting, and maintaining the robust server-side infrastructure and APIs on the cloud (AWS) that power our diverse applications. The candidate should have strong experience in backend development, especially with languages like Python (e.g., Django, Flask), Java (e.g., Spring Boot), or Node.js (e.g., Express). They should also be deeply familiar with designing and managing various databases (both relational like PostgreSQL or MySQL, and NoSQL like MongoDB or Redis) and possess a solid understanding of scalable architecture, API security, and distributed systems.",
+                no_cache=True,
+            ):
                 print("ERROR: failed to make resume")
                 return False, "Failed to make resume"
         except Exception as e:
@@ -94,5 +124,8 @@ class ResumeHandle:
             return False, f"Failed to load resume dict: {str(e)}"
         processed_resume_dict = my_resume.to_dict()
         query = f"UPDATE data SET resumeinfo = %s WHERE uid = %s"
-        values = (json.dumps(processed_resume_dict), user_auth_json["uid"])
+        print("DEBUG: resume to_dict: type of " + str(type(processed_resume_dict)))
+        processed_resume_dict = self.__convert_ndarray(processed_resume_dict)
+        values = (json.dumps(processed_resume_dict), args["uid"])
         self.database.run_sql(query, values)
+        return True, "Resume updated successfully"

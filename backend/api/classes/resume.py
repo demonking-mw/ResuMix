@@ -31,11 +31,13 @@ class ResumeHandle(Resource):
         Get the resume to download
         """
         args = resume_req.resume_get.parse_args()
+        print("DEBUG: Resume Get reached here")
         database = DBConn()
         resume_handle_obj = resume_handle.ResumeHandle(database, args)
         success, resume_pdf_bytes = resume_handle_obj.get_resume(args)
         database.close()
         if not success:
+            print("DEBUG: Failed to generate resume using resume_handle")
             return {"status": False, "message": "Failed to generate resume"}, 400
         return send_file(
             BytesIO(resume_pdf_bytes),
@@ -57,4 +59,7 @@ class ResumeHandle(Resource):
         database.close()
         if not success:
             return {"status": False, "message": message}, 400
-        {"status": True, "message": f"Resume updated successfully: {message}"}, 200
+        return {
+            "status": True,
+            "message": f"Resume updated successfully: {message}",
+        }, 200

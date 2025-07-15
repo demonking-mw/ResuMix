@@ -13,6 +13,12 @@ from flask_restful import reqparse
 #################################################################
 resume_get = reqparse.RequestParser()
 resume_get.add_argument(
+    "uid",
+    type=str,
+    help="User ID to identify the user, required for resume generation",
+    required=True,
+)
+resume_get.add_argument(
     "reauth_jwt",
     type=str,
     help="reauth_jwt to authenticate user",
@@ -32,6 +38,12 @@ resume_get.add_argument(
 )
 
 resume_post = reqparse.RequestParser()
+resume_post.add_argument(
+    "uid",
+    type=str,
+    help="User ID to identify the user, required for resume update",
+    required=True,
+)
 resume_post.add_argument(
     "reauth_jwt",
     type=str,

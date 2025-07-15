@@ -1,3 +1,4 @@
+resume_update
 user_login_oauth
 user_login_up
 user_signup_eupn
