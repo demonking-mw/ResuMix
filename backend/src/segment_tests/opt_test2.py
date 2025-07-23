@@ -4,4 +4,4 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("all-mpnet-base-v2")
 
 # 2) save it to a folder
-model.save("/Users/jocex/ResuMix/all-mpnet-base-v2-local")
+model.save("all-mpnet-base-v2-local")

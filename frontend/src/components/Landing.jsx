@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Landing.css';
 import logo from '../assets/ResuMix.png';
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const Landing = () => (
   <div className="landing-container">
@@ -11,6 +12,7 @@ const Landing = () => (
         <img src={logo} alt="ResuMix Logo" className="logo" />
         <span className="brand-name">ResuMix</span>
       </Link>
+      <Link to="/home" className="nav-home">Home</Link>
       <div className="nav-actions">
         <Link to="/login" className="landing-button">Log in</Link>
         <Link to="/signup" className="landing-button">Sign up ↗</Link>

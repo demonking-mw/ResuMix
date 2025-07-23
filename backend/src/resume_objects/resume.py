@@ -58,7 +58,7 @@ class Resume:
         else:
             self.aux_info = {"type": "resume"}
 
-    def make(self, job_req: str) -> bool:
+    def make(self, job_req: str, no_cache: bool = False) -> bool:
         """
         Make the resume build ready
         Using AI, generate the requirement
@@ -91,7 +91,7 @@ class Resume:
             all_lines.extend(itm.line_objs)
         # parse the job requirement
         parse_req = (
-            "generate a list of core requirements, each in a single sentence, from the resume. The list of sentences collectively should reflect all of what the job recruiter is looking for. the length of your result list should be between 1 to 12 items. JOB REQUIREMENT: "
+            "generate a list of core requirements, each in a single sentence and outlines the requirement of a single skill, from the resume. The list of sentences collectively should reflect all of what the job recruiter is looking for. the length of your result list should be between 1 to 12 items. JOB REQUIREMENT: "
             + job_req
         )
         parse_instruction = "your response must be strictly a python list of strings, as it will be parsed by a program."
@@ -103,7 +103,7 @@ class Resume:
             return False
         # parse_instruction is proper
         # call line_eval
-        if not line_eval(job_requirement_list, all_lines):
+        if not line_eval(job_requirement_list, all_lines, no_cache):
             print("DEBUG: line_eval failed")
             return False
         for section in self.sections:

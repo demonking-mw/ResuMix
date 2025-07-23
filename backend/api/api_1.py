@@ -2,6 +2,11 @@
 
 """
 Hosting the API. Functionality is written elsewhere
+
+Usage:
+- Login: provided the proper info for go/up login
+    - Will get a jwt token for easy reauth in the short future
+-
 """
 
 # pylint: disable=import-error
@@ -9,6 +14,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_restful import Api
 from flask_cors import CORS
 from .classes.user import User
+from .classes.resume import ResumeHandle
 
 from io import BytesIO
 
@@ -31,6 +37,7 @@ CORS(
 api = Api(app)
 
 api.add_resource(User, "/user")
+api.add_resource(ResumeHandle, "/resume")
 # api.add_resource(UserInfo, "/user/info")
 # api.add_resource(Activity, "/activity")
 

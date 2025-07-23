@@ -54,6 +54,16 @@ class User(Resource):
         """
         args = user_req.user_auth.parse_args()
         # Check auth type
+        if args["type"] == "re":
+            # Reauth, to get user info
+            database = DBConn()
+            user_auth_obj = user_auth.UserAuth(database, args)
+            user_auth_json, login_status = user_auth_obj.login_jwt()
+            database.close()
+            if login_status == -1:  # Login_status SHOULD be defined if this is reached
+                print("ERROR: something is cooked for login")
+                return {"status": False, "detail": {"status": "info mismatch"}}, 400
+            return user_auth_json, login_status
         if args["type"] == "email":
             # NOT BUILT YET
             # REQUIRING EMAIL AUTH METHOD

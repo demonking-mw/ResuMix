@@ -48,7 +48,7 @@ fi
 # Run the test program
 python -m backend.api.api_1 &
 echo "Running api server"
-sleep 12 # Wait for the server to start
+sleep 18 # Wait for the server to start
 pass_count=0
 fail_count=0
 for indiv_test in $(cat $test_file | tr -d '\r'); do
