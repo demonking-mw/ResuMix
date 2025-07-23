@@ -1,0 +1,382 @@
+/* UI Components Library */
+
+/* BUTTONS - Using existing designs exactly */
+
+/* Primary Button - Exact copy from Login.css */
+.btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  background: #6366f1;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  transition: background-color 200ms, transform 100ms;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover {
+  background-color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Landing Button - Exact copy from Landing.css */
+.btn-landing {
+  padding: 0.3rem;
+  width: 7rem;
+  height: 2.2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 30px;
+  background-color: white;
+  color: black;
+  border: 1.5px solid black;
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-landing:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 4px 4px;
+}
+
+.btn-landing:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form Button - Exact copy from ResumeForm.css */
+.btn-form {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-form:hover {
+  background-color: #4f46e5;
+}
+
+.btn-form:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Resume Button - Green variant from ResumeForm.css */
+.btn-resume {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-resume:hover {
+  background-color: #15803d;
+}
+
+.btn-resume:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Width utilities for buttons when needed */
+.btn-auto { width: auto !important; }
+.btn-full { width: 100% !important; }
+
+/* FORM ELEMENTS */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background-color: var(--background-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: var(--space-xs);
+}
+
+/* CARDS */
+.card {
+  background-color: var(--background-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.card-auth {
+  padding: var(--space-3xl) 2.25rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.card-form {
+  padding: var(--space-3xl);
+  max-width: 720px;
+  width: 100%;
+  box-shadow: var(--shadow-form);
+  border-radius: var(--radius-lg);
+}
+
+.card-header {
+  padding: var(--space-2xl);
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.card-body {
+  padding: var(--space-2xl);
+}
+
+.card-footer {
+  padding: var(--space-2xl);
+  border-top: 1px solid var(--border-gray);
+  background-color: var(--background-light);
+}
+
+/* LAYOUT COMPONENTS */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-3xl);
+}
+
+.page-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: var(--primary-gradient);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.auth-wrapper {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6rem;
+  box-sizing: border-box;
+}
+
+.form-wrapper {
+  min-height: 100vh;
+  padding: var(--space-3xl);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--primary-gradient);
+}
+
+/* NAVIGATION */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-3xl);
+  height: 5rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: var(--space-xs);
+}
+
+.nav-logo {
+  height: 5.5rem;
+  width: auto;
+}
+
+.nav-brand-text {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-left: -1rem;
+  font-family: var(--font-display);
+}
+
+.nav-actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+/* HERO SECTION */
+.hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+}
+
+.hero-bubble {
+  padding: var(--space-5xl) var(--space-4xl);
+  border-radius: 90px;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  max-width: 600px;
+}
+
+/* TYPOGRAPHY COMPONENTS */
+.title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: var(--space-xl);
+}
+
+.title-hero {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: var(--space-2xl);
+}
+
+.title-page {
+  font-size: 2.25rem;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-3xl);
+}
+
+.title-section {
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  height: 1px;
+  background-color: var(--border-gray);
+  margin: var(--space-2xl) 0;
+}
+
+/* UTILITIES */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.absolute { position: absolute; }
+.relative { position: relative; }
+
+.top-4 { top: 1rem; }
+.left-8 { left: 2rem; }
+
+.overflow-hidden { overflow: hidden; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar {
+    padding: var(--space-lg) var(--space-lg);
+  }
+  
+  .hero-bubble {
+    padding: var(--space-3xl) var(--space-2xl);
+    border-radius: 60px;
+  }
+  
+  .title-hero {
+    font-size: 2rem;
+  }
+  
+  .card-auth,
+  .card-form {
+    padding: var(--space-2xl);
+  }
+  
+  .auth-wrapper {
+    padding: var(--space-lg);
+    padding-top: 8rem;
+  }
+}
