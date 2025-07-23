@@ -27,30 +27,53 @@ export default function CreateProfile() {
       return;
     }
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/user`,
-        {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            type: 'eupn',
-            uid: userId,
-            pwd: password,
-            email,
-            user_name: `${firstName} ${lastName}`
-          })
-        }
-      );
-      const data = await res.json();
+      const response = await api.post('/user', {
+        type: 'eupn',
+        uid: userId,
+        pwd: password,
+        email,
+        user_name: `${firstName} ${lastName}`
+      });
+
+      const data = response.data;
+
       if (data.status) {
-        // Use auth context login method
-        login(data.jwt);
+        // Clear any previous error messages on successful signup
+        setMessage('');
+        
+        // Extract user data from the backend response
+        const userDetails = data.detail;
+        const userData = {
+          id: userId,
+          email: email,
+          name: `${firstName} ${lastName}`,
+          // Add other fields as available from your database
+        };
+        
+        // Use auth context login method with user data
+        login(data.jwt, userData);
         navigate('/account');
       } else {
-        setMessage(`Error: ${data.detail?.status || 'Signup failed'}`);
+        const detail = data.detail?.status || data.message;
+        if (detail === 'uid or email unique violation') {
+          setMessage('User ID or email already exists');
+        } else {
+          setMessage(`Error: ${detail}`);
+        }
       }
-    } catch {
-      setMessage('Network error — please try again.');
+    } catch (err) {
+      console.error('Signup error:', err);
+      // Check if it's an axios error with response
+      if (err.response && err.response.data) {
+        const detail = err.response.data.detail?.status || err.response.data.message;
+        if (detail === 'uid or email unique violation') {
+          setMessage('User ID or email already exists');
+        } else {
+          setMessage(`Error: ${detail}`);
+        }
+      } else {
+        setMessage('Network error — please try again later.');
+      }
     }
   };
 
@@ -67,7 +90,7 @@ export default function CreateProfile() {
       } else {
         console.log(decodedCredential);
         
-        // Send the JWT to backend for signup using axios
+        // Send the JWT to backend for signup/login using axios
         try {
           const response = await api.post("/user", {
             type: "go",
@@ -76,6 +99,9 @@ export default function CreateProfile() {
           console.log("User authenticated:", response.data);
           
           if (response.data.status) {
+            // Clear any previous error messages on successful signup/login
+            setMessage('');
+            
             // Use auth context login method with Google user data
             const userData = {
               id: decodedCredential.sub,
@@ -86,11 +112,26 @@ export default function CreateProfile() {
             login(response.data.jwt, userData);
             navigate('/account');
           } else {
-            setMessage("Google signup failed: " + (response.data.detail?.status || response.data.message));
+            const detail = response.data.detail?.status || response.data.message;
+            if (detail === 'auth type mismatch') {
+              setMessage("An account with this email already exists using a different login method");
+            } else {
+              setMessage(`Google signup failed: ${detail}`);
+            }
           }
         } catch (err) {
           console.error("Error with Google signup:", err);
-          setMessage("Google signup failed: Network error");
+          // Check if it's an axios error with response
+          if (err.response && err.response.data) {
+            const detail = err.response.data.detail?.status || err.response.data.message;
+            if (detail === 'auth type mismatch') {
+              setMessage("An account with this email already exists using a different login method");
+            } else {
+              setMessage(`Google signup failed: ${detail}`);
+            }
+          } else {
+            setMessage("Google signup failed: Network error");
+          }
         }
       }
     } else {
@@ -153,7 +194,16 @@ export default function CreateProfile() {
               required
             />
 
-            {message && <p className="error-message">{message}</p>}
+            {message && (
+              <div className="error-container">
+                <span className="error-message">{message}</span>
+                {message === 'User ID or email already exists' && (
+                  <Link to="/login" className="signup-redirect-btn">
+                    Log In
+                  </Link>
+                )}
+              </div>
+            )}
 
             <button type="submit" className="primary-btn">Sign Up</button>
 
