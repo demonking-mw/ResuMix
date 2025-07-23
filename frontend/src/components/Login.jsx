@@ -1,5 +1,5 @@
 // src/components/Login.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Login.css';
 import logo from '../assets/ResuMix.png';
@@ -16,30 +16,16 @@ export default function Login() {
   const location = useLocation();
   const { login } = useAuth();
 
-  // Debug component lifecycle
-  useEffect(() => {
-    console.log('Login component mounted/re-rendered');
-    console.log('Current errorMessage:', errorMessage);
-    console.log('Current userId:', userId);
-    console.log('Current password length:', password.length);
-  });
-
   // Get the intended destination (where user was trying to go before login)
   const from = location.state?.from?.pathname || '/account';
 
   const handleSubmit = async (e) => {
-    console.log('handleSubmit called, event:', e);
     e.preventDefault();
-    e.stopPropagation();
-    console.log('Form submission prevented');
     
     if (!userId || !password) {
-      console.log('Missing fields, setting error message');
       setErrorMessage('Please fill out both User ID and Password.');
       return;
     }
-
-    console.log('Starting API call...');
 
     try {
       const response = await api.post('/user', {
@@ -67,46 +53,29 @@ export default function Login() {
         login(data.jwt, userData);
         navigate(from, { replace: true });
       } else {
-        console.log('Login failed, response data:', data);
         const detail = data.detail?.status || data.message;
-        console.log('Error detail:', detail);
         if (detail === 'user not found') {
           setErrorMessage('UID not found');
         } else if (detail === 'password incorrect') {
           // Only set the message if it's different to avoid re-render flash
           if (errorMessage !== 'Password incorrect') {
-            console.log('Setting password incorrect error message');
-            try {
-              setErrorMessage('Password incorrect');
-              console.log('Password incorrect message set successfully');
-            } catch (err) {
-              console.error('Error setting password incorrect message:', err);
-            }
-          } else {
-            console.log('Skipping password incorrect message - already set');
+            setErrorMessage('Password incorrect');
           }
-          // TODO: Clear the password field but keep the UID - temporarily disabled
-          // setPassword('');
         } else {
           setErrorMessage(`Error: ${detail}`);
         }
       }
     } catch (err) {
-      console.error('Login error caught:', err);
-      console.log('Error response:', err.response);
+      console.error('Login error:', err);
       // Check if it's an axios error with response
       if (err.response && err.response.data) {
         const detail = err.response.data.detail?.status || err.response.data.message;
-        console.log('Catch block error detail:', detail);
         if (detail === 'user not found') {
           setErrorMessage('UID not found');
         } else if (detail === 'password incorrect') {
           // Only set the message if it's different to avoid re-render flash
           if (errorMessage !== 'Password incorrect') {
-            console.log('Catch: Setting password incorrect error message');
             setErrorMessage('Password incorrect');
-          } else {
-            console.log('Catch: Skipping password incorrect message - already set');
           }
         } else {
           setErrorMessage(`Error: ${detail}`);
