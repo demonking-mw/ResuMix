@@ -183,7 +183,7 @@ export default function Login() {
             <hr className="divider" />
             
             {/* Google OAuth Login Button */}
-            <div className="google-login-container" style={{ marginBottom: '20px', textAlign: 'center' }}>
+            <div className="google-login-container" style={{ marginBottom: '0px', textAlign: 'center' }}>
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={() => {

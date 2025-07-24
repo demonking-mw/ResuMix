@@ -152,10 +152,41 @@
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-.step-card:hover {
+.clickable-card {
+  cursor: pointer;
+}
+
+.clickable-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
   background: rgba(255, 255, 255, 1);
+}
+
+/* Card 1: Light blue tint */
+.workflow-step:nth-child(1) .step-card {
+  background: rgba(239, 246, 255, 0.95);
+}
+
+.workflow-step:nth-child(1) .clickable-card:hover {
+  background: rgba(239, 246, 255, 1);
+}
+
+/* Card 2: Light purple tint */
+.workflow-step:nth-child(2) .step-card {
+  background: rgba(245, 243, 255, 0.95);
+}
+
+.workflow-step:nth-child(2) .clickable-card:hover {
+  background: rgba(245, 243, 255, 1);
+}
+
+/* Card 3: Light gray tint */
+.workflow-step:nth-child(3) .step-card {
+  background: rgba(249, 250, 251, 0.95);
+}
+
+.workflow-step:nth-child(3) .clickable-card:hover {
+  background: rgba(249, 250, 251, 1);
 }
 
 .step-content {
@@ -207,6 +238,7 @@
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
+  min-width: 100px;
 }
 
 .step-button:hover {
@@ -214,11 +246,110 @@
   transform: translateY(-1px);
 }
 
-.generate-btn {
-  background: #16a34a;
+/* All help buttons have the same styling */
+.help-button {
+  background: #10b981;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.help-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* Help Section */
+.help-section {
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+}
+
+.help-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: slideDown 0.3s ease-out;
+  position: relative;
+}
+
+.help-close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.help-close-button:hover {
+  background: rgba(107, 114, 128, 0.1);
+  color: #374151;
+  transform: scale(1.1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.help-info h3 {
+  color: #111;
+  font-size: 1.25rem;
   font-weight: 600;
-  font-size: 1rem;
-  padding: 0.875rem 2rem;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.help-info p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.help-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-info li {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.help-info li::before {
+  content: "•";
+  color: #6366f1;
+  font-weight: bold;
+  position: absolute;
+  left: 0.5rem;
 }
 
 .generate-btn:hover {
