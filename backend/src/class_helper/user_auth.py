@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 import psycopg  # type: ignore
 
 from ..db_helper import dbconn
+from..general_helper.vec_rip import vec_rip
 
 
 class UserAuth:
@@ -106,13 +107,13 @@ class UserAuth:
             # Frequent resign prevention: will sign once every 20 min
             return {
                 "status": True,
-                "detail": table_1[0],
+                "detail": vec_rip(table_1[0]),
                 "jwt": self.args["reauth_jwt"],
             }, 200
         return {
             "status": True,
-            "detail": table_1[0],
-            "jwt": self.sign_jwt(self.args["uid"]),
+            "detail": vec_rip(table_1[0]),
+            "jwt": self.sign_jwt(self.args["reauth_jwt"]),
         }, 200
         # Successful auth returns a new jwt token with more valid time
 
@@ -138,7 +139,7 @@ class UserAuth:
         if table_1[0]["pwd"] == self.args["pwd"]:
             return {
                 "status": True,
-                "detail": table_1[0],
+                "detail": vec_rip(table_1[0]),
                 "jwt": self.sign_jwt(self.args["uid"]),
             }, 200
 
@@ -244,7 +245,7 @@ class UserAuth:
             return {"status": False, "message": "auth type mismatch"}, 401
         return {
             "status": True,
-            "info": table_1[0],
+            "info": vec_rip(table_1[0]),
             "jwt": self.sign_jwt(table_1[0]["uid"]),
         }, 200
 
