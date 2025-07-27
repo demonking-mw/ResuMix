@@ -1,18 +1,17 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Landing       from './components/Landing';
-import Login         from './components/Login';
-import CreateProfile from './components/CreateProfile';
-import AccountHome   from './components/AccountHome';
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Landing from "./components/Landing";
+import Login from "./components/Login";
+import CreateProfile from "./components/CreateProfile";
+import AccountHome from "./components/AccountHome";
 import ResumeForm from "./input_components/ResumeForm";
-import UILibraryDemo from './components/UILibraryDemo';
+import UILibraryDemo from "./components/UILibraryDemo";
 
 export default function App() {
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -27,18 +26,24 @@ export default function App() {
           <Route path="/signup" element={<CreateProfile />} />
 
           {/* 4) Account Home - Main dashboard after login */}
-          <Route path="/account" element={
-            <ProtectedRoute>
-              <AccountHome />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountHome />
+              </ProtectedRoute>
+            }
+          />
 
           {/* 5) Protected Home - Resume form */}
-          <Route path="/home" element={
-            <ProtectedRoute>
-              <ResumeForm />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/master-resume"
+            element={
+              <ProtectedRoute>
+                <ResumeForm />
+              </ProtectedRoute>
+            }
+          />
 
           {/* 6) UI Library Demo */}
           <Route path="/demo" element={<UILibraryDemo />} />

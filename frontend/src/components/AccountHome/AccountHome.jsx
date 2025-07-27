@@ -1,9 +1,9 @@
 // src/components/AccountHome/AccountHome.jsx
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import './AccountHome.css';
-import logo from '../../assets/ResuMix.png';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import "./AccountHome.css";
+import NavBar from "../NavBar";
 
 const AccountHome = () => {
   const { user, logout } = useAuth();
@@ -11,17 +11,17 @@ const AccountHome = () => {
   const [showHelp, setShowHelp] = useState(null);
 
   // Debug: Let's see what's in the user object
-  console.log('User object in AccountHome:', user);
+  console.log("User object in AccountHome:", user);
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const handleCardClick = (destination) => {
     // TODO: Implement navigation logic
     console.log(`Navigating to: ${destination}`);
-    // navigate(destination);
+    navigate(destination);
   };
 
   const handleHelpClick = (e, stepNumber) => {
@@ -31,17 +31,7 @@ const AccountHome = () => {
 
   return (
     <div className="account-container">
-      {/* Header with Logo and User Actions */}
-      <header className="account-header">
-        <Link to="/account" className="logo-link">
-          <img src={logo} alt="ResuMix Logo" className="logo" />
-          <span className="brand-name">ResuMix</span>
-        </Link>
-        <div className="user-actions">
-          <span className="welcome-text">Welcome, {user?.name || user?.user_name || user?.id || 'User'}!</span>
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
-        </div>
-      </header>
+      <NavBar />
 
       {/* Status Bar */}
       <div className="status-bar">
@@ -58,14 +48,17 @@ const AccountHome = () => {
             <div className="status-indicator">
               <span className="status-label">&lt;STATUS_INDICATOR&gt;</span>
             </div>
-            <div className="step-card clickable-card" onClick={() => handleCardClick('/master-resume')}>
+            <div
+              className="step-card clickable-card"
+              onClick={() => handleCardClick("/master-resume")}
+            >
               <div className="step-content">
                 <span className="step-title">Set your master resume</span>
                 <p className="step-description">
                   Upload and configure your comprehensive resume template
                 </p>
-                <button 
-                  className="step-button help-button" 
+                <button
+                  className="step-button help-button"
                   onClick={(e) => handleHelpClick(e, 1)}
                 >
                   Help
@@ -79,14 +72,19 @@ const AccountHome = () => {
             <div className="status-indicator">
               <span className="status-label">&lt;STATUS_INDICATOR&gt;</span>
             </div>
-            <div className="step-card clickable-card" onClick={() => handleCardClick('/parameters')}>
+            <div
+              className="step-card clickable-card"
+              // onClick={() => handleCardClick("/parameters")}
+            >
               <div className="step-content">
-                <span className="step-title">Tweak your resume's parameter</span>
+                <span className="step-title">
+                  Tweak your resume's parameter
+                </span>
                 <p className="step-description">
                   Customize settings and preferences for resume optimization
                 </p>
-                <button 
-                  className="step-button help-button" 
+                <button
+                  className="step-button help-button"
                   onClick={(e) => handleHelpClick(e, 2)}
                 >
                   Help
@@ -100,14 +98,18 @@ const AccountHome = () => {
             <div className="status-indicator">
               <span className="status-label">&lt;STATUS_INDICATOR&gt;</span>
             </div>
-            <div className="step-card clickable-card" onClick={() => handleCardClick('/generate')}>
+            <div
+              className="step-card clickable-card"
+              // onClick={() => handleCardClick("/generate")}
+            >
               <div className="step-content">
                 <span className="step-title">Generate</span>
                 <p className="step-description">
-                  Create optimized resumes tailored to specific job opportunities
+                  Create optimized resumes tailored to specific job
+                  opportunities
                 </p>
-                <button 
-                  className="step-button help-button" 
+                <button
+                  className="step-button help-button"
                   onClick={(e) => handleHelpClick(e, 3)}
                 >
                   Help
@@ -121,8 +123,8 @@ const AccountHome = () => {
         {showHelp && (
           <div className="help-section">
             <div className="help-content">
-              <button 
-                className="help-close-button" 
+              <button
+                className="help-close-button"
                 onClick={() => setShowHelp(null)}
                 aria-label="Close help"
               >
@@ -131,7 +133,11 @@ const AccountHome = () => {
               {showHelp === 1 && (
                 <div className="help-info">
                   <h3>Master Resume Help</h3>
-                  <p>Upload your complete resume template that contains all your experience, skills, and achievements. This will serve as the foundation for generating tailored resumes.</p>
+                  <p>
+                    Upload your complete resume template that contains all your
+                    experience, skills, and achievements. This will serve as the
+                    foundation for generating tailored resumes.
+                  </p>
                   <ul>
                     <li>Upload PDF or Word document</li>
                     <li>Include all relevant experience</li>
@@ -142,7 +148,10 @@ const AccountHome = () => {
               {showHelp === 2 && (
                 <div className="help-info">
                   <h3>Parameters Help</h3>
-                  <p>Configure settings that control how your resume is optimized for different job opportunities.</p>
+                  <p>
+                    Configure settings that control how your resume is optimized
+                    for different job opportunities.
+                  </p>
                   <ul>
                     <li>Set keyword matching preferences</li>
                     <li>Choose resume sections to prioritize</li>
@@ -153,7 +162,10 @@ const AccountHome = () => {
               {showHelp === 3 && (
                 <div className="help-info">
                   <h3>Generate Help</h3>
-                  <p>Create customized resumes tailored to specific job postings using your master resume and configured parameters.</p>
+                  <p>
+                    Create customized resumes tailored to specific job postings
+                    using your master resume and configured parameters.
+                  </p>
                   <ul>
                     <li>Paste job description</li>
                     <li>Select optimization level</li>
