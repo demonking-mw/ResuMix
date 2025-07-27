@@ -16,7 +16,6 @@ from flask_restful import Resource
 from backend.src.db_helper.dbconn import DBConn
 from backend.src.classes_req import resume_req
 from backend.src.class_helper import resume_handle
-from backend.src.general_helper.google_auth_extract import GoogleAuthExtract as gae
 
 
 class ResumeHandle(Resource):
