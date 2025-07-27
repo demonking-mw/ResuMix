@@ -20,6 +20,7 @@ import psycopg  # type: ignore
 
 from ..db_helper import dbconn
 from..general_helper.vec_rip import vec_rip
+from..general_helper.parse_user_info import parse_user_info
 
 
 class UserAuth:
@@ -104,16 +105,24 @@ class UserAuth:
         if datetime.datetime.utcnow() > datetime.datetime.fromtimestamp(
             payload["exp"]
         ) - datetime.timedelta(minutes=15):
+            reduced_table = vec_rip(table_1[0])
+            parsed_info = parse_user_info(reduced_table)
+            print("Parsed info:", parsed_info)
             # Frequent resign prevention: will sign once every 20 min
             return {
                 "status": True,
-                "detail": vec_rip(table_1[0]),
+                "detail": reduced_table,
+                "user_status": parsed_info,
                 "jwt": self.args["reauth_jwt"],
             }, 200
+        reduced_table = vec_rip(table_1[0])
+        parsed_info = parse_user_info(reduced_table)
+        print("Parsed info:", parsed_info)
         return {
             "status": True,
-            "detail": vec_rip(table_1[0]),
+            "detail": reduced_table,
             "jwt": self.sign_jwt(self.args["reauth_jwt"]),
+            "user_status": parsed_info,
         }, 200
         # Successful auth returns a new jwt token with more valid time
 
@@ -137,9 +146,13 @@ class UserAuth:
         if table_1[0]["auth_type"] != "eup":
             return {"status": False, "detail": {"status": "auth type mismatch"}}, 401
         if table_1[0]["pwd"] == self.args["pwd"]:
+            reduced_table = vec_rip(table_1[0])
+            parsed_info = parse_user_info(reduced_table)
+            print("Parsed info:", parsed_info)
             return {
                 "status": True,
-                "detail": vec_rip(table_1[0]),
+                "detail": reduced_table,
+                "user_status": parsed_info,
                 "jwt": self.sign_jwt(self.args["uid"]),
             }, 200
 
@@ -170,10 +183,12 @@ class UserAuth:
         )
         try:
             self.database.run_sql(sql_query, params)
+            user_status = parse_user_info({})
             return {
                 "status": True,
                 "detail": {"status": "user created"},
                 "jwt": self.sign_jwt(self.args["uid"]),
+                "user_status": user_status,
             }, 201
         except psycopg.errors.UniqueViolation:
             print("UID unique violation")
@@ -233,20 +248,26 @@ class UserAuth:
             )
             try:
                 self.database.run_sql(sql_query, params)
+                user_status = parse_user_info({})
                 return {
                     "status": True,
                     "detail": {"message": "user created"},
                     "jwt": self.sign_jwt(self.args["sub"]),
+                    "user_status": user_status,
                 }, 201
             except psycopg.errors.UniqueViolation:
                 print("BACKEND ERROR: on creation while account exists")
                 return {}, -1
         if table_1[0]["auth_type"] != "go":
             return {"status": False, "message": "auth type mismatch"}, 401
+        reduced_table = vec_rip(table_1[0])
+        parsed_info = parse_user_info(reduced_table)
+        print("Parsed info:", parsed_info)
         return {
             "status": True,
-            "info": vec_rip(table_1[0]),
+            "info": reduced_table,
             "jwt": self.sign_jwt(table_1[0]["uid"]),
+            "user_status": parsed_info,
         }, 200
 
     def delete_go(self) -> tuple[dict, int]:
