@@ -1,8 +1,8 @@
 import { useState } from "react";
 import SectionForm from "./SectionForm";
 import "./ResumeForm.css";
-import { Link } from "react-router-dom";
-import logo from "../assets/ResuMix.png";
+import { useAuth } from "../context/AuthContext";
+import NavBar from "../components/NavBar";
 
 export default function ResumeForm() {
   const [headingName, setHeadingName] = useState("");
@@ -10,6 +10,7 @@ export default function ResumeForm() {
   const [subsequentContentRaw, setSubsequentContentRaw] = useState("");
   const [sections, setSections] = useState([]);
   const [jobDescription, setJobDescription] = useState("");
+  const { isAuthenticated, user } = useAuth();
 
   const addSection = () => {
     setSections([...sections, { title: "", items: [] }]);
@@ -92,22 +93,13 @@ export default function ResumeForm() {
     }
   };
 
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="layout">
-      <header style={{ position: "absolute", top: "1rem", left: "1.5rem" }}>
-        <Link
-          to="/"
-          className="logo-link"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            textDecoration: "none",
-          }}
-        >
-          <img src={logo} alt="ResuMix Logo" className="home-logo" />
-          <span className="brand-name">ResuMix</span>
-        </Link>
-      </header>
+      <NavBar />
 
       <p className="text-style">My Mix</p>
 
