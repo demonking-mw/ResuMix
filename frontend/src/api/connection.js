@@ -33,10 +33,49 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('authToken');
+      localStorage.removeItem('reauthToken');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
+
+// Helper function to make reauth requests (for when you need to use the reauth token)
+export const makeReauthRequest = async (url, data = {}, method = 'GET') => {
+  const reauthToken = localStorage.getItem('reauthToken');
+  const authToken = localStorage.getItem('authToken');
+  
+  if (!reauthToken || !authToken) {
+    throw new Error('No reauth token available');
+  }
+
+  // Decode the auth token to get the user ID
+  try {
+    const decodedToken = JSON.parse(atob(authToken.split('.')[1]));
+    const uid = decodedToken.sub || decodedToken.user_id || decodedToken.uid;
+    
+    const requestData = {
+      ...data,
+      type: 're',
+      uid: uid,
+      reauth_jwt: reauthToken
+    };
+
+    if (method.toLowerCase() === 'post') {
+      return await api.post(url, requestData);
+    } else if (method.toLowerCase() === 'get') {
+      return await api.get(url, { params: requestData });
+    } else {
+      return await api.request({
+        method: method,
+        url: url,
+        data: requestData
+      });
+    }
+  } catch (error) {
+    console.error('Error making reauth request:', error);
+    throw error;
+  }
+};
 
 export default api;

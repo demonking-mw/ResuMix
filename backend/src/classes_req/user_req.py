@@ -16,7 +16,7 @@ user_auth = reqparse.RequestParser()
 user_auth.add_argument(
     "type",
     type=str,
-    help="Type is required, can be email, up, or go",
+    help="Type is required, can be email, up, or go or re",
     required=True,
 )
 user_auth.add_argument(
