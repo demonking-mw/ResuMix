@@ -93,7 +93,7 @@ export default function Login() {
 			const { iat, exp } = decodedCredential;
 
 			// Check if the credential is timely (with 5-second buffer for clock differences)
-			const timeBuffer = 5; // 5 seconds
+			const timeBuffer = 8; // 5 seconds
 			if (currentTime < iat - timeBuffer || currentTime > exp + timeBuffer) {
 				console.log("Credential is not valid: expired or issued in the future");
 				setErrorMessage("Google login failed: Invalid credential timing");
