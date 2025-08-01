@@ -9,18 +9,20 @@ const AccountHome = () => {
 	const { user, logout, reauthToken, reauthenticate, userStatus } = useAuth();
 	const navigate = useNavigate();
 	const [showHelp, setShowHelp] = useState(null);
+	const [hoveredStatus, setHoveredStatus] = useState(null);
+	const [statusTimeout, setStatusTimeout] = useState(null);
 
 	// Function to get color based on status value
 	const getStatusColor = (status) => {
 		switch (status) {
 			case "r":
-				return "#dc3545"; // red
+				return "#cc101c"; // red
 			case "o":
-				return "#fd7e14"; // orange
+				return "#EB6702"; // high contrast burnt orange warning
 			case "y":
-				return "#ffc107"; // yellow
+				return "#f0cc00"; // yellow
 			case "g":
-				return "#40c057"; // lighter green
+				return "#24D648"; // lighter green
 			default:
 				return "#6c757d"; // gray for unknown/null status
 		}
@@ -40,6 +42,61 @@ const AccountHome = () => {
 			default:
 				return "#fff"; // white text on gray
 		}
+	};
+
+	// Function to get detailed status messages for hover
+	const getDetailedStatusMessage = (statusType, status) => {
+		const messages = {
+			resume_state: {
+				r: "Master resume not created - Please create your resume",
+				o: `Master resume set but only contain ${
+					userStatus?.item_count || 0
+				} lines - Adding more content will improve job-specific resume optimization`,
+				y: `POGG (${userStatus?.item_count || 0} lines)`,
+				g: `Master resume has ${
+					userStatus?.item_count || 0
+				} lines - Good to go!`,
+				default: "Resume status unknown - Please check configuration",
+			},
+			tweak_status: {
+				r: "Parameters not configured. Consider customizing your parameters to emphasize key experiences.",
+				o: "Partially tweaked - continue for better results",
+				y: "Basic parameters set - Consider advanced options",
+				g: "Parameters optimally configured for best results",
+				default: "Parameter status unknown - Please check settings",
+			},
+			generate_status: {
+				r: "Not ready to generate - Complete previous steps first",
+				o: "Resume severely limited - Consider revisiting previous steps",
+				y: "Mostly ready to generate - Imperfections may occur",
+				g: "ALL SET!",
+				default: "Generation status unknown - Please check setup",
+			},
+		};
+
+		return (
+			messages[statusType]?.[status] ||
+			messages[statusType]?.default ||
+			"Status unknown"
+		);
+	};
+
+	const handleStatusHoverEnter = (statusType) => {
+		// Clear any existing timeout
+		if (statusTimeout) {
+			clearTimeout(statusTimeout);
+			setStatusTimeout(null);
+		}
+		setHoveredStatus(statusType);
+	};
+
+	const handleStatusHoverLeave = () => {
+		// Set a timeout to hide the status after 1 second
+		const timeout = setTimeout(() => {
+			setHoveredStatus(null);
+			setStatusTimeout(null);
+		}, 500);
+		setStatusTimeout(timeout);
 	};
 
 	const handleLogout = () => {
@@ -76,13 +133,24 @@ const AccountHome = () => {
 					<div className="workflow-step">
 						<div className="status-indicator">
 							<span
-								className="status-label"
+								className={`status-label ${
+									hoveredStatus === "resume_state"
+										? "status-label-expanded"
+										: ""
+								}`}
 								style={{
 									backgroundColor: getStatusColor(userStatus?.resume_state),
 									color: getTextColor(userStatus?.resume_state),
 								}}
+								onMouseEnter={() => handleStatusHoverEnter("resume_state")}
+								onMouseLeave={handleStatusHoverLeave}
 							>
-								&lt;STATUS_INDICATOR&gt;
+								{hoveredStatus === "resume_state"
+									? getDetailedStatusMessage(
+											"resume_state",
+											userStatus?.resume_state
+									  )
+									: "<STATUS_INDICATOR>"}
 							</span>
 						</div>
 						<div
@@ -108,13 +176,24 @@ const AccountHome = () => {
 					<div className="workflow-step">
 						<div className="status-indicator">
 							<span
-								className="status-label"
+								className={`status-label ${
+									hoveredStatus === "tweak_status"
+										? "status-label-expanded"
+										: ""
+								}`}
 								style={{
 									backgroundColor: getStatusColor(userStatus?.tweak_status),
 									color: getTextColor(userStatus?.tweak_status),
 								}}
+								onMouseEnter={() => handleStatusHoverEnter("tweak_status")}
+								onMouseLeave={handleStatusHoverLeave}
 							>
-								&lt;STATUS_INDICATOR&gt;
+								{hoveredStatus === "tweak_status"
+									? getDetailedStatusMessage(
+											"tweak_status",
+											userStatus?.tweak_status
+									  )
+									: "<STATUS_INDICATOR>"}
 							</span>
 						</div>
 						<div
@@ -142,13 +221,24 @@ const AccountHome = () => {
 					<div className="workflow-step">
 						<div className="status-indicator">
 							<span
-								className="status-label"
+								className={`status-label ${
+									hoveredStatus === "generate_status"
+										? "status-label-expanded"
+										: ""
+								}`}
 								style={{
 									backgroundColor: getStatusColor(userStatus?.generate_status),
 									color: getTextColor(userStatus?.generate_status),
 								}}
+								onMouseEnter={() => handleStatusHoverEnter("generate_status")}
+								onMouseLeave={handleStatusHoverLeave}
 							>
-								&lt;STATUS_INDICATOR&gt;
+								{hoveredStatus === "generate_status"
+									? getDetailedStatusMessage(
+											"generate_status",
+											userStatus?.generate_status
+									  )
+									: "<STATUS_INDICATOR>"}
 							</span>
 						</div>
 						<div
