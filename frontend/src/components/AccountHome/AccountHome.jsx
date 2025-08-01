@@ -10,6 +10,38 @@ const AccountHome = () => {
 	const navigate = useNavigate();
 	const [showHelp, setShowHelp] = useState(null);
 
+	// Function to get color based on status value
+	const getStatusColor = (status) => {
+		switch (status) {
+			case "r":
+				return "#dc3545"; // red
+			case "o":
+				return "#fd7e14"; // orange
+			case "y":
+				return "#ffc107"; // yellow
+			case "g":
+				return "#40c057"; // lighter green
+			default:
+				return "#6c757d"; // gray for unknown/null status
+		}
+	};
+
+	// Function to get text color for contrast and emphasis
+	const getTextColor = (status) => {
+		switch (status) {
+			case "r":
+				return "#fff"; // white text on red (high contrast)
+			case "o":
+				return "#fff"; // white text on orange (high contrast)
+			case "y":
+				return "#000"; // black text on yellow (better contrast)
+			case "g":
+				return "#fff"; // white text on green (high contrast, emphasizes "good")
+			default:
+				return "#fff"; // white text on gray
+		}
+	};
+
 	const handleLogout = () => {
 		logout();
 		navigate("/");
@@ -43,7 +75,15 @@ const AccountHome = () => {
 					{/* Step 1: Master Resume */}
 					<div className="workflow-step">
 						<div className="status-indicator">
-							<span className="status-label">&lt;STATUS_INDICATOR&gt;</span>
+							<span
+								className="status-label"
+								style={{
+									backgroundColor: getStatusColor(userStatus?.resume_state),
+									color: getTextColor(userStatus?.resume_state),
+								}}
+							>
+								&lt;STATUS_INDICATOR&gt;
+							</span>
 						</div>
 						<div
 							className="step-card clickable-card"
@@ -67,7 +107,15 @@ const AccountHome = () => {
 					{/* Step 2: Parameters */}
 					<div className="workflow-step">
 						<div className="status-indicator">
-							<span className="status-label">&lt;STATUS_INDICATOR&gt;</span>
+							<span
+								className="status-label"
+								style={{
+									backgroundColor: getStatusColor(userStatus?.tweak_status),
+									color: getTextColor(userStatus?.tweak_status),
+								}}
+							>
+								&lt;STATUS_INDICATOR&gt;
+							</span>
 						</div>
 						<div
 							className="step-card clickable-card"
@@ -93,7 +141,15 @@ const AccountHome = () => {
 					{/* Step 3: Generate */}
 					<div className="workflow-step">
 						<div className="status-indicator">
-							<span className="status-label">&lt;STATUS_INDICATOR&gt;</span>
+							<span
+								className="status-label"
+								style={{
+									backgroundColor: getStatusColor(userStatus?.generate_status),
+									color: getTextColor(userStatus?.generate_status),
+								}}
+							>
+								&lt;STATUS_INDICATOR&gt;
+							</span>
 						</div>
 						<div
 							className="step-card clickable-card"
