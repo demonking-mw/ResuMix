@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import api from "../api/connection";
 
 const AuthContext = createContext({});
 
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
 	// Check if user is logged in on app start
 	useEffect(() => {
-		const checkAuthState = () => {
+		const checkAuthState = async () => {
 			try {
 				const storedToken = localStorage.getItem("authToken");
 				const storedReauthToken = localStorage.getItem("reauthToken");
@@ -30,34 +31,118 @@ export const AuthProvider = ({ children }) => {
 					storedReauthToken: !!storedReauthToken,
 				});
 
-				if (storedToken) {
-					// Decode and validate the token
+				if (storedToken && storedReauthToken) {
+					// Decode the stored token to get user ID
 					const decodedToken = jwtDecode(storedToken);
 					const currentTime = Math.floor(Date.now() / 1000);
 
 					// Check if token is still valid
 					if (decodedToken.exp && currentTime < decodedToken.exp) {
-						setToken(storedToken);
-						setReauthToken(storedReauthToken);
-						console.log(
-							"AuthContext - setting reauthToken to:",
-							storedReauthToken
-						);
-						setUser({
-							id: decodedToken.sub || decodedToken.user_id,
-							email: decodedToken.email,
-							name: decodedToken.name || decodedToken.given_name,
-							picture: decodedToken.picture,
-							// Add other user data from your JWT as needed
-						});
+						// Extract user ID from token
+						const userId =
+							decodedToken.sub || decodedToken.user_id || decodedToken.uid;
+
+						if (userId) {
+							// Attempt reauthentication with the backend
+							try {
+								console.log("AuthContext - attempting reauthentication...");
+								const response = await api.get("/user", {
+									params: {
+										type: "re",
+										uid: userId,
+										reauth_jwt: storedReauthToken,
+									},
+								});
+
+								console.log(
+									"AuthContext - reauthentication response:",
+									response.data
+								);
+
+								if (response.data.status) {
+									// Update tokens if new ones are provided
+									// The backend returns a new JWT that should be used as both auth and reauth token
+									const newJwtToken = response.data.jwt;
+
+									if (newJwtToken) {
+										setToken(newJwtToken);
+										setReauthToken(newJwtToken);
+										localStorage.setItem("authToken", newJwtToken);
+										localStorage.setItem("reauthToken", newJwtToken);
+										console.log(
+											"AuthContext - updated both tokens with new JWT"
+										);
+									} else {
+										// If no new JWT provided, keep existing tokens
+										setToken(storedToken);
+										setReauthToken(storedReauthToken);
+									}
+
+									// Set user data from backend response
+									const userDetails = response.data.detail;
+									setUser({
+										id: userDetails.uid,
+										email: userDetails.email,
+										name: userDetails.user_name || userDetails.uid,
+										// Include any other user data from the backend
+										...userDetails,
+									});
+
+									console.log(
+										"AuthContext - reauthentication successful, user data updated"
+									);
+								} else {
+									// Reauthentication failed, clear stored tokens and log out user
+									console.log(
+										"AuthContext - reauthentication failed, logging out user"
+									);
+									setUser(null);
+									setToken(null);
+									setReauthToken(null);
+									localStorage.removeItem("authToken");
+									localStorage.removeItem("reauthToken");
+								}
+							} catch (reauthError) {
+								console.error(
+									"AuthContext - reauthentication error:",
+									reauthError
+								);
+								// If reauthentication fails due to network/server error, log out the user
+								// This ensures we don't keep potentially invalid tokens
+								console.log(
+									"AuthContext - reauthentication failed due to error, logging out user"
+								);
+								setUser(null);
+								setToken(null);
+								setReauthToken(null);
+								localStorage.removeItem("authToken");
+								localStorage.removeItem("reauthToken");
+							}
+						} else {
+							// No user ID in token, clear everything and log out
+							console.log("AuthContext - no user ID in token, logging out");
+							setUser(null);
+							setToken(null);
+							setReauthToken(null);
+							localStorage.removeItem("authToken");
+							localStorage.removeItem("reauthToken");
+						}
 					} else {
-						// Token expired, clear it
+						// Token expired, clear it and log out
+						console.log("AuthContext - token expired, logging out");
+						setUser(null);
+						setToken(null);
+						setReauthToken(null);
 						localStorage.removeItem("authToken");
 						localStorage.removeItem("reauthToken");
 					}
 				}
 			} catch (error) {
 				console.error("Error checking auth state:", error);
+				// Clear everything on any error during auth check
+				setUser(null);
+				setToken(null);
+				setReauthToken(null);
 				localStorage.removeItem("authToken");
 				localStorage.removeItem("reauthToken");
 			} finally {
@@ -131,6 +216,75 @@ export const AuthProvider = ({ children }) => {
 			: {};
 	};
 
+	const reauthenticate = async () => {
+		if (!reauthToken || !user?.id) {
+			console.log(
+				"AuthContext - no reauth token or user ID for reauthentication"
+			);
+			return false;
+		}
+
+		try {
+			console.log("AuthContext - manual reauthentication attempt...");
+			const response = await api.get("/user", {
+				params: {
+					type: "re",
+					uid: user.id,
+					reauth_jwt: reauthToken,
+				},
+			});
+
+			if (response.data.status) {
+				// Update tokens if new ones are provided
+				// The backend returns a new JWT that should be used as both auth and reauth token
+				const newJwtToken = response.data.jwt;
+
+				if (newJwtToken) {
+					setToken(newJwtToken);
+					setReauthToken(newJwtToken);
+					localStorage.setItem("authToken", newJwtToken);
+					localStorage.setItem("reauthToken", newJwtToken);
+					console.log(
+						"AuthContext - manual reauth: updated both tokens with new JWT"
+					);
+				}
+
+				// Update user data from backend response
+				const userDetails = response.data.detail;
+				setUser({
+					id: userDetails.uid,
+					email: userDetails.email,
+					name: userDetails.user_name || userDetails.uid,
+					// Include any other user data from the backend
+					...userDetails,
+				});
+
+				console.log("AuthContext - manual reauthentication successful");
+				return true;
+			} else {
+				console.log(
+					"AuthContext - manual reauthentication failed, logging out"
+				);
+				// If manual reauthentication fails, log out the user
+				setUser(null);
+				setToken(null);
+				setReauthToken(null);
+				localStorage.removeItem("authToken");
+				localStorage.removeItem("reauthToken");
+				return false;
+			}
+		} catch (error) {
+			console.error("AuthContext - manual reauthentication error:", error);
+			// If manual reauthentication fails due to error, log out the user
+			setUser(null);
+			setToken(null);
+			setReauthToken(null);
+			localStorage.removeItem("authToken");
+			localStorage.removeItem("reauthToken");
+			return false;
+		}
+	};
+
 	const value = {
 		user,
 		token,
@@ -141,6 +295,7 @@ export const AuthProvider = ({ children }) => {
 		isAuthenticated,
 		getAuthHeaders,
 		getReauthHeaders,
+		reauthenticate,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
