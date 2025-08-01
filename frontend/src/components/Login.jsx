@@ -28,10 +28,12 @@ export default function Login() {
 		}
 
 		try {
-			const response = await api.post("/user", {
-				type: "up",
-				uid: userId,
-				pwd: password,
+			const response = await api.get("/user", {
+				params: {
+					type: "up",
+					uid: userId,
+					pwd: password,
+				},
 			});
 
 			const data = response.data;
