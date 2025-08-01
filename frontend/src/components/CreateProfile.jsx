@@ -55,7 +55,7 @@ export default function CreateProfile() {
 				};
 
 				// Use auth context login method with user data and reauth JWT
-				login(data.jwt, userData, data.jwt);
+				login(data.jwt, userData, data.jwt, response.data);
 				navigate("/account");
 			} else {
 				const detail = data.detail?.status || data.message;
@@ -115,7 +115,12 @@ export default function CreateProfile() {
 							name: decodedCredential.name,
 							picture: decodedCredential.picture,
 						};
-						login(response.data.jwt, userData, response.data.jwt);
+						login(
+							response.data.jwt,
+							userData,
+							response.data.jwt,
+							response.data
+						);
 						navigate("/account");
 					} else {
 						const detail =

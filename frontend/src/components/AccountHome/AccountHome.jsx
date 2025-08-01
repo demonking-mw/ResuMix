@@ -1,26 +1,14 @@
 // src/components/AccountHome/AccountHome.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./AccountHome.css";
 import NavBar from "../NavBar";
 
 const AccountHome = () => {
-	const { user, logout, reauthToken } = useAuth();
+	const { user, logout, reauthToken, reauthenticate, userStatus } = useAuth();
 	const navigate = useNavigate();
 	const [showHelp, setShowHelp] = useState(null);
-
-	// // Debug: Let's see what's in the user object
-	// console.log("User object in AccountHome:", user);
-
-	// // Debug: Let's see the reauth token (replicatable on any page)
-	// console.log("Reauth token in AccountHome:", reauthToken);
-
-	// Debug: Let's also check localStorage directly
-	console.log(
-		"Reauth token from localStorage:",
-		localStorage.getItem("reauthToken")
-	);
 
 	const handleLogout = () => {
 		logout();
