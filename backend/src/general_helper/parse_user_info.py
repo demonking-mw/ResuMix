@@ -52,6 +52,10 @@ def parse_user_info(user_info: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         A new dictionary with extracted and interpolated fields
+    "item_count": int;
+    "resume_state": r(bad), o(ok but sketchy), g(good);
+    "tweak_status": r(bad), o(ok but sketchy), g(good);
+    "generate_status": r(bad), o(ok but sketchy), y(good but imperfect) g(good);
     """
     item_count, total_cate_scores, tweaked_cate_scores = _analyze_resume(user_info)
 
