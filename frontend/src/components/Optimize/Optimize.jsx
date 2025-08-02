@@ -1,15 +1,18 @@
 // src/components/Optimize/Optimize.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
+import api from "../../api/connection";
 import "./Optimize.css";
 import NavBar from "../NavBar";
 import { Button, Textarea } from "../../ui";
 
 const Optimize = () => {
-	const { user, getReauthHeaders } = useAuth();
+	const { user, getReauthHeaders, userStatus, reauthenticate } = useAuth();
 	const [jobDescription, setJobDescription] = useState("");
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [showTips, setShowTips] = useState(false);
+	const [showTerminal, setShowTerminal] = useState(false);
+	const [terminalMessages, setTerminalMessages] = useState([]);
 	const reauthPerformed = useRef(false);
 
 	// Reauthenticate only once on component mount
@@ -23,6 +26,17 @@ const Optimize = () => {
 		performReauth();
 	}, []); // Empty dependency array to run only once
 
+	// Helper function to add messages to terminal
+	const addTerminalMessage = (message, type = "info") => {
+		const timestamp = new Date().toLocaleTimeString();
+		setTerminalMessages((prev) => [...prev, { message, type, timestamp }]);
+	};
+
+	// Helper function to clear terminal
+	const clearTerminal = () => {
+		setTerminalMessages([]);
+	};
+
 	const handleJobDescriptionChange = (e) => {
 		setJobDescription(e.target.value);
 	};
@@ -33,32 +47,78 @@ const Optimize = () => {
 			return;
 		}
 
+		// Show terminal and clear previous messages
+		setShowTerminal(true);
+		clearTerminal();
 		setIsGenerating(true);
 
 		try {
-			// Reauthenticate before making the API call
-			const reauthSuccess = await reauthenticate();
-			if (!reauthSuccess) {
-				alert("Authentication failed. Please log in again.");
+			addTerminalMessage("Starting resume generation process...", "info");
+
+			// Step 1: Check generate_status
+			addTerminalMessage("Checking system status...", "info");
+
+			if (userStatus?.generate_status === "r") {
+				addTerminalMessage("❌ Resume generation not ready!", "error");
+				addTerminalMessage(
+					"Please complete the previous steps (Master Resume and Parameters) before generating.",
+					"error"
+				);
 				setIsGenerating(false);
 				return;
 			}
 
-			// TODO: Replace with actual API endpoint for resume generation
-			const response = await fetch("/api/generate-resume", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					...getReauthHeaders(),
-				},
-				body: JSON.stringify({
-					job_description: jobDescription,
-				}),
-			});
+			addTerminalMessage("✅ System status check passed", "success");
 
-			if (response.ok) {
-				// Handle successful resume generation
-				const blob = await response.blob();
+			// Step 2: Reauthenticate
+			addTerminalMessage("Authenticating user...", "info");
+			const reauthSuccess = await reauthenticate();
+			if (!reauthSuccess) {
+				addTerminalMessage(
+					"❌ Authentication failed. Please log in again.",
+					"error"
+				);
+				setIsGenerating(false);
+				return;
+			}
+			addTerminalMessage("✅ Authentication successful", "success");
+
+			// Step 3: Prepare API call
+			addTerminalMessage("Preparing resume generation request...", "info");
+			const headers = getReauthHeaders();
+
+			if (!headers.uid || !headers.reauth_jwt) {
+				addTerminalMessage("❌ Missing authentication credentials", "error");
+				setIsGenerating(false);
+				return;
+			}
+
+			// Step 4: Call backend POST /resume/optimize endpoint
+			addTerminalMessage(
+				"Calling backend resume generation service...",
+				"info"
+			);
+
+			// Use POST with data in request body instead of query parameters
+			const response = await api.post(
+				"/resume/optimize",
+				{
+					uid: headers.uid,
+					reauth_jwt: headers.reauth_jwt,
+					job_description: jobDescription,
+					no_cache: false, // boolean like backend expects
+				},
+				{
+					responseType: "blob", // Critical for handling PDF binary data
+				}
+			);
+
+			if (response.status === 200) {
+				addTerminalMessage("✅ Resume generated successfully!", "success");
+				addTerminalMessage("Downloading resume...", "info");
+
+				// Handle file download - response.data should be a blob when responseType is 'blob'
+				const blob = response.data;
 				const url = window.URL.createObjectURL(blob);
 				const a = document.createElement("a");
 				a.style.display = "none";
@@ -68,14 +128,43 @@ const Optimize = () => {
 				a.click();
 				window.URL.revokeObjectURL(url);
 				document.body.removeChild(a);
+
+				addTerminalMessage("✅ Resume download completed!", "success");
 			} else {
-				throw new Error("Failed to generate resume");
+				addTerminalMessage(
+					`❌ Failed to generate resume: ${response.status} ${response.statusText}`,
+					"error"
+				);
 			}
 		} catch (error) {
 			console.error("Error generating resume:", error);
-			alert("There was an error generating your resume. Please try again.");
+			if (error.response) {
+				// The request was made and the server responded with a status code
+				// that falls out of the range of 2xx
+				addTerminalMessage(
+					`❌ Server error: ${error.response.status} ${error.response.statusText}`,
+					"error"
+				);
+				if (error.response.data && typeof error.response.data === "string") {
+					addTerminalMessage(`Error details: ${error.response.data}`, "error");
+				}
+			} else if (error.request) {
+				// The request was made but no response was received
+				addTerminalMessage(
+					"❌ Network error: No response from server",
+					"error"
+				);
+				addTerminalMessage(
+					"Please check your connection and try again.",
+					"error"
+				);
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				addTerminalMessage(`❌ Request error: ${error.message}`, "error");
+			}
 		} finally {
 			setIsGenerating(false);
+			addTerminalMessage("Resume generation process completed.", "info");
 		}
 	};
 
@@ -188,6 +277,34 @@ const Optimize = () => {
 						{/* End of optimize-sidebar */}
 					</div>
 					{/* End of optimize-main-row */}
+
+					{/* Terminal Output */}
+					{showTerminal && (
+						<div className="terminal-container">
+							<div className="terminal-header">
+								<span className="terminal-title">Resume Generation Log</span>
+								<button
+									className="terminal-close"
+									onClick={() => setShowTerminal(false)}
+								>
+									×
+								</button>
+							</div>
+							<div className="terminal-content">
+								{terminalMessages.map((msg, index) => (
+									<div
+										key={index}
+										className={`terminal-line terminal-${msg.type}`}
+									>
+										<span className="terminal-timestamp">
+											[{msg.timestamp}]
+										</span>
+										<span className="terminal-message">{msg.message}</span>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
 
 					{/* Generate Button - Full Width */}
 					<Button

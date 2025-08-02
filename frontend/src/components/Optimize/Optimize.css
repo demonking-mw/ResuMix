@@ -300,6 +300,114 @@
   }
 }
 
+/* Terminal Styles */
+.terminal-container {
+  background: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin: 1rem 0;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.terminal-header {
+  background: #2d2d2d;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.terminal-title {
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.terminal-close {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.terminal-close:hover {
+  background: #444;
+}
+
+.terminal-content {
+  background: #1e1e1e;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.terminal-line {
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.terminal-timestamp {
+  color: #888;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+.terminal-message {
+  flex: 1;
+}
+
+.terminal-info .terminal-message {
+  color: #ffffff;
+}
+
+.terminal-success .terminal-message {
+  color: #4ade80;
+}
+
+.terminal-error .terminal-message {
+  color: #f87171;
+}
+
+.terminal-warning .terminal-message {
+  color: #fbbf24;
+}
+
+/* Scrollbar styling for terminal */
+.terminal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.terminal-content::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
 @media (max-width: 768px) {
   .optimize-main {
     padding: 1rem;
@@ -318,5 +426,15 @@
   
   .job-description-textarea {
     min-height: 250px;
+  }
+
+  .terminal-content {
+    max-height: 200px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .terminal-header {
+    padding: 0.5rem 0.75rem;
   }
 }
