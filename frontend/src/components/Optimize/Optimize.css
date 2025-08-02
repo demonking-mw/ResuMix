@@ -1,0 +1,322 @@
+/* Optimize.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+.optimize-container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #e0f2fe, #e9d5ff);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.optimize-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.optimize-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: calc(100vh - 8rem); /* Full height minus navbar and padding */
+}
+
+/* Main Content Row */
+.optimize-main-row {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  flex: 1;
+}
+
+/* Left Section - Main Content */
+.optimize-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.job-input-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.job-input-container {
+  min-height: 350px;
+}
+
+.job-description-textarea {
+  width: 100% !important;
+  height: 350px !important;
+  min-height: 350px;
+  resize: vertical;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(255, 255, 255, 0.9);
+  font-family: 'Inter', sans-serif;
+}
+
+.job-description-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+.generate-button {
+  padding: 1rem 2rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: #6366f1 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.generate-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+  background: #4f46e5 !important;
+}
+
+.generate-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Right Sidebar */
+.optimize-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Status Box */
+.status-box {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  height: 310px;
+}
+
+.status-box-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.status-item:last-child {
+  margin-bottom: 0;
+}
+
+.status-item-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.status-placeholder {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.status-tokens {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+/* Tips Widget */
+.tips-widget {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  height: 266px;
+}
+
+.tips-header {
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(249, 250, 251, 0.5);
+  transition: background-color 0.2s ease;
+}
+
+.tips-header:hover {
+  background: rgba(249, 250, 251, 0.8);
+}
+
+.tips-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.tips-toggle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.tips-toggle.expanded {
+  transform: rotate(0deg);
+}
+
+.tips-content {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.tip-item {
+  margin-bottom: 1.5rem;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.tip-item h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tip-item ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #4b5563;
+}
+
+.tip-item li {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.tip-item p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .optimize-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .optimize-sidebar {
+    order: -1;
+  }
+  
+  .status-box, .tips-widget {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .optimize-main {
+    padding: 1rem;
+  }
+  
+  .job-input-section,
+  .generate-section,
+  .status-box,
+  .tips-widget {
+    padding: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .job-description-textarea {
+    min-height: 250px;
+  }
+}

@@ -243,7 +243,7 @@ const AccountHome = () => {
 						</div>
 						<div
 							className="step-card clickable-card"
-							// onClick={() => handleCardClick("/generate")}
+							onClick={() => handleCardClick("/optimize")}
 						>
 							<div className="step-content">
 								<span className="step-title">Generate</span>
