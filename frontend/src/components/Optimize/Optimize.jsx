@@ -4,11 +4,13 @@ import { useAuth } from "../../context/AuthContext";
 import api from "../../api/connection";
 import "./Optimize.css";
 import NavBar from "../NavBar";
-import { Button, Textarea } from "../../ui";
+import { Button, Textarea, Input } from "../../ui";
 
 const Optimize = () => {
 	const { user, getReauthHeaders, userStatus, reauthenticate } = useAuth();
 	const [jobDescription, setJobDescription] = useState("");
+	const [resumeName, setResumeName] = useState("");
+	const [noCache, setNoCache] = useState(false);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [showTips, setShowTips] = useState(false);
 	const [showTerminal, setShowTerminal] = useState(false);
@@ -106,7 +108,8 @@ const Optimize = () => {
 					uid: headers.uid,
 					reauth_jwt: headers.reauth_jwt,
 					job_description: jobDescription,
-					no_cache: false, // boolean like backend expects
+					resume_name: resumeName.trim() || user?.user_name || "resume",
+					no_cache: noCache, // boolean like backend expects
 				},
 				{
 					responseType: "blob", // Critical for handling PDF binary data
@@ -121,9 +124,11 @@ const Optimize = () => {
 				const blob = response.data;
 				const url = window.URL.createObjectURL(blob);
 				const a = document.createElement("a");
+				const finalResumeName =
+					resumeName.trim() || user?.user_name || "resume";
 				a.style.display = "none";
 				a.href = url;
-				a.download = "tailored_resume.pdf";
+				a.download = `${finalResumeName}.pdf`;
 				document.body.appendChild(a);
 				a.click();
 				window.URL.revokeObjectURL(url);
@@ -184,10 +189,40 @@ const Optimize = () => {
 						{/* Left Section - Job Description */}
 						<div className="optimize-left">
 							<div className="job-input-section">
-								<h2 className="section-title">Job Description</h2>
-								<p className="section-subtitle">
-									Paste the job description below to get your tailored resume
-								</p>
+								{/* Title Row with Resume Name */}
+								<div className="title-row">
+									<h2 className="section-title">Generate Resume</h2>
+									<div className="resume-name-input">
+										<Input
+											value={resumeName}
+											onChange={(e) => setResumeName(e.target.value)}
+											placeholder="Enter resume name"
+											className="resume-name-field"
+										/>
+									</div>
+								</div>
+
+								{/* Subtitle Row with No Cache */}
+								<div className="subtitle-row">
+									<p className="section-subtitle">
+										Paste the job description below to get your tailored resume
+									</p>
+									<div className="no-cache-switch">
+										<label className="switch-label">
+											<span className="switch-text">No Cache</span>
+											<div className="switch-container">
+												<input
+													type="checkbox"
+													checked={noCache}
+													onChange={(e) => setNoCache(e.target.checked)}
+													className="switch-input"
+												/>
+												<span className="switch-slider"></span>
+											</div>
+										</label>
+									</div>
+								</div>
+
 								<div className="job-input-container">
 									<Textarea
 										value={jobDescription}
