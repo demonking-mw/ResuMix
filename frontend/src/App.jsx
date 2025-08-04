@@ -8,6 +8,7 @@ import Landing from "./components/Landing";
 import Login from "./components/Login";
 import CreateProfile from "./components/CreateProfile";
 import AccountHome from "./components/AccountHome";
+import MasterResume from "./components/MasterResume";
 import ResumeForm from "./input_components/ResumeForm";
 import UILibraryDemo from "./components/UILibraryDemo";
 import Optimize from "./components/Optimize";
@@ -36,9 +37,19 @@ export default function App() {
 						}
 					/>
 
-					{/* 5) Protected Home - Resume form */}
+					{/* 5) Master Resume Editor - New resume viewing/editing component */}
 					<Route
 						path="/master-resume"
+						element={
+							<ProtectedRoute>
+								<MasterResume />
+							</ProtectedRoute>
+						}
+					/>
+
+					{/* 5b) Legacy Resume Form - Keeping for reference */}
+					<Route
+						path="/resume-form"
 						element={
 							<ProtectedRoute>
 								<ResumeForm />

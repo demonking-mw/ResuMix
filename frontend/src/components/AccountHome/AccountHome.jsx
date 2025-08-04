@@ -12,6 +12,12 @@ const AccountHome = () => {
 	const [hoveredStatus, setHoveredStatus] = useState(null);
 	const [statusTimeout, setStatusTimeout] = useState(null);
 
+	// Console log user's master resume object
+	console.log(
+		"👤 AccountHome - User's master resume object:",
+		user?.resumeinfo
+	);
+
 	// Function to get color based on status value
 	const getStatusColor = (status) => {
 		switch (status) {

@@ -1,0 +1,322 @@
+/* src/components/MasterResume/MasterResume.css */
+
+.master-resume-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Page Header */
+.master-resume-header {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.header-content h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.header-subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Mode Controls */
+.mode-controls {
+  max-width: 1200px;
+  margin: 20px auto 0;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.mode-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover:not(:disabled) {
+  background: #e9ecef;
+  color: #333;
+}
+
+.mode-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+.mode-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Page Navigation */
+.page-navigation {
+  max-width: 1200px;
+  margin: 20px auto 0;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.nav-btn.secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.nav-btn.secondary:hover {
+  background: #5a6268;
+}
+
+.nav-btn.primary {
+  background: #28a745;
+  color: white;
+}
+
+.nav-btn.primary:hover {
+  background: #218838;
+}
+
+/* Debug Info */
+.debug-info {
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+}
+
+.debug-content {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.debug-content h3 {
+  margin: 0 0 15px 0;
+  color: #856404;
+  font-size: 1.1rem;
+}
+
+.debug-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.debug-item {
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #f1c0c7;
+  font-size: 0.9rem;
+}
+
+.debug-item strong {
+  color: #721c24;
+}
+
+/* Resume Editor Wrapper */
+.resume-editor-wrapper {
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  padding: 0 20px;
+}
+
+/* Instructions Panel */
+.instructions-panel {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+}
+
+.instructions-panel h3 {
+  background: #e3f2fd;
+  color: #1565c0;
+  margin: 0 0 20px 0;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+  font-size: 1.3rem;
+}
+
+.instructions-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.instruction-section {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.instruction-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.1rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.instruction-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.instruction-section li {
+  margin-bottom: 8px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Status indicators in lists */
+.instruction-section li::marker {
+  color: #007bff;
+}
+
+/* Different emoji sections */
+.instruction-section:nth-child(1) {
+  border-left: 4px solid #28a745;
+}
+
+.instruction-section:nth-child(2) {
+  border-left: 4px solid #ffc107;
+}
+
+.instruction-section:nth-child(3) {
+  border-left: 4px solid #17a2b8;
+}
+
+.instruction-section:nth-child(4) {
+  border-left: 4px solid #dc3545;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-content h1 {
+    font-size: 2rem;
+  }
+  
+  .header-subtitle {
+    font-size: 1rem;
+  }
+
+  .mode-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .page-navigation {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .debug-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .instructions-content {
+    grid-template-columns: 1fr;
+  }
+
+  .master-resume-container {
+    padding: 10px;
+  }
+
+  .header-content,
+  .mode-controls,
+  .page-navigation,
+  .debug-info,
+  .resume-editor-wrapper,
+  .instructions-panel {
+    padding: 0 10px;
+  }
+}
+
+/* Loading states */
+.mode-btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.mode-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: button-spin 1s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Special highlighting for testing */
+.debug-info .debug-item:hover {
+  background: #f8f9fa;
+  transform: translateY(-1px);
+  transition: all 0.2s;
+}
+
+/* Success/Error indicators */
+.debug-item:has-text("✅") {
+  border-left: 3px solid #28a745;
+}
+
+.debug-item:has-text("❌") {
+  border-left: 3px solid #dc3545;
+}
