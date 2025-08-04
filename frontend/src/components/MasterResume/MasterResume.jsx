@@ -23,7 +23,7 @@ const MasterResume = () => {
 			{/* Page Header */}
 			<div className="master-resume-header">
 				<div className="header-content">
-					<h1>Master Resume Editor</h1>
+					<h1>Master Resume</h1>
 					<p className="header-subtitle">
 						View and edit your comprehensive resume template
 					</p>

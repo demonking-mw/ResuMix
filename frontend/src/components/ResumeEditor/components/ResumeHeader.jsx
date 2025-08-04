@@ -1,8 +1,56 @@
-// src/components/ResumeEditor/components/ResumeHeader.jsx
 import React from "react";
 
 const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
-	if (!headingInfo) {
+	// Ensure we have a valid headingInfo object
+	const safeHeadingInfo = headingInfo || {
+		heading_name: "",
+		subsequent_content: [],
+	};
+
+	// Handle adding new contact info
+	const handleAddContact = () => {
+		console.log("Add contact button clicked!");
+		if (onUpdate) {
+			const updatedHeader = {
+				...safeHeadingInfo,
+				subsequent_content: [
+					...(safeHeadingInfo.subsequent_content || []),
+					"", // Add empty contact field
+				],
+			};
+			console.log("Updating header with new contact:", updatedHeader);
+			onUpdate(updatedHeader);
+		} else {
+			console.log("No onUpdate handler provided");
+		}
+	};
+
+	// Handle updating contact info
+	const handleContactChange = (index, value) => {
+		if (onUpdate) {
+			const updatedContacts = [...(safeHeadingInfo.subsequent_content || [])];
+			updatedContacts[index] = value;
+			const updatedHeader = {
+				...safeHeadingInfo,
+				subsequent_content: updatedContacts,
+			};
+			onUpdate(updatedHeader);
+		}
+	};
+
+	// Handle updating name
+	const handleNameChange = (value) => {
+		if (onUpdate) {
+			const updatedHeader = {
+				...safeHeadingInfo,
+				heading_name: value,
+			};
+			onUpdate(updatedHeader);
+		}
+	};
+
+	// Only show placeholder in view mode when there's no data
+	if (!headingInfo && mode !== "edit") {
 		return (
 			<div className="resume-header">
 				<div className="header-placeholder">
@@ -20,24 +68,21 @@ const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 					{mode === "edit" ? (
 						<input
 							type="text"
-							value={headingInfo.heading_name || ""}
+							value={safeHeadingInfo.heading_name || ""}
 							className="editable-name"
 							placeholder="Your Name"
-							onChange={(e) => {
-								// Future: Handle name changes
-								console.log("Name changed to:", e.target.value);
-							}}
+							onChange={(e) => handleNameChange(e.target.value)}
 						/>
 					) : (
 						<h1 className="name-display">
-							{headingInfo.heading_name || "Name Not Provided"}
+							{safeHeadingInfo.heading_name || "Name Not Provided"}
 						</h1>
 					)}
 				</div>
 
 				{/* Contact information */}
 				<div className="header-contact">
-					{headingInfo.subsequent_content?.map((contactItem, index) => (
+					{safeHeadingInfo.subsequent_content?.map((contactItem, index) => (
 						<div key={index} className="contact-item">
 							{mode === "edit" ? (
 								<input
@@ -45,10 +90,7 @@ const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 									value={contactItem || ""}
 									className="editable-contact"
 									placeholder={`Contact info ${index + 1}`}
-									onChange={(e) => {
-										// Future: Handle contact changes
-										console.log(`Contact ${index} changed to:`, e.target.value);
-									}}
+									onChange={(e) => handleContactChange(index, e.target.value)}
 								/>
 							) : (
 								<span className="contact-display">{contactItem}</span>
@@ -58,10 +100,16 @@ const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 				</div>
 			</div>
 
-			{/* Future: Add edit controls */}
+			{/* Edit controls */}
 			{mode === "edit" && (
 				<div className="header-controls">
-					<button className="add-contact-button" disabled>
+					<button
+						className="add-contact-button"
+						onClick={handleAddContact}
+						onMouseDown={() => console.log("Button mouse down")}
+						onMouseUp={() => console.log("Button mouse up")}
+						style={{ pointerEvents: "auto", zIndex: 10 }}
+					>
 						+ Add Contact Info
 					</button>
 				</div>

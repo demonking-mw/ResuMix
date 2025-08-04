@@ -322,6 +322,15 @@
   text-align: center;
 }
 
+/* Header Controls */
+.header-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  position: relative;
+  z-index: 1;
+}
+
 /* Section Styles */
 .section-viewer {
   margin-bottom: 40px;
@@ -1042,4 +1051,62 @@
   white-space: nowrap;
   flex-shrink: 0;
   margin-left: auto;
+}
+
+/* Empty Resume State Styles */
+.empty-resume-state {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 60px 40px;
+  text-align: center;
+  margin: 40px 0;
+}
+
+.empty-resume-message h3 {
+  margin: 0 0 16px 0;
+  color: #374151;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.empty-resume-message p {
+  margin: 0 0 32px 0;
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empty-resume-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.wiki-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: not-allowed;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.wiki-button:hover:not(:disabled) {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.wiki-button:disabled {
+  opacity: 0.6;
 }

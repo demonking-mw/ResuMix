@@ -13,39 +13,52 @@ const NavigationAuthListener = () => {
 	useEffect(() => {
 		const triggerReauthOnNavigation = async () => {
 			const currentPath = location.pathname;
-			
+
 			// Only reauth if:
 			// 1. User is already authenticated
 			// 2. We're not currently loading
 			// 3. We're not already doing reauthentication
 			// 4. The path has actually changed
 			// 5. We're not on public pages
-			if (user && token && reauthToken && !loading && !reauthInProgressRef.current) {
-				const publicPaths = ['/', '/login', '/signup'];
-				
+			if (
+				user &&
+				token &&
+				reauthToken &&
+				!loading &&
+				!reauthInProgressRef.current
+			) {
+				const publicPaths = ["/", "/login", "/signup"];
+
 				// Skip reauth for public pages
 				if (!publicPaths.includes(currentPath)) {
 					// Only reauth if the path has actually changed
-					if (lastPathRef.current !== null && lastPathRef.current !== currentPath) {
-						console.log(`Navigation detected: ${lastPathRef.current} → ${currentPath}, triggering reauthentication...`);
+					if (
+						lastPathRef.current !== null &&
+						lastPathRef.current !== currentPath
+					) {
+						console.log(
+							`Navigation detected: ${lastPathRef.current} → ${currentPath}, triggering reauthentication...`
+						);
 						reauthInProgressRef.current = true;
-						
+
 						try {
 							const success = await reauthenticate();
 							if (success) {
-								console.log('Navigation reauth successful');
+								console.log("Navigation reauth successful");
 							} else {
-								console.log('Navigation reauth failed - user will be logged out');
+								console.log(
+									"Navigation reauth failed - user will be logged out"
+								);
 							}
 						} catch (error) {
-							console.error('Navigation reauth error:', error);
+							console.error("Navigation reauth error:", error);
 						} finally {
 							reauthInProgressRef.current = false;
 						}
 					}
 				}
 			}
-			
+
 			// Update last path reference
 			lastPathRef.current = currentPath;
 		};

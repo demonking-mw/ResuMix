@@ -126,6 +126,24 @@ class ResumeHandle:
         if not new_resume_dict:
             print("ERROR: no resume info provided")
             return False, "No resume info provided"
+
+        # Check if resume has any items
+        has_items = False
+        sections = new_resume_dict.get("sections", [])
+        for section in sections:
+            items = section.get("items", [])
+            for item in items:
+                aux_info = item.get("aux_info", {})
+                if aux_info.get("type") == "items":
+                    has_items = True
+                    break
+            if has_items:
+                break
+
+        if not has_items:
+            print("ERROR: resume has no items")
+            return False, "Empty resume - no items found"
+
         # load it into object: if there are error, catch it here
         templ = LTemplate()
         try:

@@ -20,6 +20,25 @@ const ResumeEditor = ({
 	const [saveMessage, setSaveMessage] = useState("");
 	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+	// Create default resume structure for new accounts
+	const createDefaultResumeData = () => {
+		return {
+			aux_info: { type: "resume" },
+			heading_info: {
+				heading_name: "Steve Smin",
+				subsequent_content: ["steve@example.com"],
+			},
+			sections: [
+				{
+					sect_id: 0,
+					aux_info: { type: "section" },
+					title: "Sample Resume Section",
+					items: [],
+				},
+			],
+		};
+	};
+
 	// Load resume data from user context (as shown in AccountHome.jsx line 18)
 	useEffect(() => {
 		console.log(
@@ -38,13 +57,33 @@ const ResumeEditor = ({
 		}
 
 		try {
-			if (user?.resumeinfo) {
-				console.log("Found resume data, loading...");
+			// Check if user has valid resume data with required structure
+			const hasValidResumeData =
+				user?.resumeinfo &&
+				user.resumeinfo.aux_info &&
+				user.resumeinfo.heading_info &&
+				user.resumeinfo.sections;
+
+			if (hasValidResumeData) {
+				console.log("Found valid resume data, loading...");
 				setResumeData(user.resumeinfo);
 				setIsLoading(false);
 			} else {
-				console.log("No resume data found. User object:", user);
-				setError("No resume data found");
+				console.log(
+					"No valid resume data found (empty object or missing structure). Creating default structure..."
+				);
+				console.log(
+					"User resumeinfo:",
+					JSON.stringify(user?.resumeinfo, null, 2)
+				);
+				// Create default resume structure for new accounts
+				const defaultResume = createDefaultResumeData();
+				console.log(
+					"Created default resume:",
+					JSON.stringify(defaultResume, null, 2)
+				);
+				setResumeData(defaultResume);
+				setHasUnsavedChanges(true); // Mark as having changes since it's new
 				setIsLoading(false);
 			}
 		} catch (err) {
@@ -76,6 +115,15 @@ const ResumeEditor = ({
 				reauth_jwt: reauthToken,
 				resumeinfo: resumeData,
 			};
+
+			// Console log the resume data format before sending to backend
+			console.log("=== RESUME DATA BEING SENT TO BACKEND ===");
+			console.log("Full payload:", JSON.stringify(payload, null, 2));
+			console.log(
+				"Resume data structure:",
+				JSON.stringify(resumeData, null, 2)
+			);
+			console.log("=== END RESUME DATA ===");
 
 			const response = await api.post("/resume", payload);
 			const data = response.data;
@@ -112,6 +160,10 @@ const ResumeEditor = ({
 
 	// Resume update handler - no auto-save, just update state
 	const handleResumeUpdate = (updatedData) => {
+		console.log(
+			"handleResumeUpdate called with:",
+			JSON.stringify(updatedData, null, 2)
+		);
 		setResumeData(updatedData);
 		setHasUnsavedChanges(true);
 		// Call external onSave callback if provided
@@ -122,6 +174,50 @@ const ResumeEditor = ({
 
 	// Deep clone helper for immutable updates
 	const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+	// Check if resume has meaningful content (not just default template)
+	const isResumeEmpty = () => {
+		if (!resumeData) return true;
+
+		// Check if it's still the default template
+		const isDefaultName =
+			resumeData.heading_info?.heading_name === "Steve Smin";
+		const hasEmptySections =
+			!resumeData.sections ||
+			resumeData.sections.length === 0 ||
+			resumeData.sections.every(
+				(section) => !section.items || section.items.length === 0
+			);
+
+		return isDefaultName && hasEmptySections;
+	};
+
+	// Update header handler
+	const handleHeaderUpdate = (updatedHeader) => {
+		console.log(
+			"handleHeaderUpdate called with:",
+			JSON.stringify(updatedHeader, null, 2)
+		);
+		console.log(
+			"Current resumeData before header update:",
+			JSON.stringify(resumeData, null, 2)
+		);
+
+		const updated = deepClone(resumeData);
+		console.log("After deepClone:", JSON.stringify(updated, null, 2));
+
+		// Ensure we have the full structure before updating
+		if (!updated.aux_info) {
+			console.log("ERROR: resumeData missing aux_info, recreating structure");
+			const defaultResume = createDefaultResumeData();
+			updated.aux_info = defaultResume.aux_info;
+			updated.sections = defaultResume.sections;
+		}
+
+		updated.heading_info = updatedHeader;
+		console.log("Final updated structure:", JSON.stringify(updated, null, 2));
+		handleResumeUpdate(updated);
+	};
 
 	// Update section title
 	const updateSectionTitle = (sectionIndex, newTitle) => {
@@ -199,10 +295,10 @@ const ResumeEditor = ({
 	const addNewItem = (sectionIndex) => {
 		const updated = deepClone(resumeData);
 		const newItem = {
-			titles: ["", "", ""],
 			aux_info: { type: "items", style: "n" },
-			cate_scores: { bias: 0, weight: 1 },
+			titles: ["", "", ""],
 			lines: [],
+			cate_scores: { weight: 1.0, bias: 0.0 },
 		};
 		updated.sections[sectionIndex].items.push(newItem);
 		handleResumeUpdate(updated);
@@ -219,9 +315,15 @@ const ResumeEditor = ({
 	const addNewLine = (sectionIndex, itemIndex) => {
 		const updated = deepClone(resumeData);
 		const newLine = {
+			aux_info: { type: "lines" },
 			content: "",
 			content_str: "",
-			aux_info: { type: "lines" },
+			cate_score: {
+				technical: {},
+				soft: {},
+				relevance: {},
+			},
+			keywords: [],
 		};
 		updated.sections[sectionIndex].items[itemIndex].lines.push(newLine);
 		handleResumeUpdate(updated);
@@ -235,18 +337,6 @@ const ResumeEditor = ({
 	};
 
 	// Loading state - show loading if auth is loading OR resume data is loading
-	console.log(
-		"ResumeEditor render - authLoading:",
-		authLoading,
-		"isLoading:",
-		isLoading,
-		"user:",
-		!!user,
-		"resumeData:",
-		!!resumeData,
-		"error:",
-		error
-	);
 
 	if (authLoading || isLoading) {
 		return (
@@ -262,13 +352,13 @@ const ResumeEditor = ({
 		);
 	}
 
-	// Error state
-	if (error || !resumeData) {
+	// Error state - only show error if we couldn't create default data
+	if (error && !resumeData) {
 		return (
 			<div className="resume-editor-container">
 				<div className="resume-editor-error">
 					<h3>Unable to Load Resume</h3>
-					<p>{error || "Resume data is not available"}</p>
+					<p>{error}</p>
 					<button
 						className="retry-button"
 						onClick={() => window.location.reload()}
@@ -280,10 +370,22 @@ const ResumeEditor = ({
 		);
 	}
 
+	// Final safety check - if resumeData is still null, show loading
+	if (!resumeData) {
+		return (
+			<div className="resume-editor-container">
+				<div className="resume-editor-loading">
+					<div className="loading-spinner"></div>
+					<p>Preparing resume editor...</p>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="resume-editor-container" data-mode={mode}>
 			<div className="resume-editor-header">
-				<h1>Resume Editor</h1>
+				<h1>YOUR MASTER RESUME</h1>
 				<div className="editor-mode-indicator">
 					<span className={`mode-badge mode-${mode}`}>
 						{mode === "view"
@@ -310,20 +412,39 @@ const ResumeEditor = ({
 			</div>
 
 			<div className="resume-editor-content">
+				{/* Empty resume state for view mode */}
+				{showContent && mode === "view" && isResumeEmpty() && (
+					<div className="empty-resume-state">
+						<div className="empty-resume-message">
+							<h3>Your resume is empty</h3>
+							<p>
+								Get started by switching to the Edit tab to add your information
+								and experience.
+							</p>
+							<div className="empty-resume-actions">
+								<button
+									className="wiki-button"
+									onClick={() => window.open("", "_blank")}
+									disabled
+								>
+									📖 View Resume Guide
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
+
 				{/* Resume Header Section */}
-				{showContent && (
+				{showContent && (!isResumeEmpty() || mode !== "view") && (
 					<ResumeHeader
 						headingInfo={resumeData.heading_info}
 						mode={mode}
-						onUpdate={(updatedHeader) => {
-							// Future: Handle header updates
-							console.log("Header update:", updatedHeader);
-						}}
+						onUpdate={handleHeaderUpdate}
 					/>
 				)}
 
 				{/* Resume Sections */}
-				{showContent && (
+				{showContent && (!isResumeEmpty() || mode !== "view") && (
 					<div className="resume-sections">
 						{resumeData.sections?.map((section, sectionIndex) => (
 							<SectionViewer
