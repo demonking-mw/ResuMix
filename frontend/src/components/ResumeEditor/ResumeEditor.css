@@ -250,6 +250,75 @@
   flex: 1;
 }
 
+/* New structured title layout based on backend item_builder logic */
+.formatted-titles {
+  width: 100%;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.title-row:last-child {
+  margin-bottom: 0;
+}
+
+.title-left {
+  flex: 1;
+  text-align: left;
+}
+
+.title-right {
+  flex: 1;
+  text-align: right;
+  margin-left: 20px;
+}
+
+/* Primary title styling (first position) */
+.title-primary {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Secondary title styling (right side of first row) */
+.title-secondary {
+  font-style: italic;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Tertiary title styling (left side of second row) */
+.title-tertiary {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Quaternary title styling (right side of second row) */
+.title-quaternary {
+  font-style: italic;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* Separator styling for augmented titles (title1 | title2) */
+.title-separator {
+  color: #999;
+  font-weight: normal;
+  margin: 0 8px;
+}
+
+.title-secondary {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: normal;
+}
+
+/* Legacy support for old title structure */
 .item-title {
   margin-bottom: 5px;
 }
@@ -275,8 +344,30 @@
   border: none;
   border-bottom: 1px dashed #ccc;
   background: transparent;
-  padding: 2px;
-  margin-bottom: 5px;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+  font-family: inherit;
+}
+
+/* Specific styling for editable titles in new structure */
+.editable-item-title.title-primary {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.editable-item-title.title-secondary {
+  font-style: italic;
+  font-size: 1rem;
+}
+
+.editable-item-title.title-tertiary {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.editable-item-title.title-quaternary {
+  font-style: italic;
+  font-size: 0.9rem;
 }
 
 .item-metadata {
@@ -746,6 +837,18 @@
   .item-header {
     flex-direction: column;
     gap: 10px;
+  }
+  
+  /* Stack title rows vertically on mobile */
+  .title-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .title-right {
+    text-align: left;
+    margin-left: 0;
+    margin-top: 3px;
   }
   
   .parameter-summary {

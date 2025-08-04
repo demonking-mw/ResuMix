@@ -42,6 +42,74 @@ const ItemViewer = ({
 		return placeholders[index] || `Title ${index + 1}`;
 	};
 
+	// Format titles based on your backend logic from item_builder()
+	const formatTitles = (titles) => {
+		if (!titles || titles.length === 0) return null;
+
+		const titleCount = titles.length;
+
+		// Helper function to create augmented title (title1 | title2)
+		const createAugmentedTitle = (main, secondary) => (
+			<>
+				{main}
+				<span className="title-separator"> | </span>
+				<span className="title-secondary">{secondary}</span>
+			</>
+		);
+
+		if (titleCount === 1 || titleCount === 2 || titleCount === 4) {
+			// Simple layout: para1 para2 / para3 para4
+			return {
+				row1: {
+					left: titles[0],
+					right: titleCount === 1 ? null : titles[1],
+					leftIndex: 0,
+					rightIndex: titleCount === 1 ? null : 1,
+				},
+				row2:
+					titleCount === 4
+						? {
+								left: titles[2],
+								right: titles[3],
+								leftIndex: 2,
+								rightIndex: 3,
+						  }
+						: null,
+			};
+		} else if (titleCount === 3 || titleCount === 5 || titleCount === 6) {
+			// Augmented layout: (title1 | title2) title3 / ...
+			const row1 = {
+				left: createAugmentedTitle(titles[0], titles[1]),
+				right: titles[2],
+				leftIndex: 0,
+				rightIndex: 2,
+				leftSecondaryIndex: 1, // For the augmented part
+			};
+
+			let row2 = null;
+			if (titleCount === 5) {
+				row2 = {
+					left: titles[3],
+					right: titles[4],
+					leftIndex: 3,
+					rightIndex: 4,
+				};
+			} else if (titleCount === 6) {
+				row2 = {
+					left: createAugmentedTitle(titles[3], titles[4]),
+					right: titles[5],
+					leftIndex: 3,
+					rightIndex: 5,
+					leftSecondaryIndex: 4,
+				};
+			}
+
+			return { row1, row2 };
+		}
+
+		return null;
+	};
+
 	return (
 		<div
 			className={`item-viewer ${
@@ -76,47 +144,138 @@ const ItemViewer = ({
 					{/* Standard Item Layout with Titles */}
 					<div className="item-header">
 						<div className="item-titles">
-							{item.titles && item.titles.length > 0 ? (
-								item.titles.map((title, titleIndex) => (
-									<div
-										key={titleIndex}
-										className={`item-title item-title-${titleIndex}`}
-									>
-										{mode === "edit" ? (
-											<input
-												type="text"
-												value={title || ""}
-												className="editable-item-title"
-												placeholder={getTitlePlaceholder(titleIndex)}
-												// Future: Add onChange handler
-											/>
-										) : (
-											<span className="title-display">{title}</span>
-										)}
-									</div>
-								))
-							) : (
-								<div className="item-title">
-									{mode === "edit" ? (
-										<input
-											type="text"
-											value=""
-											className="editable-item-title"
-											placeholder="Item Title"
-											// Future: Add onChange handler
-										/>
-									) : (
-										<span className="title-display">Untitled Item</span>
-									)}
-								</div>
-							)}
+							{(() => {
+								if (!item.titles || item.titles.length === 0) {
+									return (
+										<div className="title-row">
+											<div className="title-left">
+												{mode === "edit" ? (
+													<input
+														type="text"
+														value=""
+														className="editable-item-title"
+														placeholder="Item Title"
+														// Future: Add onChange handler
+													/>
+												) : (
+													<span className="title-display">Untitled Item</span>
+												)}
+											</div>
+										</div>
+									);
+								}
 
-							{/* Add title button for edit mode */}
-							{mode === "edit" && item.titles && item.titles.length < 6 && (
-								<button className="add-title-button" disabled>
-									+ Add Title Field
-								</button>
-							)}
+								const formattedTitles = formatTitles(item.titles);
+								if (!formattedTitles) return null;
+
+								return (
+									<div className="formatted-titles">
+										{/* First Row */}
+										<div className="title-row title-row-1">
+											<div className="title-left">
+												{mode === "edit" ? (
+													<input
+														type="text"
+														value={
+															item.titles[formattedTitles.row1.leftIndex] || ""
+														}
+														className="editable-item-title title-primary"
+														placeholder={getTitlePlaceholder(
+															formattedTitles.row1.leftIndex
+														)}
+														// Future: Add onChange handler
+														// Note: For augmented titles, this only edits the first part
+													/>
+												) : (
+													<span className="title-display title-primary">
+														{formattedTitles.row1.left}
+													</span>
+												)}
+											</div>
+											{formattedTitles.row1.right && (
+												<div className="title-right">
+													{mode === "edit" ? (
+														<input
+															type="text"
+															value={
+																item.titles[formattedTitles.row1.rightIndex] ||
+																""
+															}
+															className="editable-item-title title-secondary"
+															placeholder={getTitlePlaceholder(
+																formattedTitles.row1.rightIndex
+															)}
+															// Future: Add onChange handler
+														/>
+													) : (
+														<span className="title-display title-secondary">
+															{formattedTitles.row1.right}
+														</span>
+													)}
+												</div>
+											)}
+										</div>
+
+										{/* Second Row (if needed) */}
+										{formattedTitles.row2 && (
+											<div className="title-row title-row-2">
+												<div className="title-left">
+													{mode === "edit" ? (
+														<input
+															type="text"
+															value={
+																item.titles[formattedTitles.row2.leftIndex] ||
+																""
+															}
+															className="editable-item-title title-tertiary"
+															placeholder={getTitlePlaceholder(
+																formattedTitles.row2.leftIndex
+															)}
+															// Future: Add onChange handler
+														/>
+													) : (
+														<span className="title-display title-tertiary">
+															{formattedTitles.row2.left}
+														</span>
+													)}
+												</div>
+												{formattedTitles.row2.right && (
+													<div className="title-right">
+														{mode === "edit" ? (
+															<input
+																type="text"
+																value={
+																	item.titles[
+																		formattedTitles.row2.rightIndex
+																	] || ""
+																}
+																className="editable-item-title title-quaternary"
+																placeholder={getTitlePlaceholder(
+																	formattedTitles.row2.rightIndex
+																)}
+																// Future: Add onChange handler
+															/>
+														) : (
+															<span className="title-display title-quaternary">
+																{formattedTitles.row2.right}
+															</span>
+														)}
+													</div>
+												)}
+											</div>
+										)}
+
+										{/* Add title button for edit mode */}
+										{mode === "edit" &&
+											item.titles &&
+											item.titles.length < 6 && (
+												<button className="add-title-button" disabled>
+													+ Add Title Field
+												</button>
+											)}
+									</div>
+								);
+							})()}
 						</div>
 
 						{/* Future: Item controls for edit mode */}
