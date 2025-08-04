@@ -1,5 +1,5 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import api from "../api/connection";
 
@@ -196,7 +196,7 @@ export const AuthProvider = ({ children }) => {
 			: {};
 	};
 
-	const reauthenticate = async () => {
+	const reauthenticate = useCallback(async () => {
 		if (!reauthToken || !user?.id) {
 			return false;
 		}
@@ -259,7 +259,7 @@ export const AuthProvider = ({ children }) => {
 			localStorage.removeItem("reauthToken");
 			return false;
 		}
-	};
+	}, [reauthToken, user?.id]);
 
 	const value = {
 		user,

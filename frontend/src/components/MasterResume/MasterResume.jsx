@@ -16,13 +16,6 @@ const MasterResume = () => {
 		setCurrentMode(newMode);
 	};
 
-	// Future: Handle save operations
-	const handleSave = (updatedResumeData) => {
-		console.log("💾 Save operation triggered:", updatedResumeData);
-		// Future: Call backend API to save changes
-		alert("Save functionality will be implemented in future updates");
-	};
-
 	return (
 		<div className="master-resume-container">
 			<NavBar />
@@ -48,9 +41,8 @@ const MasterResume = () => {
 						<button
 							className={`mode-btn ${currentMode === "edit" ? "active" : ""}`}
 							onClick={() => handleModeChange("edit")}
-							disabled
 						>
-							✏️ Edit Mode (Coming Soon)
+							✏️ Edit Mode
 						</button>
 						<button
 							className={`mode-btn ${
@@ -128,7 +120,6 @@ const MasterResume = () => {
 					mode={currentMode}
 					showParameters={currentMode !== "view" || true} // Always show parameters for now
 					showContent={currentMode !== "parameters-only"}
-					onSave={handleSave}
 				/>
 			</div>
 

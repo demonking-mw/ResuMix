@@ -1,7 +1,12 @@
 // src/components/ResumeEditor/components/ParameterControls.jsx
 import React from "react";
 
-const ParameterControls = ({ cateScores, mode, onUpdate }) => {
+const ParameterControls = ({
+	cateScores,
+	mode,
+	onUpdateWeight,
+	onUpdateBias,
+}) => {
 	if (!cateScores) {
 		return (
 			<div className="parameter-controls">
@@ -57,8 +62,9 @@ const ParameterControls = ({ cateScores, mode, onUpdate }) => {
 								min="0"
 								max="2"
 								className="parameter-input"
-								// Future: Add onChange handler
-								// onChange={(e) => onUpdate({...cateScores, weight: parseFloat(e.target.value)})}
+								onChange={(e) =>
+									onUpdateWeight(parseFloat(e.target.value) || 0)
+								}
 							/>
 							<div className="parameter-range">
 								<input
@@ -68,7 +74,7 @@ const ParameterControls = ({ cateScores, mode, onUpdate }) => {
 									min="0"
 									max="2"
 									className="parameter-slider"
-									// Future: Add onChange handler
+									onChange={(e) => onUpdateWeight(parseFloat(e.target.value))}
 								/>
 							</div>
 						</div>
@@ -105,8 +111,7 @@ const ParameterControls = ({ cateScores, mode, onUpdate }) => {
 								min="-2"
 								max="2"
 								className="parameter-input"
-								// Future: Add onChange handler
-								// onChange={(e) => onUpdate({...cateScores, bias: parseFloat(e.target.value)})}
+								onChange={(e) => onUpdateBias(parseFloat(e.target.value) || 0)}
 							/>
 							<div className="parameter-range">
 								<input
@@ -116,7 +121,7 @@ const ParameterControls = ({ cateScores, mode, onUpdate }) => {
 									min="-2"
 									max="2"
 									className="parameter-slider"
-									// Future: Add onChange handler
+									onChange={(e) => onUpdateBias(parseFloat(e.target.value))}
 								/>
 							</div>
 						</div>
@@ -138,24 +143,6 @@ const ParameterControls = ({ cateScores, mode, onUpdate }) => {
 					)}
 				</div>
 			</div>
-
-			{/* Future: Parameter presets */}
-			{mode === "edit" && (
-				<div className="parameter-presets">
-					<button className="preset-button" disabled>
-						High Priority
-					</button>
-					<button className="preset-button" disabled>
-						Normal
-					</button>
-					<button className="preset-button" disabled>
-						Low Priority
-					</button>
-					<button className="preset-button" disabled>
-						Reset
-					</button>
-				</div>
-			)}
 		</div>
 	);
 };

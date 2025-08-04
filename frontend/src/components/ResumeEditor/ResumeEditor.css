@@ -50,6 +50,179 @@
   color: #7b1fa2;
 }
 
+/* Save Status Indicator */
+.save-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.save-status.saving {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.save-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.save-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Edit Mode Save Button Styling */
+.save-button.has-changes {
+  background-color: #ff6b35 !important;
+  color: white !important;
+  border-color: #ff6b35 !important;
+  animation: pulse-orange 2s infinite;
+}
+
+.save-button.no-changes {
+  background-color: #6c757d !important;
+  color: #adb5bd !important;
+  border-color: #6c757d !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+  animation: none;
+}
+
+.save-button.no-changes:hover {
+  transform: none !important;
+  background-color: #6c757d !important;
+}
+
+@keyframes pulse-orange {
+  0% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 107, 53, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+}
+
+/* Add Section Button */
+.add-section-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.add-section-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-section-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Edit Mode Specific Styles - Only apply when in edit mode */
+.resume-editor-container[data-mode="edit"] .section-title-input,
+.resume-editor-container[data-mode="edit"] .item-title-input,
+.resume-editor-container[data-mode="edit"] .line-content-input {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  font-family: inherit;
+  font-size: inherit;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+/* Secondary title input for augmented titles (3+ titles) */
+.resume-editor-container[data-mode="edit"] .title-row-secondary {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.resume-editor-container[data-mode="edit"] .title-center {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+}
+
+.resume-editor-container[data-mode="edit"] .title-secondary-aug {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px;
+  font-family: inherit;
+  font-size: 0.9em;
+  width: 100%;
+  transition: border-color 0.3s ease;
+  text-align: center;
+}
+
+.resume-editor-container[data-mode="edit"] .section-title-input:focus,
+.resume-editor-container[data-mode="edit"] .item-title-input:focus,
+.resume-editor-container[data-mode="edit"] .line-content-input:focus,
+.resume-editor-container[data-mode="edit"] .title-secondary-aug:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Edit Action Buttons */
+.edit-actions {
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.resume-editor-container[data-mode="edit"] .section-item:hover .edit-actions,
+.resume-editor-container[data-mode="edit"] .item-container:hover .edit-actions,
+.resume-editor-container[data-mode="edit"] .line-display:hover .edit-actions {
+  opacity: 1;
+}
+
+.edit-button {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  background-color: #f5f5f5;
+}
+
+.edit-button.delete-button {
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+.edit-button.delete-button:hover {
+  background-color: #ffebee;
+}
+
+.edit-button.add-button {
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.edit-button.add-button:hover {
+  background-color: #e8f5e8;
+}
+
 /* Loading and Error States */
 .resume-editor-loading,
 .resume-editor-error {

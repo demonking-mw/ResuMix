@@ -7,7 +7,15 @@ const SectionViewer = ({
 	sectionIndex,
 	mode,
 	showParameters,
-	onUpdate,
+	onUpdateSectionTitle,
+	onUpdateItemTitles,
+	onUpdateLineContent,
+	onUpdateItemParameters,
+	onAddNewItem,
+	onDeleteItem,
+	onAddNewLine,
+	onDeleteLine,
+	onDeleteSection,
 }) => {
 	if (!section) {
 		return (
@@ -47,9 +55,9 @@ const SectionViewer = ({
 						<input
 							type="text"
 							value={section.title || ""}
-							className="editable-section-title"
+							className="section-title-input"
 							placeholder="Section Title"
-							// Future: Add onChange handler
+							onChange={(e) => onUpdateSectionTitle(e.target.value)}
 						/>
 					) : (
 						<h2 className="section-title">
@@ -66,17 +74,22 @@ const SectionViewer = ({
 					</span>
 				</div>
 
-				{/* Future: Section controls for edit mode */}
+				{/* Section controls for edit mode */}
 				{mode === "edit" && (
-					<div className="section-controls">
-						<button className="move-up-button" disabled>
-							↑
+					<div className="edit-actions">
+						<button
+							className="edit-button add-button"
+							onClick={onAddNewItem}
+							title="Add new item to this section"
+						>
+							+ Add Item
 						</button>
-						<button className="move-down-button" disabled>
-							↓
-						</button>
-						<button className="delete-section-button" disabled>
-							🗑
+						<button
+							className="edit-button delete-button"
+							onClick={onDeleteSection}
+							title="Delete this section"
+						>
+							Delete Section
 						</button>
 					</div>
 				)}
@@ -93,32 +106,31 @@ const SectionViewer = ({
 							sectionIndex={sectionIndex}
 							mode={mode}
 							showParameters={showParameters}
-							onUpdate={(updatedItem) => {
-								// Future: Handle item updates
-								console.log("Item update:", updatedItem);
-							}}
+							onUpdateTitles={(titleIndex, newTitle) =>
+								onUpdateItemTitles(itemIndex, titleIndex, newTitle)
+							}
+							onUpdateLineContent={(lineIndex, newContent) =>
+								onUpdateLineContent(itemIndex, lineIndex, newContent)
+							}
+							onUpdateParameters={(paramType, value) =>
+								onUpdateItemParameters(itemIndex, paramType, value)
+							}
+							onAddNewLine={() => onAddNewLine(itemIndex)}
+							onDeleteLine={(lineIndex) => onDeleteLine(itemIndex, lineIndex)}
+							onDeleteItem={() => onDeleteItem(itemIndex)}
 						/>
 					))
 				) : (
 					<div className="empty-section">
 						<p className="empty-message">No items in this section</p>
 						{mode === "edit" && (
-							<button className="add-item-button" disabled>
+							<button className="edit-button add-button" onClick={onAddNewItem}>
 								+ Add Item
 							</button>
 						)}
 					</div>
 				)}
 			</div>
-
-			{/* Add item button for edit mode */}
-			{mode === "edit" && section.items?.length > 0 && (
-				<div className="section-footer">
-					<button className="add-item-button" disabled>
-						+ Add New Item
-					</button>
-				</div>
-			)}
 		</div>
 	);
 };

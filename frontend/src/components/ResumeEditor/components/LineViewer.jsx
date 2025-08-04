@@ -7,7 +7,8 @@ const LineViewer = ({
 	itemIndex,
 	sectionIndex,
 	mode,
-	onUpdate,
+	onUpdateContent,
+	onDeleteLine,
 }) => {
 	if (!line) {
 		return (
@@ -29,22 +30,18 @@ const LineViewer = ({
 					<div className="line-edit-container">
 						<textarea
 							value={displayContent}
-							className="editable-line-content"
+							className="line-content-input"
 							placeholder="Enter line content..."
 							rows={2}
-							// Future: Add onChange handler
-							// Should update both content (with formatting) and content_str (clean text)
-							// onChange={(e) => onUpdate({...line, content_str: e.target.value, content: processFormatting(e.target.value)})}
+							onChange={(e) => onUpdateContent(e.target.value)}
 						/>
-						<div className="line-controls">
-							<button className="move-up-button" disabled>
-								↑
-							</button>
-							<button className="move-down-button" disabled>
-								↓
-							</button>
-							<button className="delete-line-button" disabled>
-								🗑
+						<div className="edit-actions line-edit-actions">
+							<button
+								className="edit-button delete-button"
+								onClick={onDeleteLine}
+								title="Delete this line"
+							>
+								Delete
 							</button>
 						</div>
 					</div>

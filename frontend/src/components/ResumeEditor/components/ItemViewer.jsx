@@ -9,7 +9,12 @@ const ItemViewer = ({
 	sectionIndex,
 	mode,
 	showParameters,
-	onUpdate,
+	onUpdateTitles,
+	onUpdateLineContent,
+	onUpdateParameters,
+	onAddNewLine,
+	onDeleteLine,
+	onDeleteItem,
 }) => {
 	if (!item) {
 		return (
@@ -128,7 +133,10 @@ const ItemViewer = ({
 								className="editable-compact-line"
 								placeholder="Enter content..."
 								rows={1}
-								// Future: Add onChange handler
+								onChange={(e) => {
+									// Update the first (and only) line content
+									onUpdateLineContent(0, e.target.value);
+								}}
 							/>
 						) : (
 							<span className="compact-text">
@@ -153,9 +161,9 @@ const ItemViewer = ({
 													<input
 														type="text"
 														value=""
-														className="editable-item-title"
+														className="item-title-input"
 														placeholder="Item Title"
-														// Future: Add onChange handler
+														onChange={(e) => onUpdateTitles(0, e.target.value)}
 													/>
 												) : (
 													<span className="title-display">Untitled Item</span>
@@ -179,12 +187,16 @@ const ItemViewer = ({
 														value={
 															item.titles[formattedTitles.row1.leftIndex] || ""
 														}
-														className="editable-item-title title-primary"
+														className="item-title-input"
 														placeholder={getTitlePlaceholder(
 															formattedTitles.row1.leftIndex
 														)}
-														// Future: Add onChange handler
-														// Note: For augmented titles, this only edits the first part
+														onChange={(e) =>
+															onUpdateTitles(
+																formattedTitles.row1.leftIndex,
+																e.target.value
+															)
+														}
 													/>
 												) : (
 													<span className="title-display title-primary">
@@ -192,6 +204,7 @@ const ItemViewer = ({
 													</span>
 												)}
 											</div>
+
 											{formattedTitles.row1.right && (
 												<div className="title-right">
 													{mode === "edit" ? (
@@ -201,11 +214,16 @@ const ItemViewer = ({
 																item.titles[formattedTitles.row1.rightIndex] ||
 																""
 															}
-															className="editable-item-title title-secondary"
+															className="item-title-input"
 															placeholder={getTitlePlaceholder(
 																formattedTitles.row1.rightIndex
 															)}
-															// Future: Add onChange handler
+															onChange={(e) =>
+																onUpdateTitles(
+																	formattedTitles.row1.rightIndex,
+																	e.target.value
+																)
+															}
 														/>
 													) : (
 														<span className="title-display title-secondary">
@@ -215,6 +233,33 @@ const ItemViewer = ({
 												</div>
 											)}
 										</div>
+
+										{/* Secondary title row for edit mode (centered below) */}
+										{mode === "edit" &&
+											formattedTitles.row1.leftSecondaryIndex !== undefined && (
+												<div className="title-row title-row-secondary">
+													<div className="title-center">
+														<input
+															type="text"
+															value={
+																item.titles[
+																	formattedTitles.row1.leftSecondaryIndex
+																] || ""
+															}
+															className="item-title-input"
+															placeholder={getTitlePlaceholder(
+																formattedTitles.row1.leftSecondaryIndex
+															)}
+															onChange={(e) =>
+																onUpdateTitles(
+																	formattedTitles.row1.leftSecondaryIndex,
+																	e.target.value
+																)
+															}
+														/>
+													</div>
+												</div>
+											)}
 
 										{/* Second Row (if needed) */}
 										{formattedTitles.row2 && (
@@ -227,11 +272,16 @@ const ItemViewer = ({
 																item.titles[formattedTitles.row2.leftIndex] ||
 																""
 															}
-															className="editable-item-title title-tertiary"
+															className="item-title-input"
 															placeholder={getTitlePlaceholder(
 																formattedTitles.row2.leftIndex
 															)}
-															// Future: Add onChange handler
+															onChange={(e) =>
+																onUpdateTitles(
+																	formattedTitles.row2.leftIndex,
+																	e.target.value
+																)
+															}
 														/>
 													) : (
 														<span className="title-display title-tertiary">
@@ -249,11 +299,16 @@ const ItemViewer = ({
 																		formattedTitles.row2.rightIndex
 																	] || ""
 																}
-																className="editable-item-title title-quaternary"
+																className="item-title-input"
 																placeholder={getTitlePlaceholder(
 																	formattedTitles.row2.rightIndex
 																)}
-																// Future: Add onChange handler
+																onChange={(e) =>
+																	onUpdateTitles(
+																		formattedTitles.row2.rightIndex,
+																		e.target.value
+																	)
+																}
 															/>
 														) : (
 															<span className="title-display title-quaternary">
@@ -306,18 +361,32 @@ const ItemViewer = ({
 										itemIndex={itemIndex}
 										sectionIndex={sectionIndex}
 										mode={mode}
-										onUpdate={(updatedLine) => {
-											// Future: Handle line updates
-											console.log("Line update:", updatedLine);
-										}}
+										onUpdateContent={(newContent) =>
+											onUpdateLineContent(lineIndex, newContent)
+										}
+										onDeleteLine={() => onDeleteLine(lineIndex)}
 									/>
 								))}
+								{/* Add line button for edit mode */}
+								{mode === "edit" && (
+									<div className="add-line-container">
+										<button
+											className="edit-button add-button"
+											onClick={onAddNewLine}
+										>
+											+ Add Line
+										</button>
+									</div>
+								)}
 							</div>
 						) : (
 							<div className="empty-item">
 								<p className="empty-message">No content lines</p>
 								{mode === "edit" && (
-									<button className="add-line-button" disabled>
+									<button
+										className="edit-button add-button"
+										onClick={onAddNewLine}
+									>
 										+ Add Line
 									</button>
 								)}
@@ -325,11 +394,15 @@ const ItemViewer = ({
 						)}
 					</div>
 
-					{/* Add line button for edit mode */}
-					{mode === "edit" && item.lines?.length > 0 && (
-						<div className="item-footer">
-							<button className="add-line-button" disabled>
-								+ Add New Line
+					{/* Item controls for edit mode */}
+					{mode === "edit" && (
+						<div className="edit-actions item-edit-actions">
+							<button
+								className="edit-button delete-button"
+								onClick={onDeleteItem}
+								title="Delete this item"
+							>
+								Delete Item
 							</button>
 						</div>
 					)}
@@ -341,10 +414,8 @@ const ItemViewer = ({
 				<ParameterControls
 					cateScores={item.cate_scores}
 					mode={mode}
-					onUpdate={(updatedScores) => {
-						// Future: Handle parameter updates
-						console.log("Parameter update:", updatedScores);
-					}}
+					onUpdateWeight={(value) => onUpdateParameters("weight", value)}
+					onUpdateBias={(value) => onUpdateParameters("bias", value)}
 				/>
 			)}
 		</div>

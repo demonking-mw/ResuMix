@@ -23,7 +23,10 @@ const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 							value={headingInfo.heading_name || ""}
 							className="editable-name"
 							placeholder="Your Name"
-							// Future: Add onChange handler
+							onChange={(e) => {
+								// Future: Handle name changes
+								console.log("Name changed to:", e.target.value);
+							}}
 						/>
 					) : (
 						<h1 className="name-display">
@@ -42,7 +45,10 @@ const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 									value={contactItem || ""}
 									className="editable-contact"
 									placeholder={`Contact info ${index + 1}`}
-									// Future: Add onChange handler
+									onChange={(e) => {
+										// Future: Handle contact changes
+										console.log(`Contact ${index} changed to:`, e.target.value);
+									}}
 								/>
 							) : (
 								<span className="contact-display">{contactItem}</span>

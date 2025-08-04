@@ -51,11 +51,16 @@ class ResumeHandle(Resource):
         Process the input, set cache vectors
         Return status only
         """
-        args = resume_req.resume_post.parse_args()
-        database = DBConn()
-        resume_handle_obj = resume_handle.ResumeHandle(database, args)
-        success, message = resume_handle_obj.set_resume_dict(args)
-        database.close()
+        try:
+            args = resume_req.resume_post.parse_args()
+            database = DBConn()
+            print("DEBUG: ARGS:", args)
+            resume_handle_obj = resume_handle.ResumeHandle(database, args)
+            success, message = resume_handle_obj.set_resume_dict(args)
+            database.close()
+        except Exception as e:
+            print(f"ERROR: Exception in ResumeHandle POST: {e}")
+            return {"status": False, "message": str(e)}, 500
         if not success:
             return {"status": False, "message": message}, 400
         return {

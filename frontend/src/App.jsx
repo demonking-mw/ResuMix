@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
 import { AuthProvider } from "./context/AuthContext";
+import NavigationAuthListener from "./components/NavigationAuthListener";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
@@ -15,8 +16,9 @@ import Optimize from "./components/Optimize";
 
 export default function App() {
 	return (
-		<AuthProvider>
-			<BrowserRouter>
+		<BrowserRouter>
+			<AuthProvider>
+				<NavigationAuthListener />
 				<Routes>
 					{/* 1) Landing page at "/" */}
 					<Route path="/" element={<Landing />} />
@@ -73,7 +75,7 @@ export default function App() {
 					{/* 8) Fallback: redirect unknown URLs back to landing */}
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
-			</BrowserRouter>
-		</AuthProvider>
+			</AuthProvider>
+		</BrowserRouter>
 	);
 }
