@@ -61,10 +61,6 @@ const SectionViewer = ({
 				{/* Section metadata - visible in debug/dev mode */}
 				<div className="section-metadata">
 					<span className="section-id">ID: {section.sect_id}</span>
-					<span className="section-type">{section.aux_info?.type}</span>
-					<span className="section-layout">
-						{isCompactSection ? "Compact Layout" : "Standard Layout"}
-					</span>
 					<span className="section-stats">
 						{totalItems} items ({compactItemsCount} compact)
 					</span>

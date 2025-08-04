@@ -119,16 +119,6 @@ const ItemViewer = ({
 							)}
 						</div>
 
-						{/* Item metadata */}
-						<div className="item-metadata">
-							<span className="item-style">
-								Style: {item.aux_info?.style || "n"}
-							</span>
-							<span className="item-type">
-								Type: {isCompactItem ? "Compact" : "Standard"}
-							</span>
-						</div>
-
 						{/* Future: Item controls for edit mode */}
 						{mode === "edit" && (
 							<div className="item-controls">

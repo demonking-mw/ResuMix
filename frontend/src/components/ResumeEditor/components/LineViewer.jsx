@@ -33,7 +33,8 @@ const LineViewer = ({
 							placeholder="Enter line content..."
 							rows={2}
 							// Future: Add onChange handler
-							// onChange={(e) => onUpdate({...line, content_str: e.target.value, content: e.target.value})}
+							// Should update both content (with formatting) and content_str (clean text)
+							// onChange={(e) => onUpdate({...line, content_str: e.target.value, content: processFormatting(e.target.value)})}
 						/>
 						<div className="line-controls">
 							<button className="move-up-button" disabled>
@@ -51,15 +52,8 @@ const LineViewer = ({
 					<div className="line-display">
 						<div className="line-bullet">•</div>
 						<div className="line-text">{displayContent}</div>
-						{/* Show modified warning inline to the right */}
-						{line.content !== line.content_str && (
-							<span
-								className="content-mismatch"
-								title={`Original: ${line.content}`}
-							>
-								⚠ modified
-							</span>
-						)}
+						{/* Future: Show modification warning when edit functionality is implemented */}
+						{/* Will need to track original_content or original_content_str for proper comparison */}
 					</div>
 				)}
 			</div>
