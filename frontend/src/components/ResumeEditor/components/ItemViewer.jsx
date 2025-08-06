@@ -1,5 +1,5 @@
 // src/components/ResumeEditor/components/ItemViewer.jsx
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import LineViewer from "./LineViewer";
 import ParameterControls from "./ParameterControls";
 
@@ -10,12 +10,16 @@ const ItemViewer = ({
 	mode,
 	showParameters,
 	onUpdateTitles,
+	onAddTitle,
+	onRemoveLastTitle,
 	onUpdateLineContent,
 	onUpdateParameters,
 	onAddNewLine,
 	onDeleteLine,
 	onDeleteItem,
 }) => {
+	const textareaRef = useRef(null);
+
 	if (!item) {
 		return (
 			<div className="item-viewer">
@@ -33,6 +37,26 @@ const ItemViewer = ({
 		item.titles.every((title) => !title || title.trim() === "");
 	const hasSingleLine = item.lines && item.lines.length === 1;
 	const isCompactItem = hasNoTitles && hasSingleLine;
+
+	// Auto-resize textarea function
+	const autoResizeTextarea = (textarea) => {
+		if (textarea) {
+			textarea.style.height = "auto";
+			textarea.style.height = textarea.scrollHeight + "px";
+		}
+	};
+
+	// Auto-resize on content change
+	useEffect(() => {
+		if (textareaRef.current && isCompactItem && mode === "edit") {
+			autoResizeTextarea(textareaRef.current);
+		}
+	}, [
+		item.lines?.[0]?.content_str,
+		item.lines?.[0]?.content,
+		isCompactItem,
+		mode,
+	]);
 
 	// Get title placeholders based on index
 	const getTitlePlaceholder = (index) => {
@@ -127,15 +151,21 @@ const ItemViewer = ({
 					<div className="compact-line">
 						{mode === "edit" ? (
 							<textarea
+								ref={textareaRef}
 								value={
 									item.lines[0]?.content_str || item.lines[0]?.content || ""
 								}
 								className="editable-compact-line"
 								placeholder="Enter content..."
-								rows={1}
 								onChange={(e) => {
 									// Update the first (and only) line content
 									onUpdateLineContent(0, e.target.value);
+									// Auto-resize the textarea
+									autoResizeTextarea(e.target);
+								}}
+								onInput={(e) => {
+									// Additional auto-resize on input
+									autoResizeTextarea(e.target);
 								}}
 							/>
 						) : (
@@ -146,29 +176,65 @@ const ItemViewer = ({
 							</span>
 						)}
 					</div>
+					{/* Delete button beneath the text in edit mode */}
+					{mode === "edit" && (
+						<button
+							className="item-delete-button-compact"
+							onClick={onDeleteItem}
+							title="Delete this item"
+						>
+							× Remove
+						</button>
+					)}
 				</div>
 			) : (
 				<>
 					{/* Standard Item Layout with Titles */}
 					<div className="item-header">
+						{/* Delete button in edit mode */}
+
 						<div className="item-titles">
 							{(() => {
 								if (!item.titles || item.titles.length === 0) {
 									return (
-										<div className="title-row">
-											<div className="title-left">
-												{mode === "edit" ? (
-													<input
-														type="text"
-														value=""
-														className="item-title-input"
-														placeholder="Item Title"
-														onChange={(e) => onUpdateTitles(0, e.target.value)}
-													/>
-												) : (
-													<span className="title-display">Untitled Item</span>
-												)}
+										<div className="no-titles-section">
+											<div className="title-row">
+												<div className="title-left">
+													{mode === "edit" ? (
+														<input
+															type="text"
+															value=""
+															className="item-title-input"
+															placeholder="Item Title"
+															onChange={(e) =>
+																onUpdateTitles(0, e.target.value)
+															}
+														/>
+													) : (
+														<span className="title-display">Untitled Item</span>
+													)}
+												</div>
 											</div>
+											{/* Add title button for items with no titles */}
+											{mode === "edit" && (
+												<div className="title-button-group">
+													<button
+														className="add-title-button"
+														onClick={onAddTitle}
+													>
+														+ Add Title Field
+													</button>
+													{/* Only show remove button if there are titles to remove */}
+													{item.titles && item.titles.length > 0 && (
+														<button
+															className="remove-title-button"
+															onClick={onRemoveLastTitle}
+														>
+															- Remove Last Title
+														</button>
+													)}
+												</div>
+											)}
 										</div>
 									);
 								}
@@ -320,14 +386,31 @@ const ItemViewer = ({
 											</div>
 										)}
 
-										{/* Add title button for edit mode */}
-										{mode === "edit" &&
-											item.titles &&
-											item.titles.length < 6 && (
-												<button className="add-title-button" disabled>
-													+ Add Title Field
-												</button>
-											)}
+										{/* Add/Remove title buttons for edit mode */}
+										{mode === "edit" && (
+											<div className="title-button-group">
+												{/* Add title button - only show if less than 6 titles */}
+												{item.titles &&
+													item.titles.length > 0 &&
+													item.titles.length < 6 && (
+														<button
+															className="add-title-button"
+															onClick={onAddTitle}
+														>
+															+ Add Title Field
+														</button>
+													)}
+												{/* Remove title button - only show if there are titles to remove */}
+												{item.titles && item.titles.length > 0 && (
+													<button
+														className="remove-title-button"
+														onClick={onRemoveLastTitle}
+													>
+														- Remove Last Title
+													</button>
+												)}
+											</div>
+										)}
 									</div>
 								);
 							})()}
@@ -342,8 +425,12 @@ const ItemViewer = ({
 								<button className="move-down-button" disabled>
 									↓
 								</button>
-								<button className="delete-item-button" disabled>
-									🗑
+								<button
+									className="item-delete-button"
+									onClick={onDeleteItem}
+									title="Delete this item"
+								>
+									×
 								</button>
 							</div>
 						)}
@@ -393,19 +480,6 @@ const ItemViewer = ({
 							</div>
 						)}
 					</div>
-
-					{/* Item controls for edit mode */}
-					{mode === "edit" && (
-						<div className="edit-actions item-edit-actions">
-							<button
-								className="edit-button delete-button"
-								onClick={onDeleteItem}
-								title="Delete this item"
-							>
-								Delete Item
-							</button>
-						</div>
-					)}
 				</>
 			)}
 

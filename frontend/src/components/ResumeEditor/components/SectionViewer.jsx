@@ -9,6 +9,8 @@ const SectionViewer = ({
 	showParameters,
 	onUpdateSectionTitle,
 	onUpdateItemTitles,
+	onAddItemTitle,
+	onRemoveLastItemTitle,
 	onUpdateLineContent,
 	onUpdateItemParameters,
 	onAddNewItem,
@@ -109,6 +111,8 @@ const SectionViewer = ({
 							onUpdateTitles={(titleIndex, newTitle) =>
 								onUpdateItemTitles(itemIndex, titleIndex, newTitle)
 							}
+							onAddTitle={() => onAddItemTitle(itemIndex)}
+							onRemoveLastTitle={() => onRemoveLastItemTitle(itemIndex)}
 							onUpdateLineContent={(lineIndex, newContent) =>
 								onUpdateLineContent(itemIndex, lineIndex, newContent)
 							}

@@ -41,7 +41,7 @@ const LineViewer = ({
 								onClick={onDeleteLine}
 								title="Delete this line"
 							>
-								Delete
+								× Delete
 							</button>
 						</div>
 					</div>

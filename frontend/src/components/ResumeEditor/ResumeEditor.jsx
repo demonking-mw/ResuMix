@@ -238,6 +238,34 @@ const ResumeEditor = ({
 		handleResumeUpdate(updated);
 	};
 
+	// Add a new title field (with proper backend formatting)
+	const addItemTitle = (sectionIndex, itemIndex) => {
+		const updated = deepClone(resumeData);
+		const item = updated.sections[sectionIndex].items[itemIndex];
+
+		if (!item.titles) {
+			item.titles = [];
+		}
+
+		// Add "title" string at the next position
+		item.titles.push("title");
+
+		handleResumeUpdate(updated);
+	};
+
+	// Remove the last title field
+	const removeLastItemTitle = (sectionIndex, itemIndex) => {
+		const updated = deepClone(resumeData);
+		const item = updated.sections[sectionIndex].items[itemIndex];
+
+		if (item.titles && item.titles.length > 0) {
+			// Remove the last title
+			item.titles.pop();
+		}
+
+		handleResumeUpdate(updated);
+	};
+
 	// Update line content
 	const updateLineContent = (
 		sectionIndex,
@@ -465,6 +493,12 @@ const ResumeEditor = ({
 										newTitle
 									)
 								}
+								onAddItemTitle={(itemIndex) =>
+									addItemTitle(sectionIndex, itemIndex)
+								}
+								onRemoveLastItemTitle={(itemIndex) =>
+									removeLastItemTitle(sectionIndex, itemIndex)
+								}
 								onUpdateLineContent={(itemIndex, lineIndex, newContent) =>
 									updateLineContent(
 										sectionIndex,
@@ -666,9 +700,6 @@ const ResumeEditor = ({
 							: hasUnsavedChanges
 							? "Save Changes *"
 							: "No Changes"}
-					</button>
-					<button className="action-button cancel-button" disabled>
-						Cancel
 					</button>
 				</div>
 			)}
