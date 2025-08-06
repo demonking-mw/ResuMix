@@ -1,0 +1,1350 @@
+/* src/components/ResumeEditor/ResumeEditor.css */
+
+.resume-editor-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Header Styles */
+.resume-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resume-editor-header h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+}
+
+.editor-mode-indicator .mode-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.mode-badge.mode-view {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.mode-badge.mode-edit {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.mode-badge.mode-parameters-only {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Save Status Indicator */
+.save-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.save-status.saving {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.save-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.save-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Edit Mode Save Button Styling */
+.save-button.has-changes {
+  background-color: #ff6b35 !important;
+  color: white !important;
+  border-color: #ff6b35 !important;
+  animation: pulse-orange 2s infinite;
+}
+
+.save-button.no-changes {
+  background-color: #6c757d !important;
+  color: #adb5bd !important;
+  border-color: #6c757d !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+  animation: none;
+}
+
+.save-button.no-changes:hover {
+  transform: none !important;
+  background-color: #6c757d !important;
+}
+
+@keyframes pulse-orange {
+  0% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 107, 53, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+}
+
+/* Add Section Button */
+.add-section-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.add-section-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-section-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Edit Mode Specific Styles - Only apply when in edit mode */
+.resume-editor-container[data-mode="edit"] .section-title-input,
+.resume-editor-container[data-mode="edit"] .item-title-input,
+.resume-editor-container[data-mode="edit"] .line-content-input {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  font-family: inherit;
+  font-size: inherit;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+/* Add extra padding to line content input to make room for delete button */
+.resume-editor-container[data-mode="edit"] .line-content-input {
+  padding-right: 32px;
+}
+
+/* Secondary title input for augmented titles (3+ titles) */
+.resume-editor-container[data-mode="edit"] .title-row-secondary {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.resume-editor-container[data-mode="edit"] .title-center {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+}
+
+.resume-editor-container[data-mode="edit"] .title-secondary-aug {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px;
+  font-family: inherit;
+  font-size: 0.9em;
+  width: 100%;
+  transition: border-color 0.3s ease;
+  text-align: center;
+}
+
+.resume-editor-container[data-mode="edit"] .section-title-input:focus,
+.resume-editor-container[data-mode="edit"] .item-title-input:focus,
+.resume-editor-container[data-mode="edit"] .line-content-input:focus,
+.resume-editor-container[data-mode="edit"] .title-secondary-aug:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Edit Action Buttons */
+.edit-actions {
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.resume-editor-container[data-mode="edit"] .section-item:hover .edit-actions,
+.resume-editor-container[data-mode="edit"] .item-container:hover .edit-actions,
+.resume-editor-container[data-mode="edit"] .line-display:hover .edit-actions {
+  opacity: 1;
+}
+
+.edit-button {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  background-color: #f5f5f5;
+}
+
+.edit-button.delete-button {
+  color: #d32f2f;
+  border-color: #d32f2f;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-button.delete-button:hover {
+  background-color: #ffebee;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.2);
+}
+
+.edit-button.add-button {
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.edit-button.add-button:hover {
+  background-color: #e8f5e8;
+}
+
+/* Loading and Error States */
+.resume-editor-loading,
+.resume-editor-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.retry-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.retry-button:hover {
+  background-color: #0056b3;
+}
+
+/* Content Layout */
+.resume-editor-content {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+/* Resume Header Styles */
+.resume-header {
+  border-bottom: 2px solid #333;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.header-name .name-display {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.header-name .editable-name {
+  width: 100%;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-bottom: 2px dashed #ccc;
+  background: transparent;
+  padding: 5px;
+}
+
+.header-contact {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.contact-item .contact-display {
+  color: #666;
+  font-size: 1rem;
+}
+
+.contact-item .editable-contact {
+  border: none;
+  border-bottom: 1px dashed #ccc;
+  background: transparent;
+  padding: 2px 5px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Header Controls */
+.header-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Section Styles */
+.section-viewer {
+  margin-bottom: 40px;
+}
+
+/* Compact Section Layout */
+.compact-section {
+  margin-bottom: 30px;
+}
+
+.compact-section .section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Standard Section Layout */
+.standard-section .section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+.editable-section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-bottom: 2px dashed #ccc;
+  background: transparent;
+  padding: 5px;
+  width: 300px;
+}
+
+.section-metadata {
+  display: flex;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: #888;
+  flex-wrap: wrap;
+}
+
+.section-metadata span {
+  padding: 2px 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  font-size: 0.7rem;
+}
+
+.section-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.section-controls button {
+  padding: 5px 8px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+/* Item Styles */
+.item-viewer {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  flex-wrap: nowrap;
+  min-height: 40px;
+}
+
+.item-titles {
+  flex: 1;
+  min-width: 0; /* Allow text to shrink */
+}
+
+/* Item controls container */
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+/* Item delete button styles */
+.item-delete-button {
+  background: #ff4757;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+  flex-shrink: 0;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-delete-button:hover {
+  background: #ff3838;
+  transform: scale(1.05);
+}
+
+.item-delete-button.compact {
+  padding: 2px 6px;
+  font-size: 1rem;
+  margin-left: 8px;
+  min-width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Compact delete button beneath text */
+.item-delete-button-compact {
+  background: #ff4757;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.item-delete-button-compact:hover {
+  background: #ff3838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(255, 71, 87, 0.3);
+}
+
+/* New structured title layout based on backend item_builder logic */
+.formatted-titles {
+  width: 100%;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.title-row:last-child {
+  margin-bottom: 0;
+}
+
+.title-left {
+  flex: 1;
+  text-align: left;
+}
+
+.title-right {
+  flex: 1;
+  text-align: right;
+  margin-left: 20px;
+}
+
+/* Primary title styling (first position) */
+.title-primary {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Secondary title styling (right side of first row) */
+.title-secondary {
+  font-style: italic;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Tertiary title styling (left side of second row) */
+.title-tertiary {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Quaternary title styling (right side of second row) */
+.title-quaternary {
+  font-style: italic;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* Separator styling for augmented titles (title1 | title2) */
+.title-separator {
+  color: #999;
+  font-weight: normal;
+  margin: 0 8px;
+}
+
+.title-secondary {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: normal;
+}
+
+/* Legacy support for old title structure */
+.item-title {
+  margin-bottom: 5px;
+}
+
+.item-title-0 .title-display {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.item-title-1 .title-display {
+  font-style: italic;
+  color: #666;
+}
+
+.item-title-2 .title-display {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.editable-item-title {
+  width: 100%;
+  border: none;
+  border-bottom: 1px dashed #ccc;
+  background: transparent;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+  font-family: inherit;
+}
+
+/* Specific styling for editable titles in new structure */
+.editable-item-title.title-primary {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.editable-item-title.title-secondary {
+  font-style: italic;
+  font-size: 1rem;
+}
+
+.editable-item-title.title-tertiary {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.editable-item-title.title-quaternary {
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.item-metadata {
+  font-size: 0.75rem;
+  color: #888;
+  margin-right: 10px;
+}
+
+.item-metadata span {
+  margin-right: 10px;
+}
+
+/* Extended Title Support (up to 6 titles) */
+.item-title-3 .title-display {
+  font-size: 0.9rem;
+  color: #999;
+  font-style: italic;
+}
+
+.item-title-4 .title-display {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.item-title-5 .title-display {
+  font-size: 0.85rem;
+  color: #aaa;
+  font-weight: 300;
+}
+
+.add-title-button {
+  padding: 4px 8px;
+  border: 1px dashed #007bff;
+  background: transparent;
+  color: #007bff;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.add-title-button:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+}
+
+.remove-title-button {
+  padding: 4px 8px;
+  border: 1px dashed #dc3545;
+  background: transparent;
+  color: #dc3545;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  margin-left: 8px;
+}
+
+.remove-title-button:hover:not(:disabled) {
+  background: #dc3545;
+  color: white;
+}
+
+.title-button-group {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+/* Compact Item Styles (for single-line items - any section type) */
+.item-compact {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  min-height: auto;
+  transition: all 0.2s ease;
+}
+
+/* Edit mode styling for compact items */
+[data-mode="edit"] .item-compact {
+  border: 1px solid #d0d7de;
+  background: #f6f8fa;
+}
+
+[data-mode="edit"] .item-compact:hover {
+  border-color: #8c959f;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.item-compact-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.compact-line {
+  width: 100%;
+}
+
+.compact-text {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  display: inline-block;
+}
+
+.editable-compact-line {
+  width: 100%;
+  border: 1px solid #d0d7de;
+  background: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  padding: 6px 8px;
+  border-radius: 4px;
+  resize: none;
+  overflow: hidden;
+  min-height: 1.3em;
+  max-height: none;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  transition: all 0.2s ease;
+  cursor: text;
+}
+
+.editable-compact-line:hover {
+  border-color: #8c959f;
+  background: #f6f8fa;
+}
+
+.editable-compact-line:focus {
+  background: white;
+  border: 2px solid #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Special styling for sections with compact items */
+.section-viewer:has(.item-compact) .section-title {
+  margin-bottom: 15px;
+}
+
+/* Compact items layout for any section with compact content */
+.section-viewer:has(.item-compact) .section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Alternative: Grid layout for very compact display */
+.compact-grid-layout .section-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.compact-grid-layout .item-compact {
+  margin-bottom: 0;
+}
+
+/* Line Styles */
+.line-viewer {
+  margin-bottom: 8px;
+}
+
+.line-display {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.line-bullet {
+  color: #666;
+  font-weight: bold;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.line-text {
+  flex: 1;
+  line-height: 1.4;
+  color: #333;
+  max-width: calc(100% - 120px); /* Reserve space for the warning on the right */
+  word-wrap: break-word;
+}
+
+/* Responsive layout for narrow screens */
+@media (max-width: 768px) {
+  .line-display {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .line-text {
+    max-width: 100%; /* Use full width when stacked vertically */
+  }
+  
+  .content-mismatch {
+    margin-left: 0;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+}
+
+.line-edit-container {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  position: relative;
+}
+
+.line-delete-button {
+  background: transparent;
+  border: 1px dotted #dc3545;
+  border-radius: 3px;
+  color: #dc3545;
+  padding: 2px 6px;
+  font-size: 0.9rem;
+  font-weight: normal;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.line-delete-button:hover {
+  background: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+}
+
+.editable-line-content {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 50px;
+}
+
+.line-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.line-controls button {
+  padding: 2px 6px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+/* Parameter Controls */
+.parameter-controls {
+  margin-top: 15px;
+  padding: 15px;
+  border: 2px solid #e8f4f8;
+  border-radius: 8px;
+  background: #f8fcff;
+}
+
+.parameter-header h4 {
+  margin: 0 0 15px 0;
+  color: #2c5aa0;
+  font-size: 1rem;
+}
+
+.parameter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.parameter-grid-horizontal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+/* Compact layout for parameters-only view */
+.item-viewer-compact {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  gap: 8px;
+}
+
+.item-text-section {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.item-controls-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  flex-shrink: 0;
+  min-width: 400px;
+}
+
+.parameter-control-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  padding: 6px 8px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+
+.param-top-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.param-label {
+  font-weight: 500;
+  color: #666;
+  min-width: 42px;
+}
+
+.param-indicator {
+  font-size: 0.9rem;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.param-input-compact {
+  width: 60px;
+  padding: 3px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.param-slider-compact {
+  width: 100%;
+}
+
+.parameter-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+}
+
+.parameter-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.parameter-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.parameter-indicator {
+  font-size: 1.2rem;
+}
+
+.parameter-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.parameter-value {
+  font-weight: bold;
+  color: #2c5aa0;
+  min-width: 40px;
+}
+
+.parameter-bar {
+  flex: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.parameter-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.weight-fill {
+  background: linear-gradient(90deg, #ffc107, #28a745);
+}
+
+.bias-fill {
+  background: linear-gradient(90deg, #dc3545, #6c757d, #007bff);
+}
+
+.parameter-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.parameter-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.parameter-slider {
+  width: 100%;
+}
+
+.parameter-description {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.parameter-summary {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  background: #f0f8ff;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.parameter-presets {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.preset-button {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+/* Empty States */
+.empty-section,
+.empty-item {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  font-style: italic;
+}
+
+.empty-message {
+  margin-bottom: 15px;
+}
+
+/* Action Buttons */
+.resume-editor-actions {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.action-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+}
+
+.save-button {
+  background: #28a745;
+  color: white;
+}
+
+.cancel-button {
+  background: #6c757d;
+  color: white;
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Add buttons */
+.add-item-button,
+.add-line-button,
+.add-contact-button {
+  padding: 8px 16px;
+  border: 2px dashed #007bff;
+  background: transparent;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.add-item-button:hover,
+.add-line-button:hover,
+.add-contact-button:hover {
+  background: #007bff;
+  color: white;
+}
+
+.add-item-button:disabled,
+.add-line-button:disabled,
+.add-contact-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Parameters-only view */
+.parameters-only-view {
+  padding: 20px;
+}
+
+.parameters-only-view h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.section-parameters {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.section-parameters h3 {
+  margin: 0 0 15px 0;
+  color: #2c5aa0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.item-parameters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: white;
+}
+
+.item-titles {
+  font-weight: 500;
+  color: #333;
+}
+
+.parameter-controls span {
+  margin-left: 15px;
+  padding: 4px 8px;
+  background: #e8f4f8;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #2c5aa0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .resume-editor-container {
+    padding: 10px;
+  }
+  
+  .parameter-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header-contact {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .item-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Stack title rows vertically on mobile */
+  .title-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .title-right {
+    text-align: left;
+    margin-left: 0;
+    margin-top: 3px;
+  }
+  
+  .parameter-summary {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Debug helpers */
+.content-mismatch {
+  color: #dc3545;
+  font-size: 0.7rem;
+  cursor: help;
+  background: #fff5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #fecaca;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Empty Resume State Styles */
+.empty-resume-state {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 60px 40px;
+  text-align: center;
+  margin: 40px 0;
+}
+
+.empty-resume-message h3 {
+  margin: 0 0 16px 0;
+  color: #374151;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.empty-resume-message p {
+  margin: 0 0 32px 0;
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empty-resume-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.wiki-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: not-allowed;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.wiki-button:hover:not(:disabled) {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.wiki-button:disabled {
+  opacity: 0.6;
+}

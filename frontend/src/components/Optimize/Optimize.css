@@ -1,0 +1,621 @@
+/* Optimize.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+.optimize-container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #e0f2fe, #e9d5ff);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.optimize-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.optimize-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: calc(100vh - 8rem); /* Full height minus navbar and padding */
+}
+
+/* Main Content Row */
+.optimize-main-row {
+  display: grid;
+  grid-template-columns: 7fr 3fr; /* 70-30 split: job section gets 70%, sidebar gets 30% */
+  gap: 2rem;
+  flex: 1;
+  align-items: stretch; /* Ensure both columns stretch to same height */
+}
+
+/* Left Section - Main Content */
+.optimize-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 600px; /* Ensure minimum height */
+}
+
+.job-input-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem 2rem 0 2rem; /* Remove bottom padding to let textarea extend */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  min-height: 600px; /* Minimum height to match sidebar */
+  height: 100%; /* Take full available height */
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* Resume configuration rows */
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+  gap: 2rem;
+}
+
+.subtitle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 2rem;
+}
+
+.subtitle-row .section-subtitle {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.resume-name-input {
+  max-width: 300px;
+  min-width: 200px;
+}
+
+.resume-name-input .form-group {
+  margin-bottom: 0;
+}
+
+.resume-name-input .form-label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.resume-name-field {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 8px !important;
+  border: 2px solid #e5e7eb !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.resume-name-field:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* No Cache Switch Styles */
+.no-cache-switch {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.switch-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+}
+
+.switch-container {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: #d1d5db;
+  border-radius: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.switch-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.switch-input:checked + .switch-slider {
+  transform: translateX(20px);
+}
+
+.switch-label:has(.switch-input:checked) .switch-container {
+  background-color: #6366f1;
+}
+
+.job-input-container {
+  flex: 1; /* Take remaining space after title and subtitle */
+  display: flex;
+  flex-direction: column;
+  min-height: 350px;
+  padding-bottom: 2rem; /* Add bottom padding equal to side padding */
+}
+
+.job-description-textarea.form-textarea {
+  width: 100% !important;
+  height: 100% !important; /* Take full container height */
+  min-height: 350px !important;
+  resize: vertical;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  flex: 1; /* Grow to fill available space */
+  border: 2px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(255, 255, 255, 0.9) !important;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box !important; /* Ensure padding is included in height calculation */
+}
+
+.job-description-textarea.form-textarea:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  outline: none;
+}
+
+.generate-button {
+  padding: 1rem 2rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: #6366f1 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.generate-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+  background: #4f46e5 !important;
+}
+
+.generate-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Right Sidebar */
+.optimize-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 600px; /* Ensure minimum height for alignment */
+}
+
+/* Status Box */
+.status-box {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.25rem 1.25rem 2rem 1.25rem; /* Added extra bottom padding */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  min-height: 280px; /* Set minimum height */
+  flex: 1; /* Allow flexible growth */
+}
+
+.status-box-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.status-item:last-child {
+  margin-bottom: 0;
+}
+
+.status-item-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.status-placeholder {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.status-tokens {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+/* Tips Widget */
+.tips-widget {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  min-height: 280px; /* Set minimum height */
+  flex: 1; /* Allow flexible growth */
+  display: flex;
+  flex-direction: column;
+}
+
+.tips-header {
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(249, 250, 251, 0.5);
+  transition: background-color 0.2s ease;
+}
+
+.tips-header:hover {
+  background: rgba(249, 250, 251, 0.8);
+}
+
+.tips-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.tips-toggle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.tips-toggle.expanded {
+  transform: rotate(0deg);
+}
+
+.tips-content {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  animation: slideDown 0.3s ease-out;
+  flex: 1; /* Allow content to grow and fill available space */
+  overflow-y: auto; /* Add scroll if content exceeds height */
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.tip-item {
+  margin-bottom: 1.5rem;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.tip-item h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tip-item ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #4b5563;
+}
+
+.tip-item li {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.tip-item p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Terminal Styles */
+.terminal-container {
+  background: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin: 1rem 0;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.terminal-header {
+  background: #2d2d2d;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.terminal-title {
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.terminal-close {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.terminal-close:hover {
+  background: #444;
+}
+
+.terminal-content {
+  background: #1e1e1e;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.terminal-line {
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.terminal-timestamp {
+  color: #888;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+.terminal-message {
+  flex: 1;
+}
+
+.terminal-info .terminal-message {
+  color: #ffffff;
+}
+
+.terminal-success .terminal-message {
+  color: #4ade80;
+}
+
+.terminal-error .terminal-message {
+  color: #f87171;
+}
+
+.terminal-warning .terminal-message {
+  color: #fbbf24;
+}
+
+/* Scrollbar styling for terminal */
+.terminal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.terminal-content::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Responsive Design */
+
+/* Large screens - maintain 70-30 split */
+@media (min-width: 950px) {
+  .optimize-main-row {
+    grid-template-columns: 7fr 3fr; /* Keep 70-30 split on large screens */
+  }
+}
+
+/* Medium screens - stack when sidebar becomes too cramped (sidebar would be < 280px) */
+@media (max-width: 949px) {
+  .optimize-main-row {
+    grid-template-columns: 1fr; /* Stack columns when sidebar gets too small */
+    gap: 1.5rem;
+  }
+  
+  .optimize-left,
+  .optimize-sidebar {
+    min-height: auto; /* Remove fixed heights when stacked */
+  }
+  
+  /* Adjust padding for medium stacked layout */
+  .job-input-section,
+  .tips-widget {
+    padding: 1.75rem 1.75rem 0 1.75rem;
+  }
+  
+  .status-box {
+    padding: 1.75rem;
+    min-height: 220px; /* Ensure enough height for all content including tokens */
+  }
+  
+  .job-input-container {
+    padding-bottom: 1.75rem;
+  }
+}
+
+/* Small screens - mobile layout */
+@media (max-width: 768px) {
+  .optimize-main {
+    padding: 1rem;
+  }
+  
+  .optimize-main-row {
+    gap: 1rem;
+  }
+  
+  .job-input-section,
+  .generate-section,
+  .tips-widget {
+    padding: 1.5rem 1.5rem 0 1.5rem !important;
+    min-height: auto;
+  }
+  
+  .status-box {
+    padding: 1.5rem !important;
+    min-height: 200px !important;
+  }
+  
+  .job-input-container {
+    padding-bottom: 1.5rem !important;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .job-description-textarea.form-textarea {
+    min-height: 250px !important;
+    height: 250px !important;
+  }
+
+  /* Responsive layout for new structure */
+  .title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .resume-name-input {
+    max-width: none;
+    width: 100%;
+  }
+
+  .no-cache-switch {
+    align-self: flex-start;
+  }
+
+  .terminal-content {
+    max-height: 200px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .terminal-header {
+    padding: 0.5rem 0.75rem;
+  }
+}

@@ -15,15 +15,15 @@ from flask_restful import Api
 from flask_cors import CORS
 from .classes.user import User
 from .classes.resume import ResumeHandle
+from .classes.optimize import ResumeOptimizer
 
 from io import BytesIO
 
 # Import your resume-related modules
 from backend.src.resume_objects.resume import Resume
 from backend.src.resume_objects.latex_templates import LTemplate
-from backend.src.resume_objects.implementations.scoring_functions import (
-    simple_sum_function,
-)
+from backend.src.resume_objects.implementations.scoring_functions import simple_sum_function
+
 
 app = Flask(__name__)
 
@@ -38,6 +38,7 @@ api = Api(app)
 
 api.add_resource(User, "/user")
 api.add_resource(ResumeHandle, "/resume")
+api.add_resource(ResumeOptimizer, "/resume/optimize")
 # api.add_resource(UserInfo, "/user/info")
 # api.add_resource(Activity, "/activity")
 

@@ -12,6 +12,12 @@ const AccountHome = () => {
 	const [hoveredStatus, setHoveredStatus] = useState(null);
 	const [statusTimeout, setStatusTimeout] = useState(null);
 
+	// Console log user's master resume object
+	console.log(
+		"👤 AccountHome - User's master resume object:",
+		user?.resumeinfo
+	);
+
 	// Function to get color based on status value
 	const getStatusColor = (status) => {
 		switch (status) {
@@ -243,7 +249,7 @@ const AccountHome = () => {
 						</div>
 						<div
 							className="step-card clickable-card"
-							// onClick={() => handleCardClick("/generate")}
+							onClick={() => handleCardClick("/optimize")}
 						>
 							<div className="step-content">
 								<span className="step-title">Generate</span>

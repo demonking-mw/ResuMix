@@ -85,12 +85,29 @@ class ResumeHandle:
         resume_pdf_bytes = my_resume.build()
         new_resume_dict = my_resume.to_dict()
         new_resume_dict = self.__convert_ndarray(new_resume_dict)
-        if resume_dict != new_resume_dict:
-            # Update the resume info in the database if there are changes
-            print("DEBUG: hashing resume info to db")
-            query = f"UPDATE data SET resumeinfo = %s WHERE uid = %s"
+
+        # Convert the original resume_dict for proper comparison
+        converted_resume_dict = self.__convert_ndarray(resume_dict)
+
+        # Use JSON serialization for safe comparison of complex dictionaries
+        try:
+            if json.dumps(converted_resume_dict, sort_keys=True) != json.dumps(
+                new_resume_dict, sort_keys=True
+            ):
+                # Update the resume info in the database if there are changes
+                print("DEBUG: hashing resume info to db")
+                query = "UPDATE data SET resumeinfo = %s WHERE uid = %s"
+                values = (json.dumps(new_resume_dict), user_auth_json["uid"])
+                self.database.run_sql(query, values)
+        except (TypeError, ValueError) as e:
+            # If JSON serialization fails, fall back to assuming they're different
+            print(
+                f"WARNING: Could not compare resume dictionaries, updating anyway: {e}"
+            )
+            query = "UPDATE data SET resumeinfo = %s WHERE uid = %s"
             values = (json.dumps(new_resume_dict), user_auth_json["uid"])
             self.database.run_sql(query, values)
+
         return True, resume_pdf_bytes
 
     def set_resume_dict(self, args: dict) -> tuple[bool, str]:
@@ -109,6 +126,24 @@ class ResumeHandle:
         if not new_resume_dict:
             print("ERROR: no resume info provided")
             return False, "No resume info provided"
+
+        # Check if resume has any items
+        has_items = False
+        sections = new_resume_dict.get("sections", [])
+        for section in sections:
+            items = section.get("items", [])
+            for item in items:
+                aux_info = item.get("aux_info", {})
+                if aux_info.get("type") == "items":
+                    has_items = True
+                    break
+            if has_items:
+                break
+
+        if not has_items:
+            print("ERROR: resume has no items")
+            return False, "Empty resume - no items found"
+
         # load it into object: if there are error, catch it here
         templ = LTemplate()
         try:
@@ -119,11 +154,11 @@ class ResumeHandle:
             ):
                 print("ERROR: failed to make resume")
                 return False, "Failed to make resume"
-        except Exception as e:
+        except (TypeError, ValueError) as e:
             print(f"ERROR: failed to load resume dict: {e}")
             return False, f"Failed to load resume dict: {str(e)}"
         processed_resume_dict = my_resume.to_dict()
-        query = f"UPDATE data SET resumeinfo = %s WHERE uid = %s"
+        query = "UPDATE data SET resumeinfo = %s WHERE uid = %s"
         print("DEBUG: resume to_dict: type of " + str(type(processed_resume_dict)))
         processed_resume_dict = self.__convert_ndarray(processed_resume_dict)
         values = (json.dumps(processed_resume_dict), args["uid"])
