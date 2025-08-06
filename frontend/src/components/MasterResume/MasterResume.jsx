@@ -1,6 +1,6 @@
 // src/components/MasterResume/MasterResume.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import ResumeEditor from "../ResumeEditor";
 import NavBar from "../NavBar";
@@ -9,11 +9,24 @@ import "./MasterResume.css";
 const MasterResume = () => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [currentMode, setCurrentMode] = useState("view");
+
+	// Check URL parameters for mode on component mount
+	useEffect(() => {
+		const modeParam = searchParams.get("mode");
+		if (modeParam && ["view", "edit", "parameters-only"].includes(modeParam)) {
+			setCurrentMode(modeParam);
+		}
+	}, [searchParams]);
 
 	// Demo: Toggle between different modes for testing
 	const handleModeChange = (newMode) => {
 		setCurrentMode(newMode);
+		// Update URL parameter when mode changes
+		const newSearchParams = new URLSearchParams(searchParams);
+		newSearchParams.set("mode", newMode);
+		setSearchParams(newSearchParams);
 	};
 
 	return (
