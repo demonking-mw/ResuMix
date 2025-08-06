@@ -5,6 +5,7 @@ import api from "../../api/connection";
 import "./ResumeEditor.css";
 import SectionViewer from "./components/SectionViewer";
 import ResumeHeader from "./components/ResumeHeader";
+import ParameterControls from "./components/ParameterControls";
 
 const ResumeEditor = ({
 	mode = "view", // "view", "edit", "parameters-only"
@@ -503,28 +504,155 @@ const ResumeEditor = ({
 						{resumeData.sections?.map((section, sectionIndex) => (
 							<div
 								key={section.sect_id || sectionIndex}
-								className="section-parameters"
+								className="section-viewer"
 							>
-								<h3>{section.title}</h3>
-								{section.items?.map((item, itemIndex) => (
-									<div key={itemIndex} className="item-parameters">
-										<div className="item-titles">
-											{item.titles?.join(" • ") || "Untitled Item"}
-										</div>
-										<div className="parameter-controls">
-											<span>Weight: {item.cate_scores?.weight || 1}</span>
-											<span>Bias: {item.cate_scores?.bias || 0}</span>
-										</div>
-									</div>
-								))}
+								<div className="section-header">
+									<h3 className="section-title">{section.title}</h3>
+								</div>
+								<div className="section-items">
+									{section.items?.map((item, itemIndex) => {
+										// Determine what to display for the item
+										const getItemDisplayText = () => {
+											// Check if item has meaningful titles
+											const hasValidTitles =
+												item.titles &&
+												item.titles.some((title) => title && title.trim());
+
+											// If has valid titles, use them
+											if (hasValidTitles) {
+												return item.titles
+													.filter((title) => title && title.trim())
+													.join(" • ");
+											}
+
+											// If no valid titles but has exactly one line, use the line content
+											if (
+												item.lines &&
+												item.lines.length === 1 &&
+												item.lines[0].content_str
+											) {
+												return item.lines[0].content_str;
+											}
+
+											// Fallback to "Untitled Item"
+											return "Untitled Item";
+										};
+
+										return (
+											<div key={itemIndex} className="item-viewer-compact">
+												<div className="item-text-section">
+													{getItemDisplayText()}
+												</div>
+												<div className="item-controls-section">
+													<div className="parameter-control-inline">
+														<div className="param-top-row">
+															<span className="param-label">weight:</span>
+															<span className="param-indicator">
+																{item.cate_scores?.weight > 1.2
+																	? "🔥"
+																	: item.cate_scores?.weight > 1.0
+																	? "⬆️"
+																	: item.cate_scores?.weight === 1.0
+																	? "➡️"
+																	: item.cate_scores?.weight > 0.5
+																	? "⬇️"
+																	: "❄️"}
+															</span>
+															<input
+																type="number"
+																value={item.cate_scores?.weight || 1}
+																step="0.01"
+																min="0"
+																max="2"
+																className="param-input-compact"
+																onChange={(e) =>
+																	updateItemParameters(
+																		sectionIndex,
+																		itemIndex,
+																		"weight",
+																		parseFloat(e.target.value) || 0
+																	)
+																}
+															/>
+														</div>
+														<input
+															type="range"
+															value={item.cate_scores?.weight || 1}
+															step="0.01"
+															min="0"
+															max="2"
+															className="param-slider-compact"
+															onChange={(e) =>
+																updateItemParameters(
+																	sectionIndex,
+																	itemIndex,
+																	"weight",
+																	parseFloat(e.target.value)
+																)
+															}
+														/>
+													</div>
+													<div className="parameter-control-inline">
+														<div className="param-top-row">
+															<span className="param-label">bias:</span>
+															<span className="param-indicator">
+																{item.cate_scores?.bias > 0.5
+																	? "📈"
+																	: item.cate_scores?.bias > 0
+																	? "📊"
+																	: item.cate_scores?.bias === 0
+																	? "⚖️"
+																	: item.cate_scores?.bias > -0.5
+																	? "📉"
+																	: "📉"}
+															</span>
+															<input
+																type="number"
+																value={item.cate_scores?.bias || 0}
+																step="0.01"
+																min="-2"
+																max="2"
+																className="param-input-compact"
+																onChange={(e) =>
+																	updateItemParameters(
+																		sectionIndex,
+																		itemIndex,
+																		"bias",
+																		parseFloat(e.target.value) || 0
+																	)
+																}
+															/>
+														</div>
+														<input
+															type="range"
+															value={item.cate_scores?.bias || 0}
+															step="0.01"
+															min="-2"
+															max="2"
+															className="param-slider-compact"
+															onChange={(e) =>
+																updateItemParameters(
+																	sectionIndex,
+																	itemIndex,
+																	"bias",
+																	parseFloat(e.target.value)
+																)
+															}
+														/>
+													</div>
+												</div>
+											</div>
+										);
+									})}
+								</div>
 							</div>
 						))}
 					</div>
 				)}
 			</div>
 
-			{/* Manual save button for edit mode */}
-			{mode === "edit" && (
+			{/* Manual save button for edit and parameters-only mode */}
+			{(mode === "edit" || mode === "parameters-only") && (
 				<div className="resume-editor-actions">
 					<button
 						className={`action-button save-button ${

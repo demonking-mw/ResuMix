@@ -58,7 +58,7 @@ const ParameterControls = ({
 							<input
 								type="number"
 								value={weight}
-								step="0.1"
+								step="0.01"
 								min="0"
 								max="2"
 								className="parameter-input"
@@ -70,7 +70,7 @@ const ParameterControls = ({
 								<input
 									type="range"
 									value={weight}
-									step="0.1"
+									step="0.01"
 									min="0"
 									max="2"
 									className="parameter-slider"
@@ -107,7 +107,7 @@ const ParameterControls = ({
 							<input
 								type="number"
 								value={bias}
-								step="0.1"
+								step="0.01"
 								min="-2"
 								max="2"
 								className="parameter-input"
@@ -117,7 +117,7 @@ const ParameterControls = ({
 								<input
 									type="range"
 									value={bias}
-									step="0.1"
+									step="0.01"
 									min="-2"
 									max="2"
 									className="parameter-slider"
