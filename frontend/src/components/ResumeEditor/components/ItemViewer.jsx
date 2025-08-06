@@ -157,7 +157,7 @@ const ItemViewer = ({
 							<textarea
 								ref={textareaRef}
 								value={
-									item.lines[0]?.content_str || item.lines[0]?.content || ""
+									item.lines[0]?.content || item.lines[0]?.content_str || ""
 								}
 								className="editable-compact-line"
 								placeholder="Enter content..."
@@ -204,7 +204,7 @@ const ItemViewer = ({
 								onClick={onDeleteItem}
 								title="Delete this item"
 							>
-								× Remove
+								×
 							</button>
 						</div>
 					)}

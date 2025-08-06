@@ -7,6 +7,8 @@ import SectionViewer from "./components/SectionViewer";
 import ResumeHeader from "./components/ResumeHeader";
 import ParameterControls from "./components/ParameterControls";
 import ConfirmationModal from "./components/ConfirmationModal";
+import HelpModal from "./components/HelpModal";
+import { FormatHelpContent, ModeHelpContent } from "./components/HelpContent";
 
 const ResumeEditor = ({
 	mode = "view", // "view", "edit", "parameters-only"
@@ -29,6 +31,12 @@ const ResumeEditor = ({
 		message: "",
 		onConfirm: null,
 		sectionIndex: null,
+	});
+
+	// Help modal state
+	const [helpModal, setHelpModal] = useState({
+		isOpen: false,
+		type: null, // "format" or "mode"
 	});
 
 	// Create default resume structure for new accounts
@@ -276,6 +284,13 @@ const ResumeEditor = ({
 		handleResumeUpdate(updated);
 	};
 
+	// Helper function to strip HTML-like tags for content_str
+	const stripMarkupTags = (text) => {
+		if (!text) return "";
+		// Remove HTML-like tags but preserve the text content
+		return text.replace(/<[^>]*>/g, "");
+	};
+
 	// Update line content
 	const updateLineContent = (
 		sectionIndex,
@@ -284,11 +299,13 @@ const ResumeEditor = ({
 		newContent
 	) => {
 		const updated = deepClone(resumeData);
-		updated.sections[sectionIndex].items[itemIndex].lines[
-			lineIndex
-		].content_str = newContent;
+		// Store the raw content with markup for edit mode
 		updated.sections[sectionIndex].items[itemIndex].lines[lineIndex].content =
 			newContent;
+		// Strip markup for clean display in view/parameters mode
+		updated.sections[sectionIndex].items[itemIndex].lines[
+			lineIndex
+		].content_str = stripMarkupTags(newContent);
 		handleResumeUpdate(updated);
 	};
 
@@ -353,6 +370,22 @@ const ResumeEditor = ({
 			message: "",
 			onConfirm: null,
 			sectionIndex: null,
+		});
+	};
+
+	// Open help modal
+	const openHelpModal = (type) => {
+		setHelpModal({
+			isOpen: true,
+			type: type,
+		});
+	};
+
+	// Close help modal
+	const closeHelpModal = () => {
+		setHelpModal({
+			isOpen: false,
+			type: null,
 		});
 	};
 
@@ -518,6 +551,17 @@ const ResumeEditor = ({
 						Loading resume... (auth: {authLoading ? "loading" : "done"}, data:{" "}
 						{isLoading ? "loading" : "done"})
 					</p>
+					<div className="loading-report-section">
+						<p>Taking longer than expected?</p>
+						<a
+							href="https://forms.gle/xUyzrBY9MLnqSqkQ9"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="report-issue-button"
+						>
+							Report Issue
+						</a>
+					</div>
 				</div>
 			</div>
 		);
@@ -556,29 +600,48 @@ const ResumeEditor = ({
 	return (
 		<div className="resume-editor-container" data-mode={mode}>
 			<div className="resume-editor-header">
-				<h1>YOUR MASTER RESUME</h1>
-				<div className="editor-mode-indicator">
-					<span className={`mode-badge mode-${mode}`}>
-						{mode === "view"
-							? "View Mode"
-							: mode === "edit"
-							? "Edit Mode"
-							: "Parameters Only"}
-					</span>
-					{/* Save status indicator */}
-					{(isSaving || saveMessage) && (
-						<span
-							className={`save-status ${
-								isSaving
-									? "saving"
-									: saveMessage.includes("✅")
-									? "success"
-									: "error"
-							}`}
-						>
-							{saveMessage}
+				<div className="header-left">
+					<h1>YOUR MASTER RESUME</h1>
+				</div>
+				<div className="header-right">
+					{/* Format Help Button - always visible */}
+					<button
+						className="help-button"
+						onClick={() => openHelpModal("format")}
+					>
+						<span className="help-button-icon">📝</span>
+						Format Help
+					</button>
+
+					{/* Mode Help Button - always visible */}
+					<button className="help-button" onClick={() => openHelpModal("mode")}>
+						<span className="help-button-icon">❓</span>
+						Mode Guide
+					</button>
+
+					<div className="editor-mode-indicator">
+						<span className={`mode-badge mode-${mode}`}>
+							{mode === "view"
+								? "View Mode"
+								: mode === "edit"
+								? "Edit Mode"
+								: "Parameters Only"}
 						</span>
-					)}
+						{/* Save status indicator */}
+						{(isSaving || saveMessage) && (
+							<span
+								className={`save-status ${
+									isSaving
+										? "saving"
+										: saveMessage.includes("✅")
+										? "success"
+										: "error"
+								}`}
+							>
+								{saveMessage}
+							</span>
+						)}
+					</div>
 				</div>
 			</div>
 
@@ -880,6 +943,26 @@ const ResumeEditor = ({
 				onConfirm={confirmationModal.onConfirm}
 				onCancel={closeConfirmationModal}
 				isDangerous={true}
+			/>
+
+			{/* Help Modal */}
+			<HelpModal
+				isOpen={helpModal.isOpen}
+				title={
+					helpModal.type === "format"
+						? "Text Formatting Guide"
+						: helpModal.type === "mode"
+						? "Modes Guide"
+						: ""
+				}
+				content={
+					helpModal.type === "format" ? (
+						<FormatHelpContent />
+					) : helpModal.type === "mode" ? (
+						<ModeHelpContent />
+					) : null
+				}
+				onClose={closeHelpModal}
 			/>
 		</div>
 	);
