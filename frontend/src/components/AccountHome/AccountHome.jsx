@@ -204,7 +204,9 @@ const AccountHome = () => {
 						</div>
 						<div
 							className="step-card clickable-card"
-							// onClick={() => handleCardClick("/parameters")}
+							onClick={() =>
+								handleCardClick("/master-resume?mode=parameters-only")
+							}
 						>
 							<div className="step-content">
 								<span className="step-title">

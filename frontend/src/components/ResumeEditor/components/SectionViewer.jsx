@@ -14,10 +14,17 @@ const SectionViewer = ({
 	onUpdateLineContent,
 	onUpdateItemParameters,
 	onAddNewItem,
+	onAddPrePopulatedItem,
 	onDeleteItem,
 	onAddNewLine,
 	onDeleteLine,
+	onMoveItemUp,
+	onMoveItemDown,
 	onDeleteSection,
+	onMoveSectionUp,
+	onMoveSectionDown,
+	canMoveSectionUp,
+	canMoveSectionDown,
 }) => {
 	if (!section) {
 		return (
@@ -78,13 +85,22 @@ const SectionViewer = ({
 
 				{/* Section controls for edit mode */}
 				{mode === "edit" && (
-					<div className="edit-actions">
+					<div className="section-controls">
 						<button
-							className="edit-button add-button"
-							onClick={onAddNewItem}
-							title="Add new item to this section"
+							className="move-up-button"
+							onClick={onMoveSectionUp}
+							disabled={!canMoveSectionUp}
+							title="Move section up"
 						>
-							+ Add Item
+							↑
+						</button>
+						<button
+							className="move-down-button"
+							onClick={onMoveSectionDown}
+							disabled={!canMoveSectionDown}
+							title="Move section down"
+						>
+							↓
 						</button>
 						<button
 							className="edit-button delete-button"
@@ -100,37 +116,76 @@ const SectionViewer = ({
 			{/* Section Items */}
 			<div className="section-items">
 				{section.items?.length > 0 ? (
-					section.items.map((item, itemIndex) => (
-						<ItemViewer
-							key={itemIndex}
-							item={item}
-							itemIndex={itemIndex}
-							sectionIndex={sectionIndex}
-							mode={mode}
-							showParameters={showParameters}
-							onUpdateTitles={(titleIndex, newTitle) =>
-								onUpdateItemTitles(itemIndex, titleIndex, newTitle)
-							}
-							onAddTitle={() => onAddItemTitle(itemIndex)}
-							onRemoveLastTitle={() => onRemoveLastItemTitle(itemIndex)}
-							onUpdateLineContent={(lineIndex, newContent) =>
-								onUpdateLineContent(itemIndex, lineIndex, newContent)
-							}
-							onUpdateParameters={(paramType, value) =>
-								onUpdateItemParameters(itemIndex, paramType, value)
-							}
-							onAddNewLine={() => onAddNewLine(itemIndex)}
-							onDeleteLine={(lineIndex) => onDeleteLine(itemIndex, lineIndex)}
-							onDeleteItem={() => onDeleteItem(itemIndex)}
-						/>
-					))
+					<>
+						{/* Add item button before first item (only in edit mode) */}
+						{mode === "edit" && (
+							<div className="add-item-between">
+								<button
+									className="add-item-between-button"
+									onClick={() => onAddPrePopulatedItem(-1)}
+									title="Add new pre-filled item at beginning"
+								>
+									Add Item
+								</button>
+							</div>
+						)}
+						{section.items.map((item, itemIndex) => (
+							<React.Fragment key={itemIndex}>
+								<ItemViewer
+									item={item}
+									itemIndex={itemIndex}
+									sectionIndex={sectionIndex}
+									mode={mode}
+									showParameters={showParameters}
+									onUpdateTitles={(titleIndex, newTitle) =>
+										onUpdateItemTitles(itemIndex, titleIndex, newTitle)
+									}
+									onAddTitle={() => onAddItemTitle(itemIndex)}
+									onRemoveLastTitle={() => onRemoveLastItemTitle(itemIndex)}
+									onUpdateLineContent={(lineIndex, newContent) =>
+										onUpdateLineContent(itemIndex, lineIndex, newContent)
+									}
+									onUpdateParameters={(paramType, value) =>
+										onUpdateItemParameters(itemIndex, paramType, value)
+									}
+									onAddNewLine={() => onAddNewLine(itemIndex)}
+									onDeleteLine={(lineIndex) =>
+										onDeleteLine(itemIndex, lineIndex)
+									}
+									onMoveUp={() => onMoveItemUp(itemIndex)}
+									onMoveDown={() => onMoveItemDown(itemIndex)}
+									onDeleteItem={() => onDeleteItem(itemIndex)}
+									canMoveUp={itemIndex > 0}
+									canMoveDown={itemIndex < (section.items?.length || 0) - 1}
+								/>
+								{/* Small add item button between items (only in edit mode) */}
+								{mode === "edit" && (
+									<div className="add-item-between">
+										<button
+											className="add-item-between-button"
+											onClick={() => onAddPrePopulatedItem(itemIndex)}
+											title="Add new pre-filled item"
+										>
+											Add Item
+										</button>
+									</div>
+								)}
+							</React.Fragment>
+						))}
+					</>
 				) : (
 					<div className="empty-section">
 						<p className="empty-message">No items in this section</p>
 						{mode === "edit" && (
-							<button className="edit-button add-button" onClick={onAddNewItem}>
-								+ Add Item
-							</button>
+							<div className="add-item-between">
+								<button
+									className="add-item-between-button"
+									onClick={() => onAddPrePopulatedItem(-1)}
+									title="Add new pre-filled item"
+								>
+									Add Item
+								</button>
+							</div>
 						)}
 					</div>
 				)}
