@@ -411,7 +411,8 @@
 
 .section-controls {
   display: flex;
-  gap: 5px;
+  gap: 2px;
+  align-items: center;
 }
 
 .section-controls button {
@@ -421,6 +422,52 @@
   border-radius: 3px;
   cursor: pointer;
   font-size: 0.8rem;
+}
+
+/* Section move buttons */
+.section-controls .move-up-button,
+.section-controls .move-down-button {
+  background: #6c757d;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 6px 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 1px;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-controls .move-down-button {
+  margin-right: 8px;
+}
+
+.section-controls .move-up-button:hover:not(:disabled),
+.section-controls .move-down-button:hover:not(:disabled) {
+  background: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+.section-controls .move-up-button:disabled,
+.section-controls .move-down-button:disabled {
+  background: #dee2e6;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.section-controls .move-up-button:disabled:hover,
+.section-controls .move-down-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 /* Item Styles */
@@ -450,9 +497,13 @@
 .item-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0px;
   flex-shrink: 0;
   margin-left: 10px;
+}
+
+.item-controls .item-delete-button {
+  margin-left: 6px;
 }
 
 /* Item delete button styles */
@@ -495,12 +546,12 @@
   border: none;
   border-radius: 6px;
   color: white;
-  padding: 6px 12px;
+  padding: 4px 12px;
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-top: 8px;
+  height: 28px;
   width: fit-content;
   display: flex;
   align-items: center;
@@ -511,6 +562,88 @@
   background: #ff3838;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(255, 71, 87, 0.3);
+}
+
+/* Move buttons for standard layout */
+.move-up-button,
+.move-down-button {
+  background: #9ca3af;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.move-up-button:hover:not(:disabled),
+.move-down-button:hover:not(:disabled) {
+  background: #6b7280;
+  transform: scale(1.05);
+}
+
+.move-up-button:disabled,
+.move-down-button:disabled {
+  background: #dee2e6;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Compact controls container */
+.item-controls-compact {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  margin-top: 8px;
+  width: fit-content;
+}
+
+.item-controls-compact .item-delete-button-compact {
+  margin-left: 6px;
+  margin-top: 0;
+}
+
+/* Move buttons for compact layout */
+.move-up-button-compact,
+.move-down-button-compact {
+  background: #9ca3af;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.move-up-button-compact:hover:not(:disabled),
+.move-down-button-compact:hover:not(:disabled) {
+  background: #6b7280;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3);
+}
+
+.move-up-button-compact:disabled,
+.move-down-button-compact:disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* New structured title layout based on backend item_builder logic */
@@ -1187,6 +1320,59 @@
 .add-contact-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Small add item button between items */
+.add-item-between {
+  display: flex;
+  justify-content: center;
+  margin: -4px 0;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.add-item-between-button {
+  background: #28a745;
+  border: 1px solid #28a745;
+  border-radius: 15px;
+  width: auto;
+  height: 28px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.add-item-between-button:hover {
+  background: #218838;
+  border-color: #218838;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+/* Hide add buttons in non-edit modes */
+.resume-editor-container:not([data-mode="edit"]) .add-item-between {
+  display: none;
+}
+
+/* Special styling for compact sections */
+.compact-section .add-item-between {
+  margin: -2px 0;
+}
+
+.compact-section .add-item-between-button {
+  width: auto;
+  height: 24px;
+  font-size: 0.7rem;
+  padding: 0 10px;
 }
 
 /* Parameters-only view */

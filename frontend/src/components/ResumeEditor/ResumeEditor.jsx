@@ -6,6 +6,7 @@ import "./ResumeEditor.css";
 import SectionViewer from "./components/SectionViewer";
 import ResumeHeader from "./components/ResumeHeader";
 import ParameterControls from "./components/ParameterControls";
+import ConfirmationModal from "./components/ConfirmationModal";
 
 const ResumeEditor = ({
 	mode = "view", // "view", "edit", "parameters-only"
@@ -20,6 +21,15 @@ const ResumeEditor = ({
 	const [isSaving, setIsSaving] = useState(false);
 	const [saveMessage, setSaveMessage] = useState("");
 	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+	// Confirmation modal state
+	const [confirmationModal, setConfirmationModal] = useState({
+		isOpen: false,
+		title: "",
+		message: "",
+		onConfirm: null,
+		sectionIndex: null,
+	});
 
 	// Create default resume structure for new accounts
 	const createDefaultResumeData = () => {
@@ -311,8 +321,64 @@ const ResumeEditor = ({
 
 	// Delete section
 	const deleteSection = (sectionIndex) => {
+		const sectionTitle =
+			resumeData?.sections?.[sectionIndex]?.title || "this section";
+
+		setConfirmationModal({
+			isOpen: true,
+			title: "Delete Section",
+			message: `Are you sure you want to delete "${sectionTitle}"? This action cannot be undone once you save. To undo this action, click cancel or reload the page.`,
+			onConfirm: () => confirmDeleteSection(sectionIndex),
+			sectionIndex: sectionIndex,
+		});
+	};
+
+	// Actually delete the section after confirmation
+	const confirmDeleteSection = (sectionIndex) => {
 		const updated = deepClone(resumeData);
 		updated.sections.splice(sectionIndex, 1);
+		// Reindex section IDs
+		updated.sections.forEach((section, index) => {
+			section.sect_id = index;
+		});
+		handleResumeUpdate(updated);
+		closeConfirmationModal();
+	};
+
+	// Close confirmation modal
+	const closeConfirmationModal = () => {
+		setConfirmationModal({
+			isOpen: false,
+			title: "",
+			message: "",
+			onConfirm: null,
+			sectionIndex: null,
+		});
+	};
+
+	// Move section up
+	const moveSectionUp = (sectionIndex) => {
+		if (sectionIndex <= 0) return; // Can't move first section up
+		const updated = deepClone(resumeData);
+		// Swap sections
+		const temp = updated.sections[sectionIndex];
+		updated.sections[sectionIndex] = updated.sections[sectionIndex - 1];
+		updated.sections[sectionIndex - 1] = temp;
+		// Reindex section IDs
+		updated.sections.forEach((section, index) => {
+			section.sect_id = index;
+		});
+		handleResumeUpdate(updated);
+	};
+
+	// Move section down
+	const moveSectionDown = (sectionIndex) => {
+		if (sectionIndex >= resumeData.sections.length - 1) return; // Can't move last section down
+		const updated = deepClone(resumeData);
+		// Swap sections
+		const temp = updated.sections[sectionIndex];
+		updated.sections[sectionIndex] = updated.sections[sectionIndex + 1];
+		updated.sections[sectionIndex + 1] = temp;
 		// Reindex section IDs
 		updated.sections.forEach((section, index) => {
 			section.sect_id = index;
@@ -330,6 +396,50 @@ const ResumeEditor = ({
 			cate_scores: { weight: 1.0, bias: 0.0 },
 		};
 		updated.sections[sectionIndex].items.push(newItem);
+		handleResumeUpdate(updated);
+	};
+
+	// Add pre-populated item to section at specific position
+	const addPrePopulatedItem = (sectionIndex, insertAfterIndex = -1) => {
+		const updated = deepClone(resumeData);
+		const newItem = {
+			aux_info: { type: "items", style: "n" },
+			titles: ["title"],
+			lines: [
+				{
+					aux_info: { type: "lines" },
+					content: "sample line",
+					content_str: "sample line",
+					cate_score: {
+						technical: {},
+						soft: {},
+						relevance: {},
+					},
+					keywords: [],
+				},
+			],
+			cate_scores: { weight: 1.0, bias: 0.0 },
+		};
+
+		// Insert at specific position, at beginning, or at end
+		if (insertAfterIndex === -1) {
+			// Insert at the beginning
+			updated.sections[sectionIndex].items.unshift(newItem);
+		} else if (
+			insertAfterIndex >= 0 &&
+			insertAfterIndex < updated.sections[sectionIndex].items.length
+		) {
+			// Insert after the specified index
+			updated.sections[sectionIndex].items.splice(
+				insertAfterIndex + 1,
+				0,
+				newItem
+			);
+		} else {
+			// Insert at the end
+			updated.sections[sectionIndex].items.push(newItem);
+		}
+
 		handleResumeUpdate(updated);
 	};
 
@@ -362,6 +472,38 @@ const ResumeEditor = ({
 	const deleteLine = (sectionIndex, itemIndex, lineIndex) => {
 		const updated = deepClone(resumeData);
 		updated.sections[sectionIndex].items[itemIndex].lines.splice(lineIndex, 1);
+		handleResumeUpdate(updated);
+	};
+
+	// Move item up within section
+	const moveItemUp = (sectionIndex, itemIndex) => {
+		if (itemIndex === 0) return; // Can't move first item up
+
+		const updated = deepClone(resumeData);
+		const items = updated.sections[sectionIndex].items;
+
+		// Swap with previous item
+		[items[itemIndex - 1], items[itemIndex]] = [
+			items[itemIndex],
+			items[itemIndex - 1],
+		];
+
+		handleResumeUpdate(updated);
+	};
+
+	// Move item down within section
+	const moveItemDown = (sectionIndex, itemIndex) => {
+		const updated = deepClone(resumeData);
+		const items = updated.sections[sectionIndex].items;
+
+		if (itemIndex === items.length - 1) return; // Can't move last item down
+
+		// Swap with next item
+		[items[itemIndex], items[itemIndex + 1]] = [
+			items[itemIndex + 1],
+			items[itemIndex],
+		];
+
 		handleResumeUpdate(updated);
 	};
 
@@ -516,6 +658,9 @@ const ResumeEditor = ({
 									)
 								}
 								onAddNewItem={() => addNewItem(sectionIndex)}
+								onAddPrePopulatedItem={(insertAfterIndex) =>
+									addPrePopulatedItem(sectionIndex, insertAfterIndex)
+								}
 								onDeleteItem={(itemIndex) =>
 									deleteItem(sectionIndex, itemIndex)
 								}
@@ -525,7 +670,19 @@ const ResumeEditor = ({
 								onDeleteLine={(itemIndex, lineIndex) =>
 									deleteLine(sectionIndex, itemIndex, lineIndex)
 								}
+								onMoveItemUp={(itemIndex) =>
+									moveItemUp(sectionIndex, itemIndex)
+								}
+								onMoveItemDown={(itemIndex) =>
+									moveItemDown(sectionIndex, itemIndex)
+								}
 								onDeleteSection={() => deleteSection(sectionIndex)}
+								onMoveSectionUp={() => moveSectionUp(sectionIndex)}
+								onMoveSectionDown={() => moveSectionDown(sectionIndex)}
+								canMoveSectionUp={sectionIndex > 0}
+								canMoveSectionDown={
+									sectionIndex < (resumeData.sections?.length || 0) - 1
+								}
 							/>
 						))}
 					</div>
@@ -698,7 +855,7 @@ const ResumeEditor = ({
 						{isSaving
 							? "Saving..."
 							: hasUnsavedChanges
-							? "Save Changes *"
+							? "Save Changes & Rebuild Vectors"
 							: "No Changes"}
 					</button>
 				</div>
@@ -712,6 +869,18 @@ const ResumeEditor = ({
 					</button>
 				</div>
 			)}
+
+			{/* Confirmation Modal */}
+			<ConfirmationModal
+				isOpen={confirmationModal.isOpen}
+				title={confirmationModal.title}
+				message={confirmationModal.message}
+				confirmText="Delete"
+				cancelText="Cancel"
+				onConfirm={confirmationModal.onConfirm}
+				onCancel={closeConfirmationModal}
+				isDangerous={true}
+			/>
 		</div>
 	);
 };

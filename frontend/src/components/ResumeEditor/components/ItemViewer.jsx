@@ -16,7 +16,11 @@ const ItemViewer = ({
 	onUpdateParameters,
 	onAddNewLine,
 	onDeleteLine,
+	onMoveUp,
+	onMoveDown,
 	onDeleteItem,
+	canMoveUp,
+	canMoveDown,
 }) => {
 	const textareaRef = useRef(null);
 
@@ -178,13 +182,31 @@ const ItemViewer = ({
 					</div>
 					{/* Delete button beneath the text in edit mode */}
 					{mode === "edit" && (
-						<button
-							className="item-delete-button-compact"
-							onClick={onDeleteItem}
-							title="Delete this item"
-						>
-							× Remove
-						</button>
+						<div className="item-controls-compact">
+							<button
+								className="move-up-button-compact"
+								disabled={!canMoveUp}
+								onClick={onMoveUp}
+								title="Move item up"
+							>
+								↑
+							</button>
+							<button
+								className="move-down-button-compact"
+								disabled={!canMoveDown}
+								onClick={onMoveDown}
+								title="Move item down"
+							>
+								↓
+							</button>
+							<button
+								className="item-delete-button-compact"
+								onClick={onDeleteItem}
+								title="Delete this item"
+							>
+								× Remove
+							</button>
+						</div>
 					)}
 				</div>
 			) : (
@@ -419,10 +441,20 @@ const ItemViewer = ({
 						{/* Future: Item controls for edit mode */}
 						{mode === "edit" && (
 							<div className="item-controls">
-								<button className="move-up-button" disabled>
+								<button
+									className="move-up-button"
+									disabled={!canMoveUp}
+									onClick={onMoveUp}
+									title="Move item up"
+								>
 									↑
 								</button>
-								<button className="move-down-button" disabled>
+								<button
+									className="move-down-button"
+									disabled={!canMoveDown}
+									onClick={onMoveDown}
+									title="Move item down"
+								>
 									↓
 								</button>
 								<button
