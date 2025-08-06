@@ -35,15 +35,13 @@ const LineViewer = ({
 							rows={2}
 							onChange={(e) => onUpdateContent(e.target.value)}
 						/>
-						<div className="edit-actions line-edit-actions">
-							<button
-								className="edit-button delete-button"
-								onClick={onDeleteLine}
-								title="Delete this line"
-							>
-								× Delete
-							</button>
-						</div>
+						<button
+							className="line-delete-button"
+							onClick={onDeleteLine}
+							title="Delete this line"
+						>
+							×
+						</button>
 					</div>
 				) : (
 					<div className="line-display">
