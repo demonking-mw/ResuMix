@@ -1,5 +1,12 @@
 import React from "react";
 
+// Helper function to strip HTML-like tags for display
+const stripMarkupTags = (text) => {
+	if (!text) return "";
+	// Remove HTML-like tags but preserve the text content
+	return text.replace(/<[^>]*>/g, "");
+};
+
 const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 	// Ensure we have a valid headingInfo object
 	const safeHeadingInfo = headingInfo || {
@@ -93,7 +100,11 @@ const ResumeHeader = ({ headingInfo, mode, onUpdate }) => {
 									onChange={(e) => handleContactChange(index, e.target.value)}
 								/>
 							) : (
-								<span className="contact-display">{contactItem}</span>
+								<span className="contact-display">
+									{mode === "view" || mode === "parameters-only"
+										? stripMarkupTags(contactItem)
+										: contactItem}
+								</span>
 							)}
 						</div>
 					))}

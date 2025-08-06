@@ -21,10 +21,27 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .resume-editor-header h1 {
   margin: 0;
   color: #333;
   font-size: 2rem;
+}
+
+.editor-mode-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .editor-mode-indicator .mode-badge {
@@ -276,6 +293,43 @@
   background-color: #0056b3;
 }
 
+/* Report Issue Section */
+.loading-report-section {
+  margin-top: 30px;
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-report-section p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.report-issue-button {
+  background: #dc3545;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.report-issue-button:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  color: white;
+  text-decoration: none;
+}
+
 /* Content Layout */
 .resume-editor-content {
   background: white;
@@ -512,18 +566,19 @@
   border: none;
   border-radius: 4px;
   color: white;
-  padding: 4px 8px;
+  padding: 0;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
   margin-left: 10px;
   flex-shrink: 0;
-  min-width: 24px;
-  height: 24px;
+  min-width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
 }
 
 .item-delete-button:hover {
@@ -544,18 +599,19 @@
 .item-delete-button-compact {
   background: #ff4757;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   color: white;
-  padding: 4px 12px;
-  font-size: 0.85rem;
+  padding: 0;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  height: 28px;
-  width: fit-content;
+  height: 32px;
+  min-width: 32px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  line-height: 1;
 }
 
 .item-delete-button-compact:hover {
@@ -571,14 +627,14 @@
   border: none;
   border-radius: 4px;
   color: white;
-  padding: 4px 8px;
+  padding: 6px 10px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  min-width: 24px;
-  height: 24px;
+  min-width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -619,13 +675,13 @@
   border: none;
   border-radius: 4px;
   color: white;
-  padding: 4px 8px;
-  font-size: 0.9rem;
+  padding: 6px 10px;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 28px;
-  height: 28px;
+  min-width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;

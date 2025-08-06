@@ -20,8 +20,11 @@ const LineViewer = ({
 		);
 	}
 
-	// Use content_str for display (clean version) or fall back to content
-	const displayContent = line.content_str || line.content || "";
+	// Use content_str for view/parameters display (clean version) and content for edit mode (with markup)
+	const displayContent =
+		mode === "edit"
+			? line.content || line.content_str || ""
+			: line.content_str || line.content || "";
 
 	return (
 		<div className="line-viewer">
