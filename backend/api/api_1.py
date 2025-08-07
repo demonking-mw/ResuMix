@@ -37,7 +37,7 @@ CORS(
             "origins": [
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "https://resumix-production-73ea.up.railway.app",
+                "https://vercel.com/bobs-projects-74d38889/resu-mix/settings/environment-variables",
             ]
         }
     },
