@@ -1,2 +1,0 @@
-reportlab==4.4.2
-openai==1.90.0

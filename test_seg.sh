@@ -1,10 +1,13 @@
 #!/bin/bash
 
+
 # Takes one input, which is the file name of the test suite to run.
+
 if [ ${#} -ne 1 ]; then
     echo "Usage: takes 1 argument: stem of test suite txt file" >&2
     exit 1
 fi
+
 
 test_file="./backend/src/segment_tests/lists/$1.txt"
 
