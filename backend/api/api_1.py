@@ -32,11 +32,15 @@ app = Flask(__name__)
 # ---- MERGED CORS CONFIGURATION ----
 CORS(
     app,
-    resources={r"/*": {"origins": [
-        "http://localhost:3000", 
-        "http://localhost:5173",
-        "https://resumix-production-73ea.up.railway.app"
-    ]}},
+    resources={
+        r"/*": {
+            "origins": [
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://resumix-production-73ea.up.railway.app",
+            ]
+        }
+    },
     supports_credentials=True,
 )
 
