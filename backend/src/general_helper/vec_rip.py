@@ -8,7 +8,7 @@ from typing import Dict, Any, List, Union
 
 
 def vec_rip(
-    data: Union[Dict[str, Any], List[Dict[str, Any]]]
+    data: Union[Dict[str, Any], List[Dict[str, Any]]],
 ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
     """
     Recursively removes vector data from resume dictionary responses.

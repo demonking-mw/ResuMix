@@ -19,8 +19,8 @@ from dotenv import load_dotenv
 import psycopg  # type: ignore
 
 from ..db_helper import dbconn
-from..general_helper.vec_rip import vec_rip
-from..general_helper.parse_user_info import parse_user_info
+from ..general_helper.vec_rip import vec_rip
+from ..general_helper.parse_user_info import parse_user_info
 
 
 class UserAuth:
