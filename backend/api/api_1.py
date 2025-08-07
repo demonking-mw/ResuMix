@@ -37,7 +37,8 @@ CORS(
             "origins": [
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "https://resu-50zua0g99-bobs-projects-74d38889.vercel.app/",
+                "https://resu-50zua0g99-bobs-projects-74d38889.vercel.app",
+                "https://resu-mix.vercel.app",
             ]
         }
     },
