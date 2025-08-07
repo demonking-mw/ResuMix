@@ -22,7 +22,9 @@ from io import BytesIO
 # Import your resume-related modules
 from backend.src.resume_objects.resume import Resume
 from backend.src.resume_objects.latex_templates import LTemplate
-from backend.src.resume_objects.implementations.scoring_functions import simple_sum_function
+from backend.src.resume_objects.implementations.scoring_functions import (
+    simple_sum_function,
+)
 
 
 app = Flask(__name__)
@@ -70,4 +72,8 @@ def generate_resume():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    import os
+
+    port = int(os.environ.get("PORT", 5001))
+    debug = os.environ.get("FLASK_ENV") == "development"
+    app.run(debug=debug, host="0.0.0.0", port=port)
