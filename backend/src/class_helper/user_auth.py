@@ -117,10 +117,9 @@ class UserAuth:
                 "user_status": parsed_info,
                 "jwt": self.sign_jwt(self.args["reauth_jwt"]),
             }, 200
-        print("DEBUG: table for reauth", table_1)
         reduced_table = vec_rip(table_1[0])
         parsed_info = parse_user_info(reduced_table)
-        print("Parsed info:", parsed_info)
+        print("DEBUG: line 118 happy")
         return {
             "status": True,
             "detail": reduced_table,
