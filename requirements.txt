@@ -28,6 +28,7 @@ jiter==0.10.0
 MarkupSafe==3.0.2
 mccabe==0.7.0
 mypy_extensions==1.1.0
+numpy==2.2.6
 openai==1.82.0
 ordered-set==4.1.0
 packaging==25.0
