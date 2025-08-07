@@ -1,7 +1,12 @@
 import axios from "axios";
 
 // Set your backend API base URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+console.log("🔍 Frontend debugging:");
+console.log("VITE_API_BASE_URL from env:", import.meta.env.VITE_API_BASE_URL);
+console.log("Final API_BASE_URL used:", API_BASE_URL);
+console.log("All env vars:", import.meta.env);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -13,6 +18,12 @@ const api = axios.create({
 // Add request interceptor to include auth token
 api.interceptors.request.use(
   (config) => {
+    console.log("🚀 Making API request:");
+    console.log("  URL:", config.baseURL + config.url);
+    console.log("  Method:", config.method);
+    console.log("  Params:", config.params);
+    console.log("  Data:", config.data);
+    
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -20,6 +31,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error("❌ Request error:", error);
     return Promise.reject(error);
   }
 );
@@ -27,9 +39,18 @@ api.interceptors.request.use(
 // Add response interceptor to handle token expiration
 api.interceptors.response.use(
   (response) => {
+    console.log("✅ API response success:");
+    console.log("  Status:", response.status);
+    console.log("  Data:", response.data);
     return response;
   },
   (error) => {
+    console.error("❌ API response error:");
+    console.error("  Status:", error.response?.status);
+    console.error("  Data:", error.response?.data);
+    console.error("  URL:", error.config?.url);
+    console.error("  Full error:", error);
+    
     if (error.response?.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('authToken');
