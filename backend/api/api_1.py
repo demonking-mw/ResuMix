@@ -34,17 +34,16 @@ CORS(
     app,
     resources={
         r"/*": {
-            "origins": "*",  # Allow all origins temporarily for debugging
+            "origins": [
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://resu-50zua0g99-bobs-projects-74d38889.vercel.app",
+                "https://resu-mix.vercel.app",
+            ]
         }
     },
     supports_credentials=True,
 )
-# "origins": [
-#                 "http://localhost:3000",
-#                 "http://localhost:5173",
-#                 "https://resu-50zua0g99-bobs-projects-74d38889.vercel.app",
-#                 "https://resu-mix.vercel.app",
-#             ]
 
 api = Api(app)
 
