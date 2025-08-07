@@ -102,6 +102,8 @@ class UserAuth:
             return {"status": True, "detail": "jwt token valid"}, 200
         sql_query = f"SELECT * FROM data WHERE uid = '{self.args['uid']}';"
         table_1 = self.database.run_sql(sql_query)
+        if not table_1:
+            return {"status": False, "detail": {"status": "reauth failed, result bad"}}, 400
         if datetime.datetime.utcnow() > datetime.datetime.fromtimestamp(
             payload["exp"]
         ) - datetime.timedelta(minutes=15):
@@ -113,7 +115,7 @@ class UserAuth:
                 "status": True,
                 "detail": reduced_table,
                 "user_status": parsed_info,
-                "jwt": self.args["reauth_jwt"],
+                "jwt": self.sign_jwt(self.args["reauth_jwt"]),
             }, 200
         print("DEBUG: table for reauth", table_1)
         reduced_table = vec_rip(table_1[0])
@@ -122,7 +124,7 @@ class UserAuth:
         return {
             "status": True,
             "detail": reduced_table,
-            "jwt": self.sign_jwt(self.args["reauth_jwt"]),
+            "jwt": self.args["reauth_jwt"],
             "user_status": parsed_info,
         }, 200
         # Successful auth returns a new jwt token with more valid time
