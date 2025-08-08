@@ -1,10 +1,12 @@
 // src/components/NavigationAuthListener.jsx
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const NavigationAuthListener = () => {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const { user, token, reauthToken, loading, reauthenticate } = useAuth();
 	const lastPathRef = useRef(null);
 	const reauthInProgressRef = useRef(false);
@@ -49,6 +51,7 @@ const NavigationAuthListener = () => {
 								console.log(
 									"Navigation reauth failed - user will be logged out"
 								);
+								navigate("/login", { replace: true });
 							}
 						} catch (error) {
 							console.error("Navigation reauth error:", error);
