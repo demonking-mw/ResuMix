@@ -36,6 +36,10 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
     try:
         # 1) load & encode requirements once, with L2‐norm
         model = SentenceTransformer(model_path)
+        if model:
+            print(f"DEBUG: Model loaded from {model_path}")
+        else:
+            print("DEBUG: Model failed to load")
         req_vecs = model.encode(
             requirements, normalize_embeddings=True, show_progress_bar=False
         )  # shape (R, D)
