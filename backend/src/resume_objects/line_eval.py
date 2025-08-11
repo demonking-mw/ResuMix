@@ -50,8 +50,11 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
         # 2.0) use cache if possible
         if (
             no_cache
-            or not hasattr(lines[0], "aux_info")
-            or "vec" not in lines[0].aux_info
+            or not hasattr(lines[0], "sections")
+            or not hasattr(lines[0]["sections"][0], "items")
+            or not hasattr(lines[0]["sections"][0]["items"][0], "lines")
+            or not hasattr(lines[0]["sections"][0]["items"][0]["lines"][0], "aux_info")
+            or "vec" not in lines[0]["sections"][0]["items"][0]["lines"][0].aux_info
         ):
             print("DEBUG: Re-generating vectors")
             # no cache, encode everything
