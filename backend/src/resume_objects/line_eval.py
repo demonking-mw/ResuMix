@@ -48,6 +48,16 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
         )  # shape (R, D)
 
         # 2.0) use cache if possible
+        if not hasattr(lines[0], "sections"):
+            print("DEBUG: lines[0] missing 'sections' attribute")
+        elif not hasattr(lines[0]["sections"][0], "items"):
+            print("DEBUG: lines[0]['sections'][0] missing 'items' attribute")
+        elif not hasattr(lines[0]["sections"][0]["items"][0], "lines"):
+            print("DEBUG: lines[0]['sections'][0]['items'][0] missing 'lines' attribute")
+        elif not hasattr(lines[0]["sections"][0]["items"][0]["lines"][0], "aux_info"):
+            print("DEBUG: lines[0]['sections'][0]['items'][0]['lines'][0] missing 'aux_info' attribute")
+        elif "vec" not in lines[0]["sections"][0]["items"][0]["lines"][0].aux_info:
+            print("DEBUG: 'vec' not in lines[0]['sections'][0]['items'][0]['lines'][0].aux_info")
         if (
             no_cache
             or not hasattr(lines[0], "sections")
