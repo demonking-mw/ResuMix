@@ -35,6 +35,8 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
     model_path = os.getenv("OPT_MODEL_PATH")
     try:
         print("DEBUG: model_path:", model_path)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        print("DEBUG: script_dir:", script_dir)
 
         model = SentenceTransformer(model_path)
         if model:
