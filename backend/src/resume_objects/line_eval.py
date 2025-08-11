@@ -35,9 +35,13 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
     model_path = os.getenv("OPT_MODEL_PATH")
     try:
         # 1) load & encode requirements once, with L2‐norm
-        model = SentenceTransformer(model_path)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", ".."))
+        model_abs_path = os.path.join(project_root, model_path)
+
+        model = SentenceTransformer(model_abs_path)
         if model:
-            print(f"DEBUG: Model loaded from {model_path}")
+            print(f"DEBUG: Model loaded from {model_abs_path}")
         else:
             print("DEBUG: Model failed to load")
         req_vecs = model.encode(
