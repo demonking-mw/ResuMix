@@ -1,6 +1,6 @@
 // Example usage of the UI Library
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   Input,
@@ -15,23 +15,23 @@ import {
   Divider,
   LoadingSpinner,
   ErrorMessage,
-  Container
-} from '../ui';
-import logo from '../assets/ResuMix.png';
+  Container,
+} from "../ui";
+import logo from "../assets/ResuMix.png";
 
 const UILibraryDemo = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
+    name: "",
+    email: "",
+    message: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -41,18 +41,14 @@ const UILibraryDemo = () => {
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      alert('Form submitted!');
+      alert("Form submitted!");
     }, 2000);
   };
 
   return (
     <PageWrapper>
       {/* Navigation Example */}
-      <Navbar 
-        logo={logo} 
-        brandText="ResuMix"
-        logoLink="/"
-      >
+      <Navbar logo={logo} brandText="ResuMix" logoLink="/">
         <Button variant="outline" size="sm" as={Link} to="/login">
           Login
         </Button>
@@ -67,7 +63,8 @@ const UILibraryDemo = () => {
           UI Library Demo
         </Title>
         <p className="subtitle">
-          This demonstrates all the reusable components created from your existing designs.
+          This demonstrates all the reusable components created from your
+          existing designs.
         </p>
       </Hero>
 
@@ -75,7 +72,7 @@ const UILibraryDemo = () => {
       <FormWrapper>
         <Card variant="form">
           <Title variant="section">Contact Form</Title>
-          
+
           <form onSubmit={handleSubmit} className="flex flex-col gap-lg">
             <Input
               label="Full Name"
@@ -108,12 +105,8 @@ const UILibraryDemo = () => {
 
             <ErrorMessage>{error}</ErrorMessage>
 
-            <Button 
-              type="submit" 
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? <LoadingSpinner size="sm" /> : 'Send Message'}
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? <LoadingSpinner size="sm" /> : "Send Message"}
             </Button>
           </form>
 
@@ -121,7 +114,10 @@ const UILibraryDemo = () => {
 
           <div className="text-center">
             <p className="text-muted">
-              Or reach out via email: <a href="mailto:hello@resumix.com" className="text-blue">hello@resumix.com</a>
+              Or reach out via email:{" "}
+              <a href="mailto:hello@resumix.com" className="text-blue">
+                hello@resumix.com
+              </a>
             </p>
           </div>
         </Card>
@@ -129,35 +125,59 @@ const UILibraryDemo = () => {
 
       {/* Button Examples */}
       <Container>
-        <div className="p-3xl bg-white" style={{ margin: '2rem auto', borderRadius: '12px' }}>
-          <Title variant="section">Button Examples (Your Existing Designs)</Title>
-          
+        <div
+          className="p-3xl bg-white"
+          style={{ margin: "2rem auto", borderRadius: "12px" }}
+        >
+          <Title variant="section">
+            Button Examples (Your Existing Designs)
+          </Title>
+
           <div className="flex gap-lg flex-wrap">
-            <Button variant="primary" width="auto">Primary Button</Button>
+            <Button variant="primary" width="auto">
+              Primary Button
+            </Button>
             <Button variant="landing">Landing Button</Button>
             <Button variant="form">Form Button</Button>
             <Button variant="resume">Resume Button</Button>
           </div>
 
-          <div className="flex gap-lg flex-wrap" style={{ marginTop: '1rem' }}>
-            <Button variant="primary" size="sm" width="auto">Small Primary</Button>
+          <div className="flex gap-lg flex-wrap" style={{ marginTop: "1rem" }}>
+            <Button variant="primary" size="sm" width="auto">
+              Small Primary
+            </Button>
             <Button variant="form">Base Form</Button>
-            <Button variant="resume" size="lg">Large Resume</Button>
+            <Button variant="resume" size="lg">
+              Large Resume
+            </Button>
           </div>
 
-          <div className="flex gap-lg flex-wrap" style={{ marginTop: '1rem' }}>
-            <Button variant="primary" disabled width="auto">Disabled Primary</Button>
-            <Button variant="landing" disabled>Disabled Landing</Button>
+          <div className="flex gap-lg flex-wrap" style={{ marginTop: "1rem" }}>
+            <Button variant="primary" disabled width="auto">
+              Disabled Primary
+            </Button>
+            <Button variant="landing" disabled>
+              Disabled Landing
+            </Button>
           </div>
         </div>
       </Container>
 
       {/* Card Examples */}
       <Container>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', margin: '2rem auto' }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "1rem",
+            margin: "2rem auto",
+          }}
+        >
           <Card>
             <div className="card-header">
-              <Title variant="section" className="text-lg">Default Card</Title>
+              <Title variant="section" className="text-lg">
+                Default Card
+              </Title>
             </div>
             <div className="card-body">
               <p>This is a standard card with header and body sections.</p>
@@ -167,7 +187,9 @@ const UILibraryDemo = () => {
           <Card variant="auth">
             <Title variant="section">Auth Card</Title>
             <p>This card is styled for authentication forms.</p>
-            <Button variant="primary" className="w-full">Login</Button>
+            <Button variant="primary" className="w-full">
+              Login
+            </Button>
           </Card>
         </div>
       </Container>
