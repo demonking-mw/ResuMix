@@ -1,31 +1,11 @@
 #!/bin/bash
-echo "code segment tester"
-# Must be ran at the repo root
-touch grass
-# Takes one input, which is the file name of the test suite to run.
+
 if [ ${#} -ne 1 ]; then
     echo "Usage: takes 1 argument: stem of test suite txt file" >&2
     exit 1
 fi
 
-VENV_PATH="./venv"  # Change this if your venv is in a different location
 
-# Check if venv is already activated
-if [[ -z "$VIRTUAL_ENV" ]]; then
-    if [[ -d "$VENV_PATH" ]]; then
-        echo "Activating virtual environment..."
-        source "$VENV_PATH/bin/activate"
-    else
-        echo "Error: Virtual environment not found at $VENV_PATH"
-        exit 1
-    fi
-else
-    echo -e "Virtual environment active.\n"
-fi
-echo "black-ing"
-black .
-echo -e "\n"
-echo -e "update all.txt\n"
 
 # Update all.txt
 all_file="./backend/src/segment_tests/lists/all.txt"

@@ -34,17 +34,37 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
     load_dotenv()
     model_path = os.getenv("OPT_MODEL_PATH")
     try:
-        # 1) load & encode requirements once, with L2‐norm
+        print("DEBUG: model_path:", model_path)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        print("DEBUG: script_dir:", script_dir)
+
         model = SentenceTransformer(model_path)
+        if model:
+            print(f"DEBUG: Model loaded from {model_path}")
+        else:
+            print("DEBUG: Model failed to load")
         req_vecs = model.encode(
             requirements, normalize_embeddings=True, show_progress_bar=False
         )  # shape (R, D)
 
         # 2.0) use cache if possible
+        if not hasattr(lines[0], "sections"):
+            print("DEBUG: lines[0] missing 'sections' attribute")
+        elif not hasattr(lines[0]["sections"][0], "items"):
+            print("DEBUG: lines[0]['sections'][0] missing 'items' attribute")
+        elif not hasattr(lines[0]["sections"][0]["items"][0], "lines"):
+            print("DEBUG: lines[0]['sections'][0]['items'][0] missing 'lines' attribute")
+        elif not hasattr(lines[0]["sections"][0]["items"][0]["lines"][0], "aux_info"):
+            print("DEBUG: lines[0]['sections'][0]['items'][0]['lines'][0] missing 'aux_info' attribute")
+        elif "vec" not in lines[0]["sections"][0]["items"][0]["lines"][0].aux_info:
+            print("DEBUG: 'vec' not in lines[0]['sections'][0]['items'][0]['lines'][0].aux_info")
         if (
             no_cache
-            or not hasattr(lines[0], "aux_info")
-            or "vec" not in lines[0].aux_info
+            or not hasattr(lines[0], "sections")
+            or not hasattr(lines[0]["sections"][0], "items")
+            or not hasattr(lines[0]["sections"][0]["items"][0], "lines")
+            or not hasattr(lines[0]["sections"][0]["items"][0]["lines"][0], "aux_info")
+            or "vec" not in lines[0]["sections"][0]["items"][0]["lines"][0].aux_info
         ):
             print("DEBUG: Re-generating vectors")
             # no cache, encode everything
