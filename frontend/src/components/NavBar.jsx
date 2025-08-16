@@ -14,7 +14,10 @@ export default function NavBar() {
 
   return (
     <div className="navbar">
-      <Link to={`${isAuthenticated() ? '/account' : '/'}`} className="logo-link">
+      <Link
+        to={`${isAuthenticated() ? "/account" : "/"}`}
+        className="logo-link"
+      >
         <img src={logo} alt="ResuMix Logo" className="logo" />
         <span className="brand-name">ResuMix</span>
       </Link>

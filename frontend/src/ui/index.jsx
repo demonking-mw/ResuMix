@@ -1,26 +1,26 @@
 // UI Components Library
-import React from 'react';
-import '../ui/base.css';
-import '../ui/components.css';
+import React from "react";
+import "../ui/base.css";
+import "../ui/components.css";
 
 // Button Component - Using exact existing designs
-export const Button = ({ 
-  children, 
-  variant = 'primary', 
+export const Button = ({
+  children,
+  variant = "primary",
   width = null,
-  className = '', 
+  className = "",
   disabled = false,
   onClick,
-  type = 'button',
-  as = 'button',
-  ...props 
+  type = "button",
+  as = "button",
+  ...props
 }) => {
   const variantClass = `btn-${variant}`;
-  const widthClass = width ? `btn-${width}` : '';
-  
+  const widthClass = width ? `btn-${width}` : "";
+
   const classes = [variantClass, widthClass, className]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   const Component = as;
 
@@ -38,16 +38,16 @@ export const Button = ({
 };
 
 // Input Component
-export const Input = ({ 
-  label, 
-  error, 
-  className = '', 
-  type = 'text',
+export const Input = ({
+  label,
+  error,
+  className = "",
+  type = "text",
   placeholder,
   value,
   onChange,
   required = false,
-  ...props 
+  ...props
 }) => {
   const inputClass = `form-input ${className}`;
 
@@ -73,16 +73,16 @@ export const Input = ({
 };
 
 // Textarea Component
-export const Textarea = ({ 
-  label, 
-  error, 
-  className = '', 
+export const Textarea = ({
+  label,
+  error,
+  className = "",
   placeholder,
   value,
   onChange,
   required = false,
   rows = 4,
-  ...props 
+  ...props
 }) => {
   const textareaClass = `form-textarea ${className}`;
 
@@ -108,18 +108,18 @@ export const Textarea = ({
 };
 
 // Card Component
-export const Card = ({ 
-  children, 
-  variant = 'default', 
-  className = '',
-  ...props 
+export const Card = ({
+  children,
+  variant = "default",
+  className = "",
+  ...props
 }) => {
-  const baseClass = 'card';
-  const variantClass = variant !== 'default' ? `card-${variant}` : '';
-  
+  const baseClass = "card";
+  const variantClass = variant !== "default" ? `card-${variant}` : "";
+
   const classes = [baseClass, variantClass, className]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <div className={classes} {...props}>
@@ -129,19 +129,19 @@ export const Card = ({
 };
 
 // Title Component
-export const Title = ({ 
-  children, 
-  variant = 'section', 
-  className = '',
-  as = 'h2',
-  ...props 
+export const Title = ({
+  children,
+  variant = "section",
+  className = "",
+  as = "h2",
+  ...props
 }) => {
-  const baseClass = 'title';
+  const baseClass = "title";
   const variantClass = `title-${variant}`;
-  
+
   const classes = [baseClass, variantClass, className]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   const Component = as;
 
@@ -153,13 +153,13 @@ export const Title = ({
 };
 
 // Navbar Component
-export const Navbar = ({ 
-  logo, 
-  brandText, 
-  logoLink = '/',
-  children, 
-  className = '',
-  ...props 
+export const Navbar = ({
+  logo,
+  brandText,
+  logoLink = "/",
+  children,
+  className = "",
+  ...props
 }) => {
   return (
     <nav className={`navbar ${className}`} {...props}>
@@ -167,39 +167,22 @@ export const Navbar = ({
         {logo && <img src={logo} alt="Logo" className="nav-logo" />}
         {brandText && <span className="nav-brand-text">{brandText}</span>}
       </a>
-      <div className="nav-actions">
-        {children}
-      </div>
+      <div className="nav-actions">{children}</div>
     </nav>
   );
 };
 
 // Hero Section Component
-export const Hero = ({ 
-  children, 
-  className = '',
-  bubble = true,
-  ...props 
-}) => {
+export const Hero = ({ children, className = "", bubble = true, ...props }) => {
   return (
     <main className={`hero ${className}`} {...props}>
-      {bubble ? (
-        <div className="hero-bubble">
-          {children}
-        </div>
-      ) : (
-        children
-      )}
+      {bubble ? <div className="hero-bubble">{children}</div> : children}
     </main>
   );
 };
 
 // Page Wrapper Component
-export const PageWrapper = ({ 
-  children, 
-  className = '',
-  ...props 
-}) => {
+export const PageWrapper = ({ children, className = "", ...props }) => {
   return (
     <div className={`page-wrapper ${className}`} {...props}>
       {children}
@@ -208,11 +191,7 @@ export const PageWrapper = ({
 };
 
 // Auth Wrapper Component
-export const AuthWrapper = ({ 
-  children, 
-  className = '',
-  ...props 
-}) => {
+export const AuthWrapper = ({ children, className = "", ...props }) => {
   return (
     <div className={`auth-wrapper ${className}`} {...props}>
       {children}
@@ -221,11 +200,7 @@ export const AuthWrapper = ({
 };
 
 // Form Wrapper Component
-export const FormWrapper = ({ 
-  children, 
-  className = '',
-  ...props 
-}) => {
+export const FormWrapper = ({ children, className = "", ...props }) => {
   return (
     <div className={`form-wrapper ${className}`} {...props}>
       {children}
@@ -234,24 +209,24 @@ export const FormWrapper = ({
 };
 
 // Divider Component
-export const Divider = ({ className = '', ...props }) => {
+export const Divider = ({ className = "", ...props }) => {
   return <hr className={`divider ${className}`} {...props} />;
 };
 
 // Loading Spinner Component
-export const LoadingSpinner = ({ size = 'md', className = '' }) => {
+export const LoadingSpinner = ({ size = "md", className = "" }) => {
   const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8', 
-    lg: 'w-12 h-12'
+    sm: "w-4 h-4",
+    md: "w-8 h-8",
+    lg: "w-12 h-12",
   };
 
   return (
     <div className={`flex justify-center items-center ${className}`}>
-      <div 
+      <div
         className={`animate-spin rounded-full border-2 border-gray-300 border-t-blue-600 ${sizeClasses[size]}`}
         style={{
-          animation: 'spin 1s linear infinite'
+          animation: "spin 1s linear infinite",
         }}
       />
     </div>
@@ -259,18 +234,14 @@ export const LoadingSpinner = ({ size = 'md', className = '' }) => {
 };
 
 // Error Message Component
-export const ErrorMessage = ({ children, className = '' }) => {
+export const ErrorMessage = ({ children, className = "" }) => {
   if (!children) return null;
-  
-  return (
-    <div className={`form-error ${className}`}>
-      {children}
-    </div>
-  );
+
+  return <div className={`form-error ${className}`}>{children}</div>;
 };
 
 // Container Component
-export const Container = ({ children, className = '', ...props }) => {
+export const Container = ({ children, className = "", ...props }) => {
   return (
     <div className={`container ${className}`} {...props}>
       {children}
