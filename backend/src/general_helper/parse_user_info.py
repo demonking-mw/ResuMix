@@ -86,11 +86,11 @@ def parse_user_info(user_info: Dict[str, Any]) -> Dict[str, Any]:
         generate_resume = "o"
     elif resume_state == "g":
         generate_resume = "y"
-
+    
     parsed_info = {
         "item_count": item_count,
         "resume_state": resume_state,
         "tweak_status": tweak_status,
-        "generate_status": generate_resume,
+        "generate_status": generate_resume
     }
     return parsed_info

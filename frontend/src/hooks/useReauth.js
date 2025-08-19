@@ -6,7 +6,6 @@ export const useReauth = () => {
   const { user, reauthToken, login } = useAuth();
 
   const makeReauthRequest = async (url, data = {}, method = 'GET') => {
-    console.log('Making reauth request to:', url, 'with data:', data, 'and method:', method);
     if (!reauthToken || !user?.id) {
       throw new Error('No reauth token or user ID available');
     }

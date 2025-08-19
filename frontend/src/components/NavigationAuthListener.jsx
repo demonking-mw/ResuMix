@@ -1,17 +1,13 @@
 // src/components/NavigationAuthListener.jsx
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const NavigationAuthListener = () => {
-
-	const location = useLocation();
-	const navigate = useNavigate();
-	const { user, token, reauthToken, loading, reauthenticate } = useAuth();
-	const lastPathRef = useRef(null);
-	const reauthInProgressRef = useRef(false);
-
+  const location = useLocation();
+  const { user, token, reauthToken, loading, reauthenticate } = useAuth();
+  const lastPathRef = useRef(null);
+  const reauthInProgressRef = useRef(false);
 
   // Trigger reauthentication on navigation to keep user data fresh
   useEffect(() => {
@@ -45,26 +41,23 @@ const NavigationAuthListener = () => {
             );
             reauthInProgressRef.current = true;
 
-
-						try {
-							const success = await reauthenticate();
-							if (success) {
-								console.log("Navigation reauth successful");
-							} else {
-								console.log(
-									"Navigation reauth failed - user will be logged out"
-								);
-								navigate("/login", { replace: true });
-							}
-						} catch (error) {
-							console.error("Navigation reauth error:", error);
-						} finally {
-							reauthInProgressRef.current = false;
-						}
-					}
-				}
-			}
-
+            try {
+              const success = await reauthenticate();
+              if (success) {
+                console.log("Navigation reauth successful");
+              } else {
+                console.log(
+                  "Navigation reauth failed - user will be logged out"
+                );
+              }
+            } catch (error) {
+              console.error("Navigation reauth error:", error);
+            } finally {
+              reauthInProgressRef.current = false;
+            }
+          }
+        }
+      }
 
       // Update last path reference
       lastPathRef.current = currentPath;

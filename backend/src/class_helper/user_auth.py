@@ -19,8 +19,8 @@ from dotenv import load_dotenv
 import psycopg  # type: ignore
 
 from ..db_helper import dbconn
-from ..general_helper.vec_rip import vec_rip
-from ..general_helper.parse_user_info import parse_user_info
+from..general_helper.vec_rip import vec_rip
+from..general_helper.parse_user_info import parse_user_info
 
 
 class UserAuth:
@@ -102,8 +102,6 @@ class UserAuth:
             return {"status": True, "detail": "jwt token valid"}, 200
         sql_query = f"SELECT * FROM data WHERE uid = '{self.args['uid']}';"
         table_1 = self.database.run_sql(sql_query)
-        if not table_1:
-            return {"status": False, "detail": {"status": "reauth failed, result bad"}}, 400
         if datetime.datetime.utcnow() > datetime.datetime.fromtimestamp(
             payload["exp"]
         ) - datetime.timedelta(minutes=15):
@@ -115,15 +113,15 @@ class UserAuth:
                 "status": True,
                 "detail": reduced_table,
                 "user_status": parsed_info,
-                "jwt": self.sign_jwt(self.args["reauth_jwt"]),
+                "jwt": self.args["reauth_jwt"],
             }, 200
         reduced_table = vec_rip(table_1[0])
         parsed_info = parse_user_info(reduced_table)
-        print("DEBUG: line 118 happy")
+        print("Parsed info:", parsed_info)
         return {
             "status": True,
             "detail": reduced_table,
-            "jwt": self.args["reauth_jwt"],
+            "jwt": self.sign_jwt(self.args["reauth_jwt"]),
             "user_status": parsed_info,
         }, 200
         # Successful auth returns a new jwt token with more valid time
