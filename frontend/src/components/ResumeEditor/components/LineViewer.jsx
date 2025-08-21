@@ -48,10 +48,14 @@ const LineViewer = ({
           </div>
         ) : (
           <div className="line-display">
-            <div className="line-bullet">•</div>
-            <div className="line-text">{displayContent}</div>
-            {/* Future: Show modification warning when edit functionality is implemented */}
-            {/* Will need to track original_content or original_content_str for proper comparison */}
+            {displayContent && (
+              <>
+                <div className="line-bullet">•</div>
+                <div className="line-text">{displayContent}</div>
+                {/* Future: Show modification warning when edit functionality is implemented */}
+                {/* Will need to track original_content or original_content_str for proper comparison */}
+              </>
+            )}
           </div>
         )}
       </div>

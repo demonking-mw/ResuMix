@@ -726,12 +726,10 @@
 }
 
 .title-left {
-  flex: 1;
   text-align: left;
 }
 
 .title-right {
-  flex: 1;
   text-align: right;
   margin-left: 20px;
 }
@@ -1001,6 +999,7 @@
 
 .line-display {
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
   gap: 8px;
 }
@@ -1022,10 +1021,6 @@
 
 /* Responsive layout for narrow screens */
 @media (max-width: 768px) {
-  .line-display {
-    flex-direction: column;
-    gap: 4px;
-  }
   
   .line-text {
     max-width: 100%; /* Use full width when stacked vertically */
