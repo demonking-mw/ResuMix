@@ -85,6 +85,7 @@ class UserAuth:
         Requires uid, reauth_jwt
         """
         if not self.args["uid"] or not self.args["reauth_jwt"]:
+            print("ERROR: uid or reauth_jwt not provided")
             return {"status": False, "detail": "no jwt/uid provided"}, 401
         load_dotenv()
         authsecret = os.getenv("JWT_REAUTH_SECRET")
@@ -93,10 +94,13 @@ class UserAuth:
                 self.args["reauth_jwt"], authsecret, algorithms=["HS256"]
             )
         except jwt.ExpiredSignatureError:
+            print("ERROR: jwt token expired")
             return {"status": False, "detail": "jwt token expired"}, 401
         except jwt.InvalidTokenError:
+            print("ERROR: jwt token invalid")
             return {"status": False, "detail": "jwt token invalid"}, 401
         if payload["uid"] != self.args["uid"]:
+            print(f"ERROR: uid mismatch (provided: {self.args['uid']}, token: {payload['uid']})")
             return {"status": False, "detail": "uid mismatch"}, 401
         if quick:
             return {"status": True, "detail": "jwt token valid"}, 200
@@ -146,6 +150,7 @@ class UserAuth:
         if not table_1:
             return {"status": False, "detail": {"status": "user not found"}}, 400
         if table_1[0]["auth_type"] != "eup":
+            print("ERROR: auth type mismatch")
             return {"status": False, "detail": {"status": "auth type mismatch"}}, 401
         if table_1[0]["pwd"] == self.args["pwd"]:
             reduced_table = vec_rip(table_1[0])

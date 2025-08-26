@@ -54,7 +54,6 @@ class ResumeHandle(Resource):
         try:
             args = resume_req.resume_post.parse_args()
             database = DBConn()
-            print("DEBUG: ARGS:", args)
             resume_handle_obj = resume_handle.ResumeHandle(database, args)
             success, message = resume_handle_obj.set_resume_dict(args)
             database.close()

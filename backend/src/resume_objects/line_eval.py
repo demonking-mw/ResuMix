@@ -8,6 +8,8 @@ currently, no cache is used, could be a function for the future
 import os
 from dotenv import load_dotenv
 import numpy as np
+import gc
+import torch
 
 from sentence_transformers import SentenceTransformer
 
@@ -100,6 +102,15 @@ def line_eval(requirements: list[str], lines: list, no_cache: bool = False) -> b
         for line, sc in zip(lines, norm_scores):
             line.score = float(sc)
 
+        # Release model memory
+        del model
+        try:
+
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except ImportError:
+            pass
+        gc.collect()
         return True
 
     except Exception as e:

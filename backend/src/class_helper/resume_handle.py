@@ -144,20 +144,20 @@ class ResumeHandle:
             print("ERROR: resume has no items")
             return False, "Empty resume - no items found"
 
-        # load it into object: if there are error, catch it here
-        templ = LTemplate()
-        try:
-            my_resume = Resume(templ, new_resume_dict)
-            if not my_resume.make(
-                "This is a backend software engineer role, where the candidate will be instrumental in developing, hosting, and maintaining the robust server-side infrastructure and APIs on the cloud (AWS) that power our diverse applications. The candidate should have strong experience in backend development, especially with languages like Python (e.g., Django, Flask), Java (e.g., Spring Boot), or Node.js (e.g., Express). They should also be deeply familiar with designing and managing various databases (both relational like PostgreSQL or MySQL, and NoSQL like MongoDB or Redis) and possess a solid understanding of scalable architecture, API security, and distributed systems.",
-                no_cache=True,
-            ):
-                print("ERROR: failed to make resume")
-                return False, "Failed to make resume"
-        except (TypeError, ValueError) as e:
-            print(f"ERROR: failed to load resume dict: {e}")
-            return False, f"Failed to load resume dict: {str(e)}"
-        processed_resume_dict = my_resume.to_dict()
+        # # load it into object: if there are error, catch it here
+        # templ = LTemplate()
+        # try:
+        #     my_resume = Resume(templ, new_resume_dict)
+        #     if not my_resume.make(
+        #         "This is a backend software engineer role, where the candidate will be instrumental in developing, hosting, and maintaining the robust server-side infrastructure and APIs on the cloud (AWS) that power our diverse applications. The candidate should have strong experience in backend development, especially with languages like Python (e.g., Django, Flask), Java (e.g., Spring Boot), or Node.js (e.g., Express). They should also be deeply familiar with designing and managing various databases (both relational like PostgreSQL or MySQL, and NoSQL like MongoDB or Redis) and possess a solid understanding of scalable architecture, API security, and distributed systems.",
+        #         no_cache=True,
+        #     ):
+        #         print("ERROR: failed to make resume")
+        #         return False, "Failed to make resume"
+        # except (TypeError, ValueError) as e:
+        #     print(f"ERROR: failed to load resume dict: {e}")
+        #     return False, f"Failed to load resume dict: {str(e)}"
+        processed_resume_dict = new_resume_dict
         query = "UPDATE data SET resumeinfo = %s WHERE uid = %s"
         print("DEBUG: resume to_dict: type of " + str(type(processed_resume_dict)))
         processed_resume_dict = self.__convert_ndarray(processed_resume_dict)
