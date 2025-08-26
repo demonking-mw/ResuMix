@@ -115,7 +115,7 @@ class UserAuth:
                 "status": True,
                 "detail": reduced_table,
                 "user_status": parsed_info,
-                "jwt": self.sign_jwt(self.args["reauth_jwt"]),
+                "jwt": self.args["reauth_jwt"],
             }, 200
         reduced_table = vec_rip(table_1[0])
         parsed_info = parse_user_info(reduced_table)
@@ -123,7 +123,7 @@ class UserAuth:
         return {
             "status": True,
             "detail": reduced_table,
-            "jwt": self.args["reauth_jwt"],
+            "jwt": self.sign_jwt(self.args["reauth_jwt"]),
             "user_status": parsed_info,
         }, 200
         # Successful auth returns a new jwt token with more valid time
