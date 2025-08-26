@@ -22,9 +22,7 @@ from io import BytesIO
 # Import your resume-related modules
 from backend.src.resume_objects.resume import Resume
 from backend.src.resume_objects.latex_templates import LTemplate
-from backend.src.resume_objects.implementations.scoring_functions import (
-    simple_sum_function,
-)
+from backend.src.resume_objects.implementations.scoring_functions import simple_sum_function
 
 
 app = Flask(__name__)
@@ -32,17 +30,7 @@ app = Flask(__name__)
 # ---- MERGED CORS CONFIGURATION ----
 CORS(
     app,
-    resources={
-        r"/*": {
-            "origins": [
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "https://resu-50zua0g99-bobs-projects-74d38889.vercel.app",
-                "https://resu-mix.vercel.app",
-                "https://resumix-beta.vercel.app",
-            ]
-        }
-    },
+    resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:5173"]}},
     supports_credentials=True,
 )
 
@@ -82,8 +70,4 @@ def generate_resume():
 
 
 if __name__ == "__main__":
-    import os
-
-    port = int(os.environ.get("PORT", 5001))
-    debug = os.environ.get("FLASK_ENV") == "development"
-    app.run(debug=debug, host="0.0.0.0", port=port)
+    app.run(debug=True, port=5001)
