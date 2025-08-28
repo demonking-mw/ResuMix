@@ -64,6 +64,7 @@ export default function Login() {
           }
         } else {
           setErrorMessage(`Error: ${detail}`);
+          console.error("Login error detail:", data);
         }
       }
     } catch (err) {
