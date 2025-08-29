@@ -3,7 +3,7 @@
 import "./Wiki.css";
 import NavBar from "../NavBar";
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { ChevronRight, BookOpen, Zap, Code, HelpCircle } from "lucide-react";
 
 const wikiSections = [
@@ -117,14 +117,17 @@ const wikiSections = [
 	},
 ];
 
-export default function Wiki({ currentSection = "getting-started" }) {
-	const navigate = useNavigate();
-	const location = useLocation();
-	const [activeSection, setActiveSection] = useState(currentSection);
 
-	useEffect(() => {
-		setActiveSection(currentSection);
-	}, [currentSection]);
+export default function Wiki() {
+   const navigate = useNavigate();
+   const location = useLocation();
+   const { sectionId } = useParams();
+   const currentSection = sectionId || "getting-started";
+   const [activeSection, setActiveSection] = useState(currentSection);
+
+   useEffect(() => {
+	   setActiveSection(currentSection);
+   }, [currentSection]);
 
 	const handleSectionChange = (sectionId) => {
 		setActiveSection(sectionId);

@@ -72,6 +72,7 @@ export default function App() {
 
 					{/* 7) Wiki page */}
 					<Route path="/wiki" element={<Wiki />} />
+					<Route path="/wiki/:sectionId" element={<Wiki />} />
 
 					{/* 8) UI Library Demo */}
 					<Route path="/demo" element={<UILibraryDemo />} />
