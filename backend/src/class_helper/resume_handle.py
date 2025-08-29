@@ -72,9 +72,12 @@ class ResumeHandle:
                 resume_dict = None
         else:
             resume_dict = resumeinfo_raw
+
         if not resume_dict:
             print("ERROR: no resume info found for user")
             return False, None
+        # Convert the original resume_dict for proper comparison
+        converted_resume_dict = self.__convert_ndarray(resume_dict)
         # Here you would generate the resume PDF from resume_dict
         templ = LTemplate()
         my_resume = Resume(templ, resume_dict)
@@ -85,11 +88,7 @@ class ResumeHandle:
         resume_pdf_bytes = my_resume.build()
         new_resume_dict = my_resume.to_dict()
         new_resume_dict = self.__convert_ndarray(new_resume_dict)
-
-        # Convert the original resume_dict for proper comparison
-        converted_resume_dict = self.__convert_ndarray(resume_dict)
-
-        # Use JSON serialization for safe comparison of complex dictionaries
+        
         try:
             if json.dumps(converted_resume_dict, sort_keys=True) != json.dumps(
                 new_resume_dict, sort_keys=True
@@ -97,7 +96,7 @@ class ResumeHandle:
                 # Update the resume info in the database if there are changes
                 print("DEBUG: hashing resume info to db")
                 query = "UPDATE data SET resumeinfo = %s WHERE uid = %s"
-                values = (json.dumps(new_resume_dict), user_auth_json["uid"])
+                values = (json.dumps(new_resume_dict), args["uid"])
                 self.database.run_sql(query, values)
         except (TypeError, ValueError) as e:
             # If JSON serialization fails, fall back to assuming they're different
