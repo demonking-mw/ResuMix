@@ -244,6 +244,8 @@
   border: none;
   cursor: pointer;
   min-width: 100px;
+  align-items: center;
+  justify-content: center;
 }
 
 .step-button:hover {
