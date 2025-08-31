@@ -151,11 +151,13 @@ const ItemViewer = ({
       {isCompactItem ? (
         <div className="item-compact-content">
           <div className="title-button-group">
-            <button className="add-title-button" onClick={onAddTitle}>
-              + Add Title Field
-            </button>
+            {mode === "edit" && (
+              <button className="add-title-button" onClick={onAddTitle}>
+                + Add Title Field
+              </button>
+            )}
             {/* Only show remove button if there are titles to remove */}
-            {item.titles && item.titles.length > 0 && (
+            {mode === "edit" && item.titles && item.titles.length > 0 && (
               <button
                 className="remove-title-button"
                 onClick={onRemoveLastTitle}
