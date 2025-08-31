@@ -244,6 +244,8 @@
   border: none;
   cursor: pointer;
   min-width: 100px;
+  align-items: center;
+  justify-content: center;
 }
 
 .step-button:hover {
@@ -259,7 +261,6 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  min-width: 100px;
 }
 
 .help-button:hover {
