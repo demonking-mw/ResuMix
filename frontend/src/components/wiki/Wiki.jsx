@@ -117,17 +117,16 @@ const wikiSections = [
 	},
 ];
 
-
 export default function Wiki() {
-   const navigate = useNavigate();
-   const location = useLocation();
-   const { sectionId } = useParams();
-   const currentSection = sectionId || "getting-started";
-   const [activeSection, setActiveSection] = useState(currentSection);
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { sectionId } = useParams();
+	const currentSection = sectionId || "getting-started";
+	const [activeSection, setActiveSection] = useState(currentSection);
 
-   useEffect(() => {
-	   setActiveSection(currentSection);
-   }, [currentSection]);
+	useEffect(() => {
+		setActiveSection(currentSection);
+	}, [currentSection]);
 
 	const handleSectionChange = (sectionId) => {
 		setActiveSection(sectionId);
