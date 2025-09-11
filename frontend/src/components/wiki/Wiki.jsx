@@ -137,6 +137,7 @@ const wikiSections = [
 ];
 
 export default function Wiki() {
+
   const navigate = useNavigate();
   const location = useLocation();
   const { sectionId } = useParams();
@@ -146,6 +147,7 @@ export default function Wiki() {
   useEffect(() => {
     setActiveSection(currentSection);
   }, [currentSection]);
+
 
   const handleSectionChange = (sectionId) => {
     setActiveSection(sectionId);
