@@ -49,6 +49,13 @@
   padding: 5px;
   border-radius: 8px;
   border: 1px solid #dee2e6;
+  /* for stick positioning of modes (dont know if i like design)*/
+  position: fixed;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .mode-btn {

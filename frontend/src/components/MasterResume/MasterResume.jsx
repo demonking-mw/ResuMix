@@ -15,7 +15,10 @@ const MasterResume = () => {
   // Check URL parameters for mode on component mount
   useEffect(() => {
     const modeParam = searchParams.get("mode");
-    if (modeParam && ["view", "edit", "parameters-only"].includes(modeParam)) {
+    if (
+      modeParam &&
+      ["view", "edit", "parameters-only", "view-latex"].includes(modeParam)
+    ) {
       setCurrentMode(modeParam);
     }
   }, [searchParams]);
@@ -63,7 +66,15 @@ const MasterResume = () => {
               }`}
               onClick={() => handleModeChange("parameters-only")}
             >
-              ⚙️ Parameters Only
+              📄 Parameters Only
+            </button>
+            <button
+              className={`mode-btn ${
+                currentMode === "view-latex" ? "active" : ""
+              }`}
+              onClick={() => handleModeChange("view-latex")}
+            >
+              View LaTeX
             </button>
           </div>
         </div>
