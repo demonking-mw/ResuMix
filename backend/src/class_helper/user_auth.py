@@ -127,7 +127,7 @@ class UserAuth:
         return {
             "status": True,
             "detail": reduced_table,
-            "jwt": self.sign_jwt(self.args["reauth_jwt"]),
+            "jwt": self.sign_jwt(self.args["uid"]),
             "user_status": parsed_info,
         }, 200
         # Successful auth returns a new jwt token with more valid time
