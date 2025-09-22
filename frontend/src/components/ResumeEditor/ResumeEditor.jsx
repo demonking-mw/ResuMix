@@ -947,13 +947,13 @@ const ResumeEditor = ({
                             <div className="param-top-row">
                               <span className="param-label">bias:</span>
                               <span className="param-indicator">
-                                {item.cate_scores?.bias > 0.5
+                                {item.cate_scores?.bias > 3
                                   ? "📈"
                                   : item.cate_scores?.bias > 0
                                   ? "📊"
                                   : item.cate_scores?.bias === 0
                                   ? "⚖️"
-                                  : item.cate_scores?.bias > -0.5
+                                  : item.cate_scores?.bias > -3
                                   ? "📉"
                                   : "📉"}
                               </span>
@@ -961,8 +961,8 @@ const ResumeEditor = ({
                                 type="number"
                                 value={item.cate_scores?.bias || 0}
                                 step="0.01"
-                                min="-2"
-                                max="2"
+                                min="-10"
+                                max="10"
                                 className="param-input-compact"
                                 onChange={(e) =>
                                   updateItemParameters(
@@ -978,8 +978,8 @@ const ResumeEditor = ({
                               type="range"
                               value={item.cate_scores?.bias || 0}
                               step="0.01"
-                              min="-2"
-                              max="2"
+                              min="-10"
+                              max="10"
                               className="param-slider-compact"
                               onChange={(e) =>
                                 updateItemParameters(

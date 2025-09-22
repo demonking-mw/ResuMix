@@ -108,8 +108,8 @@ const ParameterControls = ({
                 type="number"
                 value={bias}
                 step="0.01"
-                min="-2"
-                max="2"
+                min="-10"
+                max="10"
                 className="parameter-input"
                 onChange={(e) => onUpdateBias(parseFloat(e.target.value) || 0)}
               />
@@ -118,8 +118,8 @@ const ParameterControls = ({
                   type="range"
                   value={bias}
                   step="0.01"
-                  min="-2"
-                  max="2"
+                  min="-10"
+                  max="10"
                   className="parameter-slider"
                   onChange={(e) => onUpdateBias(parseFloat(e.target.value))}
                 />
