@@ -158,6 +158,14 @@
   box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
 }
 
+/* Center the entire header content in edit mode */
+.resume-editor-container[data-mode="edit"] .resume-editor-header {
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
 /* Edit Mode Specific Styles - Only apply when in edit mode */
 .resume-editor-container[data-mode="edit"] .section-title-input,
 .resume-editor-container[data-mode="edit"] .item-title-input,
@@ -356,6 +364,15 @@
   border-bottom: 2px solid #333;
   padding-bottom: 20px;
   margin-bottom: 30px;
+}
+
+.resume-header .header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
 .header-name .name-display {
