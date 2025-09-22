@@ -24,14 +24,12 @@ export default function Landing() {
 			<NavBar />
 			<main className="hero">
 				<div className="hero-bubble" onClick={handleBubbleClick}>
-					<h1>
-						Optimize Your Resume.
-						<br />
-						Maximize Your Impact.
+					<h1 style={{ fontSize: '2.5rem' }}>
+						Sentence-Transformer based Resume Optimizer
 					</h1>
 					<p>
-						Upload your resume once, then generate the perfect, job-specific
-						resume in seconds.
+						Set your resume once, then generate perfect, job-specific
+						resumes in seconds.
 					</p>
 				</div>
 			</main>

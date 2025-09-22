@@ -153,7 +153,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
@@ -162,9 +162,12 @@
 }
 
 .clickable-card:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15), 0 0 0 1px rgba(79, 70, 229, 0.1);
+  background: linear-gradient(135deg, 
+    rgba(245, 243, 255, 1) 0%, 
+    rgba(237, 233, 254, 1) 50%, 
+    rgba(224, 231, 255, 1) 100%);
+  border: 1px solid rgba(79, 70, 229, 0.2);
 }
 
 /* Status-based card accents */
@@ -178,6 +181,7 @@
   animation: pulse-attention 3s ease-in-out infinite;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
 }
 
 .step-card-accent-urgent::before {
@@ -195,13 +199,13 @@
 }
 
 .step-card-accent-urgent:hover {
-  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4), 0 0 0 2px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 12px 40px rgba(29, 78, 216, 0.6), 0 0 0 3px rgba(29, 78, 216, 0.4);
   background: linear-gradient(135deg, 
-    rgba(239, 246, 255, 1) 0%, 
-    rgba(219, 234, 254, 1) 50%, 
-    rgba(191, 219, 254, 1) 100%);
+    rgba(191, 219, 254, 1) 0%, 
+    rgba(147, 197, 253, 1) 50%, 
+    rgba(96, 165, 250, 1) 100%);
+  border: 3px solid #1d4ed8;
   animation: none;
-  transform: translateY(-2px);
 }
 
 .step-card-accent-urgent:hover::before {
@@ -211,11 +215,9 @@
 @keyframes pulse-attention {
   0%, 100% {
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.15);
-    transform: scale(1);
   }
   50% {
     box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4), 0 0 0 2px rgba(59, 130, 246, 0.2);
-    transform: scale(1.02);
   }
 }
 
@@ -236,7 +238,6 @@
 }
 
 .step-card-disabled:hover {
-  transform: none;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   background: rgba(248, 249, 250, 0.95);
 }
@@ -247,7 +248,7 @@
 }
 
 .workflow-step:nth-child(1) .clickable-card:hover {
-  background: rgba(239, 246, 255, 1);
+  background: rgba(219, 234, 254, 1);
 }
 
 /* Card 2: Light purple tint */
@@ -256,7 +257,7 @@
 }
 
 .workflow-step:nth-child(2) .clickable-card:hover {
-  background: rgba(245, 243, 255, 1);
+  background: rgba(237, 233, 254, 1);
 }
 
 /* Card 3: Light gray tint */
@@ -265,7 +266,7 @@
 }
 
 .workflow-step:nth-child(3) .clickable-card:hover {
-  background: rgba(249, 250, 251, 1);
+  background: rgba(243, 244, 246, 1);
 }
 
 .step-content {
