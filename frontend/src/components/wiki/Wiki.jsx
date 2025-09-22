@@ -8,23 +8,23 @@ import { ChevronRight, BookOpen, Zap, Code, HelpCircle } from "lucide-react";
 
 const wikiSections = [
   {
-    id: "getting-started",
-    title: "Getting Started",
+    id: "the-basics",
+    title: "The basics",
     icon: <BookOpen className="w-4 h-4" />,
     content: {
-      title: "Getting Started",
+      title: "About ResuMix: must-know basics",
       description:
-        "Learn how to create and customize your first resume with ResuMix.",
+        "How the app function, what data it uses, and key features to get you started.",
       sections: [
         {
-          heading: "Create Your Resume",
+          heading: "General Overview",
           content:
-            "Start by entering your name and contact information in the header section. Then use the 'Add Section' button to create sections like Education, Experience, Skills etc. Add items within each section to list your experiences and achievements.",
+            "ResuMix is a resume-optimizer that helps you create tailored resumes for job applications. It uses Sentence Transformers to analyze job descriptions and optimize your resume content accordingly. Your resume content is NOT thrown into any LLM, so your data remains private and secure.",
         },
         {
-          heading: "Job Description Optimization",
+          heading: "Optimization behind the hood",
           content:
-            "Paste the job description you're applying for. ResuMix will analyze it and help tailor your resume content to highlight the most relevant skills and experiences for that specific role.",
+            "",
         },
         {
           heading: "Preview & Download",
