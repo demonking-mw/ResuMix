@@ -24,29 +24,34 @@ const wikiSections = [
         {
           heading: "Optimization behind the hood",
           content:
-            "",
+            "Each time you generate a resume, ResuMix parses the job description with AI, then feeds the output into a sentence transformer model to measure semantic similarity between your resume content and the job description. This scores each line of your resume, which is later used to make the best scoring resume. The resume is automatically downloaded as a PDF. Depending on server load, this process would take around 5-30 seconds. We hope to upgrade our compute soon to make this faster, but budget is a great limiting factor.",
         },
         {
-          heading: "Preview & Download",
+          heading: "LaTeX Master Resume",
           content:
-            "Once you've added your content, click 'Generate Resume' to create your customized PDF resume. You can preview it and make further edits before downloading.",
+            "Under 'Set Your Master Resume', you can find a section which provides you with a LaTeX version of your resume. This LaTeX code represents your master resume, which is the base format used for generating tailored resumes. You can copy and paste this LaTeX code into your own LaTeX editor or Overleaf to make further customizations or adjustments to the layout and design of your resume.",
         },
+        { heading: "Data Structure",
+          content:
+            "Your resume data is structured in a nested format with sections, items, and lines. Each section contains multiple items, and each item contains multiple lines. This structure allows for detailed organization of your resume content, making it easier to manage and optimize.",
+        },
+        
       ],
     },
   },
   {
-    id: "resume-optimization",
-    title: "Resume Optimization",
+    id: "resume-operations",
+    title: "Resume Operations",
     icon: <Zap className="w-4 h-4" />,
     content: {
-      title: "Resume Optimization",
+      title: "Resume Operations",
       description:
-        "Advanced techniques and best practices for optimizing your resume content.",
+        "Step-by-step guide on inputting, tuning, and optimizing your resume.",
       sections: [
         {
-          heading: "Content Strategy",
+          heading: "Inputting Your Resume: basics",
           content:
-            "Learn how to structure your resume content for maximum impact. Focus on achievements, quantifiable results, and relevant skills.",
+            "Select the edit mode in the resume page (if it's not already selected). Add a section and give it a title. Now you can add items to the section. Worry less about the order of the items, as you can reorder them later. When adding items, set the number of titles you want to see. They would automatically goes into a certain format. You should use the same number of titles for a section. To achieve the bullet point effect commonly seen in SKILLS sections, remove every single titles, and you will see a different input style for lines.",
         },
         {
           heading: "Keyword Optimization",
