@@ -1,103 +1,239 @@
-# WorkBringer2
-A new resume optimizer that brings you closer to employment
+# ResuMix
 
+**Live Application:** [https://resu-mix.vercel.app/](https://resu-mix.vercel.app/)
 
-MAJOR ASSUMPTIONS: 
-EACH LINES IN AN ITEM IN A RESUME HAVE SIMILAR LENGTH
+A sentence-transformer-based AI-powered resume optimizer that generates job-specific, tailored resumes in seconds. Set your master resume once, then automatically generate perfectly optimized resumes for each job application.
 
+---
 
-RULES:
+## What is ResuMix?
 
-Backend API reture rule:
-- 'message' means a string
-- 'detail' means a nested dict
-- 'status' means a bool on the success of the action
-    - Note: it conveys a different meaning than the code
-    - It is possible that the action was not performed but no error was reached
-- 'info' means data
-- 'jwt' means a reauthentication jwt for quick auth next time.
+ResuMix is an intelligent resume optimization platform that uses advanced AI and natural language processing to help job seekers create highly targeted resumes. Instead of manually tailoring your resume for each job application, ResuMix:
 
-Categories: Technical, Soft, Relevance, 
+1. **Stores your master resume** - Enter all your experiences, skills, and achievements once
+2. **Analyzes job descriptions** - Uses sentence transformers to understand job requirements
+3. **Optimizes content** - Intelligently selects and ranks your most relevant experiences
+4. **Generates PDFs** - Creates professional LaTeX-formatted resumes ready to submit
 
-Definition of resumeinfo:
-(here lstr means latex string)
-resumeinfo -> sections -> items -> lines
-    |           |           |        |- content: lstr
-    |           |           |        |- cate_scores: dict
-    |           |           |        |- content_str
-    |           |           |        |          |- one dict per each category
-    |           |           |        |- keywords: listof(str)
-    |           |           |- Titles: listof(lstr)
-    |           |           |- Category_weight: dict
-    |           |           |- Category_bias: dict
-    |           |           |- Aux_info: dict
-    |           |- Title: lstr
-    |           |- Type_info: dict
-    |           |- Aux_info: dict
-    |- Style_info: dict
-    |- Category_scoring_functions: dict
-    |- Aux_info: dict
-    |- Heading_info: dict:
-    |       |- first_line: str (name)
-    |       |- subsequent_content: listof(lstr)
-Note: all contents should be in the form of latex code segments, so things like hyperlink is easy
+---
 
-Lines' cate_scores: a dict of dicts: {technical: {}, soft: {}}
+## Key Features
 
-aux_info: type: lines/items/sections, format: see documentation for different classes
+### AI-Powered Optimization
+- **Sentence Transformer Scoring**: Uses the `all-mpnet-base-v2` model to compute semantic similarity between your resume content and job requirements
+- **Multi-Category Analysis**: Evaluates content across technical skills, soft skills, and relevance
+- **Smart Line Ranking**: Each line in your resume is scored and ranked based on job fit
 
-EDIT: every class should have a aux_info class
+### Master Resume Management
+- **Structured Resume Builder**: Organize your resume into sections, items, and lines
+- **Multiple Item Styles**: Support for various resume formats (2-4 heading styles, paragraphs)
+- **LaTeX Export**: Professional PDF generation using PyLaTeX
+- **Parameter Customization**: Fine-tune weights and biases for different content categories
 
-Classes: ResumeInfo, Sections, Items, Lines
-Note: they should store the user's full resume
-Note: conversion between json and obj should be quick and ezez
+### Secure Authentication
+- **Multiple Auth Methods**: Email/password and Google OAuth integration
+- **JWT-Based Sessions**: Secure reauthentication tokens for quick access
+- **PostgreSQL Storage**: Secure user data and resume information storage
 
-Most major calculations should be done in the backend
+### Modern User Interface
+- **React + Vite Frontend**: Fast, responsive single-page application
+- **Intuitive Dashboard**: Track resume status, tweak parameters, and generate optimized resumes
+- **Real-time Feedback**: Terminal-style output during resume generation
+- **Wiki & Documentation**: Built-in help system
 
-Resume generate: use pylatex
+---
 
-Categories: technical, soft, relevance
-CATEGORY NAME FOR ANY INTERMETHOD COMMUNICATION MUST BE AS IS
+## Technical Architecture
 
-Processor: a dict storing instruction on how to process items
-{values: {cate: {} ~...}, functions: {cate: funcn}}
-values are AI generated for each value present in each category
-function is for scoring a category of an item:
-(weight: int, bias: int, products: listof listof int) -> (score: dict)
+### Frontend
+- **Framework**: React 19 with Vite
+- **Routing**: React Router DOM
+- **State Management**: Context API for authentication
+- **UI Components**: Custom component library with Lucide icons
+- **API Communication**: Axios with credential support
 
+### Backend
+- **Framework**: Flask with Flask-RESTful
+- **Language**: Python 3.x
+- **API Type**: REST API
+- **CORS**: Configured for cross-origin requests from Vercel deployments
 
+### Database
+- **Type**: PostgreSQL
+- **Connection**: psycopg3 with connection pooling
+- **Schema**: Single `data` table storing user info and resume data as JSONB
 
+```sql
+CREATE TABLE data (
+    uid VARCHAR(256) PRIMARY KEY,
+    user_name VARCHAR(64),
+    pwd VARCHAR(64),
+    email VARCHAR(256) NOT NULL UNIQUE,
+    auth_type VARCHAR(16),
+    userinfo JSONB,
+    resumeInfo JSONB
+);
+```
 
-Variables:
+### AI/ML Components
+- **Sentence Transformers**: `all-mpnet-base-v2` for semantic similarity
+- **OpenAI Integration**: GPT-4o-mini for parsing job requirements and generating structured data
+- **Vector Embeddings**: Cached embeddings for efficient resume line scoring
+- **Optimization Algorithm**: Custom scoring and shuffling algorithm for content selection
 
-Lines:
-- content: lstr
-    latex content in r'' format
-- cate_score: dictof: str - dict
-    each sub dictionary is str - int, which represents attribute and score
-- content_str: str
-    pure string of content, set by frontend when creating item
-- self.keywords: listof str
-- self.aux_info: AUX_INFO
+---
 
-Items:
-- title: listof lstr
-    can be different lengths, corresponding to different forms of resume
-- line_objs: listof Lines
-- cate_score: dictof: str - dict
-    each sub dict contain 'weight' and 'bias', each assigned to a decimal
-- aux_info: AUX_INFO
-- paragraph: lstr
-    Only used if style is p, stores the paragraph info
-- style: str
-    denotes the type of Item it is, stored in aux_info when folded into dict
-    Options:
-    - n2  - two headings, normal
-    - n2l - two headings, all to the left
-    - n3  - 3 headings, one line, middle one (to the left) for skills or alike
-    - n4  - 4 headings, normal
-    - n5  - 4 headings with a skill line in upper row, to the left
-    - p   - ONE PARAGRAPH
+## Tech Stack
+
+### Backend Dependencies
+- **Flask** (3.1.1) - Web framework
+- **sentence-transformers** (4.1.0) - Semantic similarity
+- **PyLaTeX** (1.4.2) - PDF resume generation
+- **PyJWT** (2.10.1) - Authentication tokens
+- **psycopg** (3.2.3) - PostgreSQL database driver
+- **openai** (1.82.0) - AI integration
+- **torch** (2.7.1) - Deep learning framework
+- **transformers** (4.52.4) - NLP models
+
+### Frontend Dependencies
+- **react** (19.1.0) - UI framework
+- **react-router-dom** (6.30.1) - Routing
+- **axios** (1.10.0) - HTTP client
+- **@react-oauth/google** (0.12.2) - Google authentication
+- **jwt-decode** (4.0.0) - JWT handling
+- **lucide-react** (0.522.0) - Icons
+
+---
+
+## How It Works
+
+### 1. User Registration & Authentication
+Users can sign up using email/password or Google OAuth. Authentication tokens are stored securely using JWT.
+
+### 2. Master Resume Creation
+Users build their comprehensive master resume by:
+- Adding sections (Education, Experience, Projects, Skills, etc.)
+- Creating items within sections (jobs, degrees, projects)
+- Writing lines for each item (bullet points, descriptions)
+- Setting parameters (category weights and biases)
+
+### 3. Job Description Analysis
+When generating an optimized resume:
+1. User pastes a job description
+2. GPT-4o-mini extracts 3-12 core requirements
+3. Requirements are converted to vector embeddings
+4. Each resume line is scored against requirements using cosine similarity
+
+### 4. Optimization & Selection
+The optimization algorithm:
+1. Scores each line (0-10 scale) based on semantic similarity
+2. Applies category weights and biases
+3. Selects the most relevant content for each section
+4. Generates multiple versions and shuffles for optimal layout
+
+### 5. PDF Generation
+- Selected content is formatted using LaTeX templates
+- PyLaTeX generates a professional PDF
+- User downloads the tailored resume
+
+---
+
+## Data Structure
+
+### Resume Hierarchy
+```
+ResumeInfo
+├── sections (list)
+│   ├── Section
+│   │   ├── title (LaTeX string)
+│   │   ├── items (list)
+│   │   │   ├── Item
+│   │   │   │   ├── titles (list of LaTeX strings)
+│   │   │   │   ├── lines (list)
+│   │   │   │   │   ├── Line
+│   │   │   │   │   │   ├── content (LaTeX string)
+│   │   │   │   │   │   ├── content_str (plain string)
+│   │   │   │   │   │   ├── score (float 0-10)
+│   │   │   │   │   │   ├── keywords (list)
+│   │   │   │   │   │   └── aux_info (cached vectors)
+│   │   │   │   ├── category_weight (dict)
+│   │   │   │   └── category_bias (dict)
+│   │   └── aux_info
+└── heading_info (name, contact info)
+```
+
+---
+
+## API Endpoints
+
+### User Authentication
+- `POST /user` - Sign up new user
+- `GET /user` - Login with credentials or Google OAuth
+- `PUT /user` - Update user information
+
+### Resume Management
+- `GET /resume` - Retrieve user's resume data
+- `POST /resume` - Update resume information
+- `PUT /resume` - Modify resume parameters
+
+### Resume Generation
+- `POST /resume/optimize` - Generate optimized PDF resume
+- `POST /api/generate-resume` - Alternative PDF generation endpoint
+
+---
+
+## Use Cases
+
+1. **Job Seekers**: Generate tailored resumes for multiple job applications
+2. **Career Changers**: Emphasize different skills for different industries
+3. **Recent Graduates**: Optimize limited experience for various roles
+4. **Professionals**: Maintain one master resume, generate role-specific versions
+
+---
+
+## Security Features
+
+- Password hashing for email/password authentication
+- JWT tokens with expiration for session management
+- Environment variable management for API keys
+- CORS configuration for secure cross-origin requests
+- PostgreSQL with parameterized queries to prevent SQL injection
+
+---
+
+## Future Enhancements
+
+- Multiple resume templates and styles
+- ATS (Applicant Tracking System) optimization
+- Cover letter generation
+- Interview preparation based on job requirements
+- Analytics on which experiences perform best
+- Multi-language support
+
+---
+
+## Contributing
+
+This project is actively maintained. For questions or contributions, please refer to the project repository.
+
+---
+
+## License
+
+See repository for license information.
+
+---
+
+## Acknowledgments
+
+- Sentence Transformers library by UKPLab
+- OpenAI GPT models
+- PyLaTeX for PDF generation
+- The open-source community
+
+---
+
+Built to help you land your dream job faster.
 
 
 
