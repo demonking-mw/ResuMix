@@ -9,6 +9,10 @@ Commenting: ALL_CAP for required, lowercase for optional
 
 from flask_restful import reqparse
 
+# Accept credentials from a JSON body (preferred) or the query string (legacy).
+# Query strings end up in server logs and browser history, so clients should POST.
+AUTH_LOCATIONS = ("json", "values")
+
 # User Auth: TYPE, jwt_token, email, uid, pwd
 # THIS IS FOR LOGIN
 #################################################################
@@ -18,7 +22,7 @@ user_auth.add_argument(
     type=str,
     help="Type is required, can be email, up, or go or re",
     required=True,
-    location=["args"],
+    location=AUTH_LOCATIONS,
 )
 user_auth.add_argument(
     "jwt_token",
@@ -26,24 +30,24 @@ user_auth.add_argument(
     help="JWT token for go type",
     required=False,
     default=None,
-    location=["args"],
+    location=AUTH_LOCATIONS,
 )
 
 user_auth.add_argument(
-    "email", type=str, help="Email", required=False, location=["args"]
+    "email", type=str, help="Email", required=False, location=AUTH_LOCATIONS
 )
 user_auth.add_argument(
-    "uid", type=str, help="User ID", required=False, location=["args"]
+    "uid", type=str, help="User ID", required=False, location=AUTH_LOCATIONS
 )
 user_auth.add_argument(
-    "pwd", type=str, help="Password", required=False, location=["args"]
+    "pwd", type=str, help="Password", required=False, location=AUTH_LOCATIONS
 )
 user_auth.add_argument(
     "reauth_jwt",
     type=str,
     help="Reauth JWT for re type",
     required=False,
-    location=["args"],
+    location=AUTH_LOCATIONS,
 )
 
 
@@ -63,6 +67,13 @@ user_signup.add_argument("uid", type=str, help="User ID", required=False)
 user_signup.add_argument("pwd", type=str, help="Password", required=False)
 user_signup.add_argument(
     "user_name", type=str, help="User name", required=False, default=None
+)
+user_signup.add_argument(
+    "reauth_jwt",
+    type=str,
+    help="Reauth JWT, used when type is 're'",
+    required=False,
+    default=None,
 )
 
 

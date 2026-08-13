@@ -10,8 +10,6 @@ import Login from "./components/Login";
 import CreateProfile from "./components/CreateProfile";
 import AccountHome from "./components/AccountHome";
 import MasterResume from "./components/MasterResume";
-import ResumeForm from "./input_components/ResumeForm";
-import UILibraryDemo from "./components/UILibraryDemo";
 import Optimize from "./components/Optimize";
 import Wiki from "./components/wiki/Wiki";
 
@@ -50,16 +48,6 @@ export default function App() {
 						}
 					/>
 
-					{/* 5b) Legacy Resume Form - Keeping for reference */}
-					<Route
-						path="/resume-form"
-						element={
-							<ProtectedRoute>
-								<ResumeForm />
-							</ProtectedRoute>
-						}
-					/>
-
 					{/* 6) Optimize page - Generate tailored resumes */}
 					<Route
 						path="/optimize"
@@ -73,9 +61,6 @@ export default function App() {
 					{/* 7) Wiki page */}
 					<Route path="/wiki" element={<Wiki />} />
 					<Route path="/wiki/:sectionId" element={<Wiki />} />
-
-					{/* 8) UI Library Demo */}
-					<Route path="/demo" element={<UILibraryDemo />} />
 
 					{/* 8) Fallback: redirect unknown URLs back to landing */}
 					<Route path="*" element={<Navigate to="/" replace />} />

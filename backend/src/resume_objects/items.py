@@ -60,7 +60,10 @@ class Item:
 
     def top_k_lines(self, lines: List[Line], k: int) -> List[Line]:
         """
-        returns the top k Line objects with the highest line scores in ascending order
+        returns the k highest scoring Line objects, best first.
+
+        Order matters: this is the order the lines are printed in, and a reader
+        scans a resume top down.
         """
         sorted_lines = sorted(
             lines,
@@ -68,8 +71,9 @@ class Item:
                 line.score is not None,
                 line.score if line.score is not None else 0,
             ),
+            reverse=True,
         )
-        return sorted_lines[-k:]
+        return sorted_lines[:k]
 
     def make(self, templ: LTemplate) -> List[dict]:
         """

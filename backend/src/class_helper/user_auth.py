@@ -16,11 +16,26 @@ import datetime
 import jwt  # pylint: disable=import-error
 
 from dotenv import load_dotenv
-import psycopg  # type: ignore
 
 from ..db_helper import dbconn
+from ..db_helper.errors import UniqueViolation
+from ..general_helper.passwords import hash_password, is_hashed, verify_password
 from ..general_helper.vec_rip import vec_rip
 from ..general_helper.parse_user_info import parse_user_info
+
+TOKEN_LIFETIME = datetime.timedelta(hours=1)
+# Re-sign a token once it is within this window of expiring.
+TOKEN_REFRESH_WINDOW = datetime.timedelta(minutes=15)
+MIN_PASSWORD_LENGTH = 8
+
+
+def _utcnow() -> datetime.datetime:
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
+def normalize_email(email) -> str:
+    """Emails are case-insensitive, so store and compare them folded."""
+    return email.strip().lower() if isinstance(email, str) else email
 
 
 class UserAuth:
@@ -62,12 +77,15 @@ class UserAuth:
         """
         load_dotenv()
         authsecret = os.getenv("JWT_REAUTH_SECRET")
-        if not isinstance(authsecret, str):
-            raise TypeError("JWT_REAUTH_SECRET must be a string")
+        if not isinstance(authsecret, str) or not authsecret.strip():
+            raise RuntimeError(
+                "JWT_REAUTH_SECRET is not set. Copy .env.example to .env and set it, "
+                "or run ./scripts/setup.sh."
+            )
         return jwt.encode(
             {
                 "uid": uid,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+                "exp": _utcnow() + TOKEN_LIFETIME,
             },
             authsecret,
             algorithm="HS256",
@@ -104,17 +122,19 @@ class UserAuth:
             return {"status": False, "detail": "uid mismatch"}, 401
         if quick:
             return {"status": True, "detail": "jwt token valid"}, 200
-        sql_query = f"SELECT * FROM data WHERE uid = '{self.args['uid']}';"
-        table_1 = self.database.run_sql(sql_query)
+        table_1 = self.database.run_sql(
+            "SELECT * FROM data WHERE uid = %s;", (self.args["uid"],)
+        )
         if not table_1:
             return {"status": False, "detail": {"status": "reauth failed, result bad"}}, 400
-        if datetime.datetime.utcnow() > datetime.datetime.fromtimestamp(
-            payload["exp"]
-        ) - datetime.timedelta(minutes=15):
+        expires_at = payload.get("exp")
+        if expires_at is not None and _utcnow() <= datetime.datetime.fromtimestamp(
+            expires_at, tz=datetime.timezone.utc
+        ) - TOKEN_REFRESH_WINDOW:
             reduced_table = vec_rip(table_1[0])
+            reduced_table.pop("pwd", None)
             parsed_info = parse_user_info(reduced_table)
-            print("Parsed info:", parsed_info)
-            # Frequent resign prevention: will sign once every 20 min
+            # Still comfortably valid, so hand the same token back.
             return {
                 "status": True,
                 "detail": reduced_table,
@@ -122,8 +142,8 @@ class UserAuth:
                 "jwt": self.args["reauth_jwt"],
             }, 200
         reduced_table = vec_rip(table_1[0])
+        reduced_table.pop("pwd", None)
         parsed_info = parse_user_info(reduced_table)
-        print("DEBUG: line 118 happy")
         return {
             "status": True,
             "detail": reduced_table,
@@ -145,17 +165,24 @@ class UserAuth:
             # uid and pwd are mandatory
             print("ERROR: uid or pwd not provided")
             return {}, -1
-        sql_query = f"SELECT * FROM data WHERE uid = '{self.args['uid']}';"
-        table_1 = self.database.run_sql(sql_query)
+        table_1 = self.database.run_sql(
+            "SELECT * FROM data WHERE uid = %s;", (self.args["uid"],)
+        )
         if not table_1:
             return {"status": False, "detail": {"status": "user not found"}}, 400
         if table_1[0]["auth_type"] != "eup":
             print("ERROR: auth type mismatch")
             return {"status": False, "detail": {"status": "auth type mismatch"}}, 401
-        if table_1[0]["pwd"] == self.args["pwd"]:
+        if verify_password(self.args["pwd"], table_1[0]["pwd"]):
+            if not is_hashed(table_1[0]["pwd"]):
+                # Upgrade a legacy plaintext row now that we know the password.
+                self.database.run_sql(
+                    "UPDATE data SET pwd = %s WHERE uid = %s",
+                    (hash_password(self.args["pwd"]), self.args["uid"]),
+                )
             reduced_table = vec_rip(table_1[0])
+            reduced_table.pop("pwd", None)
             parsed_info = parse_user_info(reduced_table)
-            print("Parsed info:", parsed_info)
             return {
                 "status": True,
                 "detail": reduced_table,
@@ -175,6 +202,18 @@ class UserAuth:
         if any(not self.args[field] for field in required_fields):
             print("ERROR: uid, pwd, email, or name not provided")
             return {}, -1
+        if len(self.args["pwd"]) < MIN_PASSWORD_LENGTH:
+            return {
+                "status": False,
+                "detail": {
+                    "status": f"password must be at least {MIN_PASSWORD_LENGTH} characters"
+                },
+            }, 400
+        if "@" not in normalize_email(self.args["email"]):
+            return {
+                "status": False,
+                "detail": {"status": "email address is not valid"},
+            }, 400
         sql_query = """
             INSERT INTO data (uid, user_name, pwd, email, auth_type, userinfo, resumeinfo)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -182,8 +221,8 @@ class UserAuth:
         params = (
             self.args["uid"],
             self.args["user_name"],
-            self.args["pwd"],
-            self.args["email"],
+            hash_password(self.args["pwd"]),
+            normalize_email(self.args["email"]),
             "eup",
             json.dumps({"email_verified": False}),
             json.dumps({}),
@@ -197,7 +236,7 @@ class UserAuth:
                 "jwt": self.sign_jwt(self.args["uid"]),
                 "user_status": user_status,
             }, 201
-        except psycopg.errors.UniqueViolation:
+        except UniqueViolation:
             print("UID unique violation")
             return {
                 "status": False,
@@ -214,9 +253,24 @@ class UserAuth:
         if any(field not in self.args for field in required_fields):
             print("ERROR: uid, pwd, email, or name not provided")
             return {}, -1
-        sql_query = f"DELETE FROM data WHERE uid = '{self.args['uid']}' AND pwd = '{self.args['pwd']}' AND email = '{self.args['email']}';"
+        rows = self.database.run_sql(
+            "SELECT pwd, email FROM data WHERE uid = %s AND auth_type = 'eup';",
+            (self.args["uid"],),
+        )
+        if (
+            not rows
+            or rows[0]["email"] != normalize_email(self.args["email"])
+            or not verify_password(self.args["pwd"], rows[0]["pwd"])
+        ):
+            return {
+                "status": False,
+                "detail": {"status": "credentials do not match"},
+            }, 401
         try:
-            self.database.run_sql(sql_query)
+            self.database.run_sql(
+                "DELETE FROM data WHERE uid = %s AND auth_type = 'eup';",
+                (self.args["uid"],),
+            )
             return {"status": True, "detail": {"status": "user deleted"}}, 200
         except Exception as e:  # pylint: disable=broad-except
             print(f"ERROR: {e}")
@@ -236,8 +290,9 @@ class UserAuth:
         if not self.args["sub"]:
             print("ERROR: sub not provided")
             return {}, -1
-        sql_query = f"SELECT * FROM data WHERE uid = '{self.args['sub']}';"
-        table_1 = self.database.run_sql(sql_query)
+        table_1 = self.database.run_sql(
+            "SELECT * FROM data WHERE uid = %s;", (self.args["sub"],)
+        )
 
         if not table_1:
             sql_query = """
@@ -248,7 +303,7 @@ class UserAuth:
                 self.args["sub"],
                 self.args["name"],
                 "",
-                self.args["email"],
+                normalize_email(self.args["email"]),
                 "go",
                 json.dumps({"email_verified": True}),
                 json.dumps({}),
@@ -262,14 +317,14 @@ class UserAuth:
                     "jwt": self.sign_jwt(self.args["sub"]),
                     "user_status": user_status,
                 }, 201
-            except psycopg.errors.UniqueViolation:
+            except UniqueViolation:
                 print("BACKEND ERROR: on creation while account exists")
                 return {}, -1
         if table_1[0]["auth_type"] != "go":
             return {"status": False, "message": "auth type mismatch"}, 401
         reduced_table = vec_rip(table_1[0])
+        reduced_table.pop("pwd", None)
         parsed_info = parse_user_info(reduced_table)
-        print("Parsed info:", parsed_info)
         return {
             "status": True,
             "info": reduced_table,
@@ -285,11 +340,9 @@ class UserAuth:
         if not self.args["uid"]:
             print("ERROR: sub not provided")
             return {}, -1
-        sql_query = (
-            f"DELETE FROM data WHERE uid = '{self.args['uid']}' AND auth_type = 'go';"
-        )
+        sql_query = "DELETE FROM data WHERE uid = %s AND auth_type = 'go';"
         try:
-            self.database.run_sql(sql_query)
+            self.database.run_sql(sql_query, (self.args["uid"],))
             return {"status": True, "message": "user deleted"}, 200
         except Exception as e:  # pylint: disable=broad-except
             print(f"ERROR: {e}")

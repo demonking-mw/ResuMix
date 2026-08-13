@@ -152,7 +152,9 @@ const ItemViewer = ({
         <div className="item-compact-content">
           <div className="title-button-group">
             {mode === "edit" && (
-              <button className="add-title-button" onClick={onAddTitle}>
+              <button className="add-title-button" onClick={onAddTitle}
+                disabled={(item.titles?.length || 0) >= 4}
+                title="The resume template lays out at most four title fields">
                 + Add Title Field
               </button>
             )}
@@ -257,6 +259,8 @@ const ItemViewer = ({
                           <button
                             className="add-title-button"
                             onClick={onAddTitle}
+                            disabled={(item.titles?.length || 0) >= 4}
+                            title="The resume template lays out at most four title fields"
                           >
                             + Add Title Field
                           </button>
@@ -432,6 +436,8 @@ const ItemViewer = ({
                             <button
                               className="add-title-button"
                               onClick={onAddTitle}
+                              disabled={(item.titles?.length || 0) >= 4}
+                              title="The resume template lays out at most four title fields"
                             >
                               + Add Title Field
                             </button>

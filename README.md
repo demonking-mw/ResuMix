@@ -1,248 +1,284 @@
 # ResuMix
 
-**Live Application:** [https://resu-mix.vercel.app/](https://resu-mix.vercel.app/)
+Run it on your own machine: `git clone`, `./scripts/setup.sh`, `./scripts/start.sh`.
 
-A sentence-transformer-based AI-powered resume optimizer that generates job-specific, tailored resumes in seconds. Set your master resume once, then automatically generate perfectly optimized resumes for each job application.
+ResuMix is a resume optimizer. You enter your master resume once, paste a job
+description, and it scores every line of your resume against that job, picks the
+most relevant content, and renders a tailored PDF.
 
----
-
-## What is ResuMix?
-
-ResuMix is an intelligent resume optimization platform that uses advanced AI and natural language processing to help job seekers create highly targeted resumes. Instead of manually tailoring your resume for each job application, ResuMix:
-
-1. **Stores your master resume** - Enter all your experiences, skills, and achievements once
-2. **Analyzes job descriptions** - Uses sentence transformers to understand job requirements
-3. **Optimizes content** - Intelligently selects and ranks your most relevant experiences
-4. **Generates PDFs** - Creates professional LaTeX-formatted resumes ready to submit
+Everything runs locally. Your resume data lives in a SQLite file inside the
+repository (`data/resumix.db`) — there is no hosted database, no account
+service, and no deployment step.
 
 ---
 
-## Key Features
+## Requirements
 
-### AI-Powered Optimization
-- **Sentence Transformer Scoring**: Uses the `all-mpnet-base-v2` model to compute semantic similarity between your resume content and job requirements
-- **Multi-Category Analysis**: Evaluates content across technical skills, soft skills, and relevance
-- **Smart Line Ranking**: Each line in your resume is scored and ranked based on job fit
+| Tool | Version | Notes |
+| --- | --- | --- |
+| Python | 3.10+ | 3.12 or 3.13 recommended |
+| Node.js | 18+ | ships with npm |
+| Disk | ~3 GB | PyTorch plus the embedding model |
 
-### Master Resume Management
-- **Structured Resume Builder**: Organize your resume into sections, items, and lines
-- **Multiple Item Styles**: Support for various resume formats (2-4 heading styles, paragraphs)
-- **LaTeX Export**: Professional PDF generation using PyLaTeX
-- **Parameter Customization**: Fine-tune weights and biases for different content categories
+You also need **one** language-model endpoint for reading job descriptions:
 
-### Secure Authentication
-- **Multiple Auth Methods**: Email/password and Google OAuth integration
-- **JWT-Based Sessions**: Secure reauthentication tokens for quick access
-- **PostgreSQL Storage**: Secure user data and resume information storage
+- an OpenAI API key, **or**
+- any OpenAI-compatible server running locally (Ollama, LM Studio, vLLM, …)
 
-### Modern User Interface
-- **React + Vite Frontend**: Fast, responsive single-page application
-- **Intuitive Dashboard**: Track resume status, tweak parameters, and generate optimized resumes
-- **Real-time Feedback**: Terminal-style output during resume generation
-- **Wiki & Documentation**: Built-in help system
+Nothing else needs to be installed — no PostgreSQL, no Docker, no LaTeX.
 
 ---
 
-## Technical Architecture
+## Quick start
 
-### Frontend
-- **Framework**: React 19 with Vite
-- **Routing**: React Router DOM
-- **State Management**: Context API for authentication
-- **UI Components**: Custom component library with Lucide icons
-- **API Communication**: Axios with credential support
+```bash
+git clone <your-fork-or-this-repo> ResuMix
+cd ResuMix
 
-### Backend
-- **Framework**: Flask with Flask-RESTful
-- **Language**: Python 3.x
-- **API Type**: REST API
-- **CORS**: Configured for cross-origin requests from Vercel deployments
+./scripts/setup.sh          # venv + pip install + npm install + local database
+                            # add --with-model to pre-download the embedding model
+```
 
-### Database
-- **Type**: PostgreSQL
-- **Connection**: psycopg3 with connection pooling
-- **Schema**: Single `data` table storing user info and resume data as JSONB
+Then open `.env` and set your language model. Either:
+
+```bash
+OPENAI_KEY=sk-...           # hosted OpenAI
+```
+
+or, to keep everything on your machine:
+
+```bash
+OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_MODEL=llama3.1
+```
+
+Start both servers:
+
+```bash
+./scripts/start.sh
+```
+
+- UI: <http://localhost:3000>
+- API: <http://127.0.0.1:5001> (health check: `/health`)
+
+Sign up with a username, password and email on the signup page. The account is
+created in your local database — nothing leaves the machine except the job
+description sent to your language model.
+
+To stop, press `Ctrl-C`.
+
+---
+
+## What runs where
+
+```
+frontend (Vite dev server, :3000)
+      |  HTTP, CORS-allowed for localhost only
+backend (Flask, 127.0.0.1:5001)
+      |-- data/resumix.db           SQLite: accounts + resumes
+      |-- models/ or the HF cache   sentence-transformers scorer (local inference)
+      `-- OPENAI_BASE_URL           job-description parsing (OpenAI or your own server)
+```
+
+Manual start, if you prefer separate terminals:
+
+```bash
+# terminal 1
+source venv/bin/activate
+python -m backend.api.api_1
+
+# terminal 2
+cd frontend && npm run dev
+```
+
+---
+
+## Configuration
+
+All backend settings live in `.env` (copy from `.env.example`; `setup.sh` does
+this and generates the JWT secret). Frontend settings live in `frontend/.env`.
+
+### Backend (`.env`)
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | empty | Empty = local SQLite. `sqlite:///path.db` to relocate. `postgresql://…` only if you deliberately want a server. |
+| `RESUMIX_DB_PATH` | `data/resumix.db` | Alternative way to move the SQLite file. |
+| `JWT_REAUTH_SECRET` | generated by setup | Signs session/reauth tokens. Required. |
+| `OPENAI_KEY` | empty | OpenAI API key. Not needed when `OPENAI_BASE_URL` points at a local server. |
+| `OPENAI_BASE_URL` | empty | OpenAI-compatible endpoint, e.g. `http://localhost:11434/v1`. |
+| `OPENAI_MODEL` | `gpt-4o-mini` | Chat model used to extract requirements from a job description. |
+| `OPT_MODEL_PATH` | empty | Sentence-transformer directory or model id. Empty = `models/all-mpnet-base-v2` if present, otherwise downloaded once and cached. || `RESUMIX_PDF_FONT` | empty | Optional `.ttf` (or a directory of them) for the generated PDF. Empty = a Unicode system font is detected automatically. || `BACKEND_HOST` | `127.0.0.1` | Loopback by default, so the API is not exposed to your network. |
+| `BACKEND_PORT` | `5001` | API port. |
+| `CORS_ORIGINS` | empty | Extra allowed browser origins, comma separated. `localhost:3000` and `localhost:5173` are always allowed. |
+
+### Frontend (`frontend/.env`)
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `VITE_API_BASE_URL` | `http://localhost:5001` | Where the UI sends API calls. |
+| `VITE_GOOGLE_CLIENT_ID` | empty | Optional. Empty hides the Google sign-in button; email/password still works. Google sign-in requires a client id registered with Google, so it cannot work offline. |
+
+---
+
+## Running fully offline
+
+After the first setup, ResuMix needs no internet if you:
+
+1. Pre-download the scorer: `python scripts/fetch_model.py`
+   (saves `models/all-mpnet-base-v2`).
+2. Point `OPENAI_BASE_URL` at a local server, for example Ollama:
+   ```bash
+   ollama serve
+   ollama pull llama3.1
+   ```
+   ```bash
+   OPENAI_BASE_URL=http://localhost:11434/v1
+   OPENAI_MODEL=llama3.1
+   ```
+3. Leave `VITE_GOOGLE_CLIENT_ID` empty.
+
+One remaining online reference is the Google Fonts `@import` in the stylesheets;
+without a connection the UI falls back to system fonts.
+
+---
+
+## Your data
+
+| Path | Contents | Committed? |
+| --- | --- | --- |
+| `data/resumix.db` | accounts, master resumes, cached embeddings | no (gitignored) |
+| `models/` | downloaded sentence-transformer | no (gitignored) |
+| `.env`, `frontend/.env` | your local settings and keys | no (gitignored) |
+
+Back up by copying `data/resumix.db`. Start fresh by deleting it and running
+`python scripts/init_db.py`.
+
+Schema (created automatically):
 
 ```sql
 CREATE TABLE data (
-    uid VARCHAR(256) PRIMARY KEY,
-    user_name VARCHAR(64),
-    pwd VARCHAR(64),
-    email VARCHAR(256) NOT NULL UNIQUE,
-    auth_type VARCHAR(16),
-    userinfo JSONB,
-    resumeInfo JSONB
+    uid        TEXT PRIMARY KEY,
+    user_name  TEXT,
+    pwd        TEXT,   -- PBKDF2-HMAC-SHA256 hash, never plaintext
+    email      TEXT NOT NULL UNIQUE,
+    auth_type  TEXT,
+    userinfo   TEXT,   -- JSON
+    resumeinfo TEXT    -- JSON
 );
 ```
 
-### AI/ML Components
-- **Sentence Transformers**: `all-mpnet-base-v2` for semantic similarity
-- **OpenAI Integration**: GPT-4o-mini for parsing job requirements and generating structured data
-- **Vector Embeddings**: Cached embeddings for efficient resume line scoring
-- **Optimization Algorithm**: Custom scoring and shuffling algorithm for content selection
+Inspect it at any time:
 
----
-
-## Tech Stack
-
-### Backend Dependencies
-- **Flask** (3.1.1) - Web framework
-- **sentence-transformers** (4.1.0) - Semantic similarity
-- **PyLaTeX** (1.4.2) - PDF resume generation
-- **PyJWT** (2.10.1) - Authentication tokens
-- **psycopg** (3.2.3) - PostgreSQL database driver
-- **openai** (1.82.0) - AI integration
-- **torch** (2.7.1) - Deep learning framework
-- **transformers** (4.52.4) - NLP models
-
-### Frontend Dependencies
-- **react** (19.1.0) - UI framework
-- **react-router-dom** (6.30.1) - Routing
-- **axios** (1.10.0) - HTTP client
-- **@react-oauth/google** (0.12.2) - Google authentication
-- **jwt-decode** (4.0.0) - JWT handling
-- **lucide-react** (0.522.0) - Icons
-
----
-
-## How It Works
-
-### 1. User Registration & Authentication
-Users can sign up using email/password or Google OAuth. Authentication tokens are stored securely using JWT.
-
-### 2. Master Resume Creation
-Users build their comprehensive master resume by:
-- Adding sections (Education, Experience, Projects, Skills, etc.)
-- Creating items within sections (jobs, degrees, projects)
-- Writing lines for each item (bullet points, descriptions)
-- Setting parameters (category weights and biases)
-
-### 3. Job Description Analysis
-When generating an optimized resume:
-1. User pastes a job description
-2. GPT-4o-mini extracts 3-12 core requirements
-3. Requirements are converted to vector embeddings
-4. Each resume line is scored against requirements using cosine similarity
-
-### 4. Optimization & Selection
-The optimization algorithm:
-1. Scores each line (0-10 scale) based on semantic similarity
-2. Applies category weights and biases
-3. Selects the most relevant content for each section
-4. Generates multiple versions and shuffles for optimal layout
-
-### 5. PDF Generation
-- Selected content is formatted using LaTeX templates
-- PyLaTeX generates a professional PDF
-- User downloads the tailored resume
-
----
-
-## Data Structure
-
-### Resume Hierarchy
-```
-ResumeInfo
-├── sections (list)
-│   ├── Section
-│   │   ├── title (LaTeX string)
-│   │   ├── items (list)
-│   │   │   ├── Item
-│   │   │   │   ├── titles (list of LaTeX strings)
-│   │   │   │   ├── lines (list)
-│   │   │   │   │   ├── Line
-│   │   │   │   │   │   ├── content (LaTeX string)
-│   │   │   │   │   │   ├── content_str (plain string)
-│   │   │   │   │   │   ├── score (float 0-10)
-│   │   │   │   │   │   ├── keywords (list)
-│   │   │   │   │   │   └── aux_info (cached vectors)
-│   │   │   │   ├── category_weight (dict)
-│   │   │   │   └── category_bias (dict)
-│   │   └── aux_info
-└── heading_info (name, contact info)
+```bash
+python scripts/inspect_db.py
 ```
 
 ---
 
-## API Endpoints
+## How it works
 
-### User Authentication
-- `POST /user` - Sign up new user
-- `GET /user` - Login with credentials or Google OAuth
-- `PUT /user` - Update user information
-
-### Resume Management
-- `GET /resume` - Retrieve user's resume data
-- `POST /resume` - Update resume information
-- `PUT /resume` - Modify resume parameters
-
-### Resume Generation
-- `POST /resume/optimize` - Generate optimized PDF resume
-- `POST /api/generate-resume` - Alternative PDF generation endpoint
-
----
-
-## Use Cases
-
-1. **Job Seekers**: Generate tailored resumes for multiple job applications
-2. **Career Changers**: Emphasize different skills for different industries
-3. **Recent Graduates**: Optimize limited experience for various roles
-4. **Professionals**: Maintain one master resume, generate role-specific versions
+1. **Master resume** — sections → items → lines, edited in the UI and stored as
+   JSON in your local database.
+2. **Job description** — sent to your configured chat model, which returns 1–12
+   requirement sentences.
+3. **Scoring** — `sentence-transformers/all-mpnet-base-v2` embeds the
+   requirements and every resume line locally, then scores each line 0–10 by
+   cosine similarity. The scale is absolute, so a line's score means the same
+   thing across resumes and across job descriptions. Embeddings are cached back
+   into the database and reused on later runs.
+4. **Selection** — item weights and biases are applied, then a knapsack pass
+   picks the content that fits the page, best-matching bullets first.
+5. **Render** — reportlab draws the PDF and the browser downloads it.
 
 ---
 
-## Security Features
+## API
 
-- Password hashing for email/password authentication
-- JWT tokens with expiration for session management
-- Environment variable management for API keys
-- CORS configuration for secure cross-origin requests
-- PostgreSQL with parameterized queries to prevent SQL injection
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/user` | Sign up (`eupn`), log in (`up`, `go`) or reauthenticate (`re`) |
+| `GET` | `/user` | Same sign-in types, credentials in the query string (legacy; prefer POST) |
+| `DELETE` | `/user` | Delete an account |
+| `GET` | `/resume` | Tailored PDF |
+| `POST` | `/resume` | Replace the master resume |
+| `POST` | `/resume/optimize` | Authenticated tailored PDF |
+| `POST` | `/resume/optimize/full` | Tailored dict + base64 PDF + identity hashes (401 `reauth_required` when the token expired) |
+| `POST` | `/api/generate-resume` | Stateless: resume dict in, PDF out |
+| `POST` | `/api/generate-resume-full` | Stateless: resume dict in, dict + base64 PDF out |
+| `GET` | `/health` | Liveness check |
+
+Errors carry an `error_code` alongside a human-readable `message`, for example
+`job_description_too_short`, `reauth_required` or `database_unavailable`.
 
 ---
 
-## Future Enhancements
+## Repository layout
 
-- Multiple resume templates and styles
-- ATS (Applicant Tracking System) optimization
-- Cover letter generation
-- Interview preparation based on job requirements
-- Analytics on which experiences perform best
-- Multi-language support
+```
+backend/
+  api/                Flask app and REST resources
+  src/db_helper/      DBConn: SQLite by default, PostgreSQL optional
+  src/class_helper/   auth, user modification, resume handling
+  src/resume_objects/ resume model, scoring, fonts, reportlab templates
+  src/general_helper/ language-model client, password hashing, utilities
+  tests/              unit tests
+  api_tests/          scripted HTTP tests (need a running server)
+frontend/src/         React UI; config.js holds the runtime settings
+scripts/              setup.sh, start.sh, init_db.py, fetch_model.py, inspect_db.py
+docs/                 setup guide, architecture notes, known issues
+data/                 your local database (created on first run)
+```
 
 ---
 
-## Contributing
+## Development
 
-This project is actively maintained. For questions or contributions, please refer to the project repository.
+```bash
+source venv/bin/activate
+pip install -r requirements-dev.txt
+
+python -m unittest discover -s backend/tests -t .   # unit tests
+black .                                             # format
+./test_api.sh sample                                # scripted API tests
+```
+
+`requirements.txt` holds runtime dependencies with lower bounds; the exact pins
+used by the old hosted build are in git history.
+
+---
+
+## Troubleshooting
+
+**`JWT_REAUTH_SECRET must be a string`** — `.env` is missing or the secret is
+empty. Run `cp .env.example .env` and set it, or re-run `./scripts/setup.sh`.
+
+**`OpenAI API key not found in .env file`** — set `OPENAI_KEY`, or set
+`OPENAI_BASE_URL` to a local OpenAI-compatible server.
+
+**First resume generation is slow** — the embedding model is downloading
+(~420 MB) and loading. Pre-fetch with `python scripts/fetch_model.py`.
+
+**Port already in use** — change `BACKEND_PORT` in `.env` and
+`VITE_API_BASE_URL` in `frontend/.env`, or `server.port` in
+`frontend/vite.config.js`.
+
+**Requests fail with a CORS error** — the browser origin must be listed. Add it
+to `CORS_ORIGINS` in `.env`.
+
+**The app is talking to a remote database** — `DATABASE_URL` is set to a
+`postgresql://` URL. Clear it to use the local SQLite file.
+
+---
+
+## Docs
+
+- [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) — detailed setup, offline mode, troubleshooting
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — how the pieces fit together locally
+- [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) — outstanding bugs in the application
 
 ---
 
 ## License
 
 See repository for license information.
-
----
-
-## Acknowledgments
-
-- Sentence Transformers library by UKPLab
-- OpenAI GPT models
-- PyLaTeX for PDF generation
-- The open-source community
-
----
-
-Built to help you land your dream job faster.
-
-
-
-RULE:
-- usually, make means to parse the information and to get the thing ready to be built
-- build would be to build the object.
-
-
-UPDATE: 
-scoring is done only once with the master scoring function to enable functions such as:
-- balancing skills
-- preference of variety or depth

@@ -22,9 +22,6 @@ if [[ -z "$VIRTUAL_ENV" ]]; then
 else
     echo -e "Virtual environment active.\n"
 fi
-echo "black-ing"
-black .
-echo -e "\n"
 echo -e "update all.txt\n"
 
 # Update all.txt
@@ -47,8 +44,18 @@ fi
 
 # Run the test program
 python -m backend.api.api_1 &
-echo "Running api server"
-sleep 18 # Wait for the server to start
+SERVER_PID=$!
+trap 'kill "$SERVER_PID" 2>/dev/null' EXIT
+echo "Running api server (pid $SERVER_PID)"
+
+PORT="${BACKEND_PORT:-5001}"
+for _ in $(seq 1 60); do
+    if curl -fsS -o /dev/null "http://127.0.0.1:${PORT}/health" 2>/dev/null; then
+        echo "Server is up"
+        break
+    fi
+    sleep 1
+done
 pass_count=0
 fail_count=0
 for indiv_test in $(cat $test_file | tr -d '\r'); do
@@ -68,8 +75,8 @@ if [ $fail_count -eq 0 ]; then
 fi
 
 
-pkill -f "backend.api.api_1"
-echo "Killed api server\n"
+kill "$SERVER_PID" 2>/dev/null
+echo "Killed api server"
 exit $fail_count
 
 

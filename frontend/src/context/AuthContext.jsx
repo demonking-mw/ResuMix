@@ -47,12 +47,10 @@ export const AuthProvider = ({ children }) => {
             if (userId) {
               // Attempt reauthentication with the backend
               try {
-                const response = await api.get("/user", {
-                  params: {
-                    type: "re",
-                    uid: userId,
-                    reauth_jwt: storedReauthToken,
-                  },
+                const response = await api.post("/user", {
+                  type: "re",
+                  uid: userId,
+                  reauth_jwt: storedReauthToken,
                 });
 
                 if (response.data.status) {
@@ -208,12 +206,10 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await api.get("/user", {
-        params: {
-          type: "re",
-          uid: user.id,
-          reauth_jwt: reauthToken,
-        },
+      const response = await api.post("/user", {
+        type: "re",
+        uid: user.id,
+        reauth_jwt: reauthToken,
       });
 
       if (response.data.status) {

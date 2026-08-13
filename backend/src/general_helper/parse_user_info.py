@@ -75,17 +75,17 @@ def parse_user_info(user_info: Dict[str, Any]) -> Dict[str, Any]:
             tweak_status = "g"  # thoroughly tweaked (more than half)
         else:
             tweak_status = "o"  # tweaked (some but less than half)
-    generate_resume = "r"
-    if resume_state == "g" and tweak_status == "g":
+
+    # Generation only needs something to generate from. Tweaking weights is a
+    # refinement, so it colours the status rather than blocking the button.
+    if item_count == 0:
+        generate_resume = "r"
+    elif resume_state == "g" and tweak_status == "g":
         generate_resume = "g"
-    elif resume_state == "g" and tweak_status == "o":
-        generate_resume = "y"  # yellow for mostly good
-    elif resume_state == "o" and tweak_status == "g":
+    elif resume_state == "g" or tweak_status in ("g", "o"):
         generate_resume = "y"
-    elif resume_state == "o" and tweak_status == "o":
+    else:
         generate_resume = "o"
-    elif resume_state == "g":
-        generate_resume = "y"
 
     parsed_info = {
         "item_count": item_count,

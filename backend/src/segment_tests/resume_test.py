@@ -7,6 +7,7 @@ from ..resume_objects.latex_templates import LTemplate
 from ..resume_objects.implementations.scoring_functions import simple_sum_function
 import datetime
 
+
 test_resume_dict = {
     "aux_info": {"type": "resume"},
     "heading_info": {
@@ -956,45 +957,48 @@ test_resume_dict = {
         },
     ],
 }
-template = LTemplate()
-t0 = datetime.datetime.now()
-my_resume = Resume(template, test_resume_dict)
-if not my_resume.make(
-    "This is a backend software engineer role, where the candidate will be instrumental in developing, hosting, and maintaining the robust server-side infrastructure and APIs on the cloud (AWS) that power our diverse applications. The candidate should have strong experience in backend development, especially with languages like Python (e.g., Django, Flask), Java (e.g., Spring Boot), or Node.js (e.g., Express). They should also be deeply familiar with designing and managing various databases (both relational like PostgreSQL or MySQL, and NoSQL like MongoDB or Redis) and possess a solid understanding of scalable architecture, API security, and distributed systems."
-):
-    print("sadge")
-print("Resume made successfully")
-print(my_resume.section_make_results)
-my_resume.optimize()
 
-print("Optimization result, here is the result:")
-print(my_resume.optimization_result)
-print("Building the resume PDF...")
-resume_pdf = my_resume.build()
-with open("test_resume.pdf", "wb") as f:
-    f.write(resume_pdf)
-print("Wrote test_resume.pdf")
-t1 = datetime.datetime.now()
-new_dict = my_resume.to_dict()
 
-print("Just one more, once")
-t2 = datetime.datetime.now()
-my_resume2 = Resume(template, new_dict)
-if not my_resume2.make(
-    "We are seeking a passionate and skilled Frontend Dev Engineer to join our innovative product development team at [Your Company Name], where you'll be instrumental in bringing our user interfaces to life, ensuring they are visually stunning, highly performant, and a joy to use. In this role, you will design, develop, and maintain robust, scalable, and responsive user-facing features, collaborating closely with UI/UX designers to translate concepts into pixel-perfect applications and integrating seamlessly with backend APIs (RESTful and/or GraphQL); you'll also be responsible for optimizing performance, writing clean and testable code, participating in code reviews, and contributing to technical discussions and continuous process improvement. We're looking for someone with 3+ years of professional experience, possessing deep expertise in HTML5, CSS3, and modern JavaScript (ES6+), with strong proficiency in React.js and its ecosystem, extensive experience with TypeScript for building robust applications, and hands-on experience with state management libraries like Redux Toolkit. You should be familiar with modern styling solutions like Styled-Components or Tailwind CSS, adept at consuming APIs, and skilled in writing unit and integration tests using frameworks such as Jest and React Testing Library, all while proficiently using Git for version control. Our primary tech stack includes React.js, TypeScript, Redux Toolkit, and Styled-Components (with growing use of Tailwind CSS), all tested with Jest and React Testing Library, and built with Webpack (moving towards Vite); if you're excited by the opportunity to build exceptional user experiences, thrive in a collaborative environment, and work with a cutting-edge frontend stack, we encourage you to apply."
-):
-    print("sadge")
-print("Resume made successfully")
-my_resume2.optimize()
+if __name__ == "__main__":
+    template = LTemplate()
+    t0 = datetime.datetime.now()
+    my_resume = Resume(template, test_resume_dict)
+    if not my_resume.make(
+        "This is a backend software engineer role, where the candidate will be instrumental in developing, hosting, and maintaining the robust server-side infrastructure and APIs on the cloud (AWS) that power our diverse applications. The candidate should have strong experience in backend development, especially with languages like Python (e.g., Django, Flask), Java (e.g., Spring Boot), or Node.js (e.g., Express). They should also be deeply familiar with designing and managing various databases (both relational like PostgreSQL or MySQL, and NoSQL like MongoDB or Redis) and possess a solid understanding of scalable architecture, API security, and distributed systems."
+    ):
+        print("sadge")
+    print("Resume made successfully")
+    print(my_resume.section_make_results)
+    my_resume.optimize()
 
-print("Optimization result, here is the result:")
-print(my_resume2.optimization_result)
-print("Building the resume PDF...")
-resume_pdf2 = my_resume2.build()
-with open("test_resume2.pdf", "wb") as f:
-    f.write(resume_pdf2)
-print("Wrote test_resume.pdf")
-t3 = datetime.datetime.now()
-print()
-print(f"Time taken to make the first resume: {t1 - t0}")
-print(f"Time taken to make the second resume: {t3 - t2}")
+    print("Optimization result, here is the result:")
+    print(my_resume.optimization_result)
+    print("Building the resume PDF...")
+    resume_pdf = my_resume.build()
+    with open("test_resume.pdf", "wb") as f:
+        f.write(resume_pdf)
+    print("Wrote test_resume.pdf")
+    t1 = datetime.datetime.now()
+    new_dict = my_resume.to_dict()
+
+    print("Just one more, once")
+    t2 = datetime.datetime.now()
+    my_resume2 = Resume(template, new_dict)
+    if not my_resume2.make(
+        "We are seeking a passionate and skilled Frontend Dev Engineer to join our innovative product development team at [Your Company Name], where you'll be instrumental in bringing our user interfaces to life, ensuring they are visually stunning, highly performant, and a joy to use. In this role, you will design, develop, and maintain robust, scalable, and responsive user-facing features, collaborating closely with UI/UX designers to translate concepts into pixel-perfect applications and integrating seamlessly with backend APIs (RESTful and/or GraphQL); you'll also be responsible for optimizing performance, writing clean and testable code, participating in code reviews, and contributing to technical discussions and continuous process improvement. We're looking for someone with 3+ years of professional experience, possessing deep expertise in HTML5, CSS3, and modern JavaScript (ES6+), with strong proficiency in React.js and its ecosystem, extensive experience with TypeScript for building robust applications, and hands-on experience with state management libraries like Redux Toolkit. You should be familiar with modern styling solutions like Styled-Components or Tailwind CSS, adept at consuming APIs, and skilled in writing unit and integration tests using frameworks such as Jest and React Testing Library, all while proficiently using Git for version control. Our primary tech stack includes React.js, TypeScript, Redux Toolkit, and Styled-Components (with growing use of Tailwind CSS), all tested with Jest and React Testing Library, and built with Webpack (moving towards Vite); if you're excited by the opportunity to build exceptional user experiences, thrive in a collaborative environment, and work with a cutting-edge frontend stack, we encourage you to apply."
+    ):
+        print("sadge")
+    print("Resume made successfully")
+    my_resume2.optimize()
+
+    print("Optimization result, here is the result:")
+    print(my_resume2.optimization_result)
+    print("Building the resume PDF...")
+    resume_pdf2 = my_resume2.build()
+    with open("test_resume2.pdf", "wb") as f:
+        f.write(resume_pdf2)
+    print("Wrote test_resume.pdf")
+    t3 = datetime.datetime.now()
+    print()
+    print(f"Time taken to make the first resume: {t1 - t0}")
+    print(f"Time taken to make the second resume: {t3 - t2}")

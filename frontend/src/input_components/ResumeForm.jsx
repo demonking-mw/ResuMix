@@ -2,6 +2,7 @@ import { useState } from "react";
 import SectionForm from "./SectionForm";
 import "./ResumeForm.css";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../config";
 import NavBar from "../components/NavBar";
 
 export default function ResumeForm() {
@@ -68,7 +69,7 @@ export default function ResumeForm() {
 
     try {
       const response = await fetch(
-        "http://localhost:5001/api/generate-resume",
+        `${API_BASE_URL}/api/generate-resume`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

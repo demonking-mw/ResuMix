@@ -5,6 +5,7 @@ import logo from "../assets/ResuMix.png";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import api from "../api/connection";
+import { GOOGLE_CLIENT_ID, GOOGLE_LOGIN_ENABLED } from "../config";
 import { useAuth } from "../context/AuthContext";
 
 export default function CreateProfile() {
@@ -158,7 +159,7 @@ export default function CreateProfile() {
   };
 
   return (
-    <GoogleOAuthProvider clientId="934728058727-jvm3keubjaluikeg06hl4voifiq8fcv0.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <div className="auth-wrapper">
         <div className="auth-header">
           <Link to="/" className="logo-link">
@@ -229,18 +230,20 @@ export default function CreateProfile() {
             <hr className="divider" />
 
             {/* Google OAuth Signup Button */}
-            <div
-              className="google-login-container"
-              style={{ marginBottom: "0px", textAlign: "center" }}
-            >
-              <GoogleLogin
-                onSuccess={handleGoogleLoginSuccess}
-                onError={() => {
-                  console.log("Google Signup Failed");
-                  setMessage("Google signup failed");
-                }}
-              />
-            </div>
+            {GOOGLE_LOGIN_ENABLED && (
+              <div
+                className="google-login-container"
+                style={{ marginBottom: "0px", textAlign: "center" }}
+              >
+                <GoogleLogin
+                  onSuccess={handleGoogleLoginSuccess}
+                  onError={() => {
+                    console.log("Google Signup Failed");
+                    setMessage("Google signup failed");
+                  }}
+                />
+              </div>
+            )}
 
             <hr className="divider" />
 

@@ -51,9 +51,14 @@ class User(Resource):
         Gets all user info after authentication
         Creates a new user if not exists and having enough info (go type)
         Note: SIGN IN ONLY
+
+        Prefer POST: a GET puts credentials in the URL, and therefore in server
+        logs and browser history.
         """
-        args = user_req.user_auth.parse_args()
-        # Check auth type
+        return self.__authenticate(user_req.user_auth.parse_args())
+
+    def __authenticate(self, args: dict) -> tuple[dict, int]:
+        """Shared sign-in handling for both GET and POST."""
         if args["type"] == "re":
             # Reauth, to get user info
             database = DBConn()
@@ -84,22 +89,15 @@ class User(Resource):
 
     def post(self) -> tuple[dict, int]:
         """
-        Creates a new user and log the user in
+        Creates a new user, or signs an existing one in, from a JSON body.
         """
 
         args = user_req.user_signup.parse_args()
 
-        # Login via user/password
-        if args["type"] == "up":
-            database = DBConn()
-            user_auth_obj = user_auth.UserAuth(database, args)
-            user_auth_json, login_status = user_auth_obj.login_up()
-            database.close()
-            if login_status == -1:
-                # password mismatch
-                return {"status": False, "detail": {"status": "info mismatch"}}, 400
-            # returns {"status": True, "jwt": "...", ...}, 200
-            return user_auth_json, login_status
+        # Sign-in types are handled by the shared helper so credentials can be
+        # sent in a body instead of the query string.
+        if args["type"] in ("up", "re", "email"):
+            return self.__authenticate(args)
 
         # Check auth type
         if args["type"] == "go":

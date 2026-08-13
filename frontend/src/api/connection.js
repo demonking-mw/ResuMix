@@ -1,9 +1,7 @@
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
-// Set your backend API base URL
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
-
+// Backend API base URL (see frontend/src/config.js)
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -32,11 +30,17 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
+    // A 401 from a sign-in attempt is the caller's to report; redirecting here
+    // reloads the page and destroys the error message the form is about to show.
+    const url = error.config?.url || "";
+    const isAuthAttempt = url.startsWith("/user");
+    const hadSession = Boolean(localStorage.getItem("authToken"));
+
+    if (error.response?.status === 401 && hadSession && !isAuthAttempt) {
+      // Session expired mid-use: clear it and send the user back to log in.
       localStorage.removeItem("authToken");
       localStorage.removeItem("reauthToken");
-      window.location.href = "/login";
+      window.location.href = "/login?expired=1";
     }
     return Promise.reject(error);
   }

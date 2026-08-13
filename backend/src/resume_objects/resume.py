@@ -11,6 +11,16 @@ from .sections import Section
 from .line_eval import line_eval
 from ..general_helper.isa_bot import AIBot
 
+MIN_JOB_DESCRIPTION_CHARS = 40
+
+
+class ResumeGenerationError(RuntimeError):
+    """A generation step failed for a reason worth showing the user."""
+
+    def __init__(self, message: str, code: str = "generation_failed") -> None:
+        super().__init__(message)
+        self.code = code
+
 
 class Resume:
     """
@@ -31,7 +41,7 @@ class Resume:
         self.section_build_results = []
         self.requirements = {}
         self.attribute_targets = {}  # dict of cate -> list of attributes
-        self.bot = AIBot()  # AI bot for generating scores
+        self._bot = None  # built on first use so loading a resume needs no model config
         self.optimization_result = None  # set by optimize(), see docstring for shape
         self.make_results_flattened = (
             []
@@ -58,6 +68,13 @@ class Resume:
         else:
             self.aux_info = {"type": "resume"}
 
+    @property
+    def bot(self) -> AIBot:
+        """The language-model client, created on first use."""
+        if self._bot is None:
+            self._bot = AIBot()
+        return self._bot
+
     def make(self, job_req: str, no_cache: bool = False) -> bool:
         """
         Make the resume build ready
@@ -71,7 +88,8 @@ class Resume:
             each list corresponds to: section -> item -> version
         - Returns True if successful, False otherwise
 
-
+        Raises ResumeGenerationError when the input or an external service makes
+        generation impossible, so the caller can report why.
 
         New version:
         Scores each line under the resume
@@ -81,6 +99,14 @@ class Resume:
         assign section_make_result and make_results_flattened
         return successfulness
         """
+        job_req = (job_req or "").strip()
+        if len(job_req) < MIN_JOB_DESCRIPTION_CHARS:
+            raise ResumeGenerationError(
+                "The job description is too short to tailor a resume from. "
+                f"Paste at least {MIN_JOB_DESCRIPTION_CHARS} characters.",
+                code="job_description_too_short",
+            )
+
         # New version
         all_sects = self.sections
         all_items = []
@@ -89,6 +115,12 @@ class Resume:
         all_lines = []
         for itm in all_items:
             all_lines.extend(itm.line_objs)
+        if not all_lines:
+            raise ResumeGenerationError(
+                "This resume has no bullet points yet. Add at least one line to "
+                "an item in your master resume.",
+                code="empty_resume",
+            )
         # parse the job requirement
         parse_req = (
             "generate a list of core requirements, each in a single sentence and outlines the requirement of a single skill from the resume. The list of sentences collectively should reflect all of what the job recruiter is looking for. the length of your result list should be between 1 to 12 items. Some of the items in your list should be soft skills inferred from the job requirement or relevant knowledge requirement inferred from the company context. JOB REQUIREMENT: "
@@ -98,21 +130,31 @@ class Resume:
         req_success, job_requirement_list = self.bot.pythoned_response_instruction(
             parse_req, parse_instruction, datatype=list
         )
-        if not req_success:
-            print("DEBUG: parse requirement failed")
-            return False
+        if not req_success or not job_requirement_list:
+            raise ResumeGenerationError(
+                "The language model did not return usable requirements for this "
+                "job description. Try again, or switch OPENAI_MODEL to a stronger model.",
+                code="requirement_parsing_failed",
+            )
         # parse_instruction is proper
         # call line_eval
         if not line_eval(job_requirement_list, all_lines, no_cache):
-            print("DEBUG: line_eval failed")
-            return False
+            raise ResumeGenerationError(
+                "Scoring failed: the sentence-transformer model could not be loaded. "
+                "Run python scripts/fetch_model.py, or check OPT_MODEL_PATH in .env.",
+                code="scoring_failed",
+            )
         for section in self.sections:
+            if not section.items:
+                # A section the user has not filled in yet is simply skipped.
+                self.section_make_results.append([])
+                continue
             item_core_info = section.make()  # Deprecate requirements
-            for item_info_list in item_core_info:
-                self.make_results_flattened.append(item_info_list)
             if item_core_info is None:
                 print(f"DEBUG: Failed to make section {section.sect_id}")
                 return False
+            for item_info_list in item_core_info:
+                self.make_results_flattened.append(item_info_list)
             self.section_make_results.append(item_core_info)
         return True
 
@@ -202,8 +244,6 @@ class Resume:
         for ids in max_result:
             section_id = ids[0]
             self.optimization_result[section_id].append(ids)
-        print("DEBUG: Optimization FINISHED")
-        print("DEBUG: optimization result:", self.optimization_result)
         return True
 
     def build(self) -> bytes:
@@ -221,7 +261,10 @@ class Resume:
             return b""
         for section in self.sections:
             if not section.items:
-                print(f"DEBUG: Section {section.sect_id} has no items, skipping")
+                continue
+            if not self.optimization_result[section.sect_id]:
+                # Nothing from this section was selected; printing the heading
+                # on its own would leave an empty block on the page.
                 continue
             section_build = section.build(
                 self.optimization_result[section.sect_id], self.template
@@ -229,7 +272,6 @@ class Resume:
             # Result of seciton_build should be a 1d list
             self.section_build_results.extend(section_build)
         # Call the resume build function in the template
-        print("DEBUG: Building resume with template")
         return self.template.resume_builder(self)
 
     def to_dict(self) -> dict:
@@ -246,4 +288,50 @@ class Resume:
                 "heading_name": self.heading_name,
                 "subsequent_content": self.heading_subsequent_content,
             }
+        return result
+
+    def to_tailored_dict(self) -> dict:
+        """
+        Return the resume dict containing only the items and lines selected
+        by the optimizer. Requires optimize() to have been called first.
+
+        Each selected item is trimmed to only its top-k lines (where k is
+        determined by the version_idx chosen by the optimizer).
+        """
+        if not self.optimization_result:
+            return self.to_dict()
+
+        result = {
+            "aux_info": self.aux_info,
+            "heading_info": {
+                "heading_name": self.heading_name,
+                "subsequent_content": self.heading_subsequent_content,
+            },
+            "sections": [],
+        }
+
+        for section in self.sections:
+            selected_ids = self.optimization_result[section.sect_id]
+            if not selected_ids:
+                continue
+            sect_dict = {
+                "sect_id": section.sect_id,
+                "aux_info": section.aux_info,
+                "title": section.title,
+                "items": [],
+            }
+            for ids in sorted(selected_ids, key=lambda x: x[1]):
+                item_idx = ids[1]
+                version_idx = ids[2]
+                item = section.items[item_idx]
+                num_lines = version_idx + 1
+                top_lines = item.top_k_lines(item.line_objs, num_lines)
+                sect_dict["items"].append({
+                    "aux_info": item.aux_info,
+                    "titles": item.titles if item.titles else [],
+                    "lines": [line.to_dict() for line in top_lines],
+                    "cate_scores": item.cate_scores,
+                })
+            result["sections"].append(sect_dict)
+
         return result

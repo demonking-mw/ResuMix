@@ -14,6 +14,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.colors import HexColor
 
 from .styles import ResumeStyle, resume_style_0
+from .markup import safe_markup
 
 
 class LTemplate:
@@ -126,7 +127,7 @@ class LTemplate:
                 "subright2_font"
             ].font_attributes.leading
         for line in top_k_lines:
-            line_rstring = line.content
+            line_rstring = safe_markup(line.content)
             line_style = self.style_sheet.font_lib[
                 "standard_text_font"
             ].get_paragraph_style()
@@ -165,6 +166,8 @@ class LTemplate:
 
         RETURN: a list of Paragraphs
         """
+        headings = [safe_markup(h) for h in (headings or [])]
+        content = [safe_markup(c) for c in (content or [])]
         section_content = []
         if item_type == "n":
             # Normal resume build:
@@ -293,7 +296,7 @@ class LTemplate:
         # Add the section title and the bar line
         section_content.append(
             Paragraph(
-                title,
+                safe_markup(title),
                 self.style_sheet.font_lib["section_title_font"].get_paragraph_style(),
             )
         )
@@ -322,7 +325,6 @@ class LTemplate:
         Makes the resume, then hand it back as bytes
         Using section_build_results: listof(Paragraph() or equivalent reportlab items)
         """
-        print("Building resume...")
         main_content = resume_object.section_build_results
         # All the content in the middle
 
@@ -345,11 +347,13 @@ class LTemplate:
         full_content_list = []
         # It's a 1d list, build directly
         title_para = Paragraph(
-            resume_object.heading_name,
+            safe_markup(resume_object.heading_name),
             self.style_sheet.font_lib["resume_heading_name_font"].get_paragraph_style(),
         )
         # In this template, join the heading subsequent list
-        subsequent_text = " | ".join(resume_object.heading_subsequent_content)
+        subsequent_text = " | ".join(
+            safe_markup(part) for part in resume_object.heading_subsequent_content
+        )
         sub_para = Paragraph(
             subsequent_text,
             self.style_sheet.font_lib["resume_heading_desc_font"].get_paragraph_style(),
@@ -367,5 +371,4 @@ class LTemplate:
         c.save()
         pdf_bytes = buffer.getvalue()
         buffer.close()
-        print("pdf generated successfully")
         return pdf_bytes

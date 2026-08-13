@@ -130,12 +130,25 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
+frontend/.env
+frontend/.env.local
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Local-first runtime data (never commit these)
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Locally downloaded models
+models/
+all-mpnet-base-v2-local/
 
 # Spyder project settings
 .spyderproject

@@ -6,6 +6,18 @@ import "./Optimize.css";
 import NavBar from "../NavBar";
 import { Button, Textarea, Input } from "../../ui";
 
+const RESUME_STATUS_TEXT = {
+  r: "Add more items (fewer than 4)",
+  o: "Usable, more items would help",
+  g: "Good",
+};
+
+const TWEAK_STATUS_TEXT = {
+  r: "Using default weights",
+  o: "Partly tuned",
+  g: "Tuned",
+};
+
 const Optimize = () => {
   const { user, getReauthHeaders, userStatus, reauthenticate } = useAuth();
   const [jobDescription, setJobDescription] = useState("");
@@ -61,9 +73,9 @@ const Optimize = () => {
       addTerminalMessage("Checking system status...", "info");
 
       if (userStatus?.generate_status === "r") {
-        addTerminalMessage("❌ Resume generation not ready!", "error");
+        addTerminalMessage("❌ Your master resume is empty", "error");
         addTerminalMessage(
-          "Please complete the previous steps (Master Resume and Parameters) before generating.",
+          "Add at least one item with a bullet point under 'Set your master resume', then try again.",
           "error"
         );
         setIsGenerating(false);
@@ -144,15 +156,25 @@ const Optimize = () => {
     } catch (error) {
       console.error("Error generating resume:", error);
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
+        // The backend sends a JSON body explaining what went wrong. With
+        // responseType 'blob' it arrives as a Blob, so read it back as text.
+        let detail = "";
+        try {
+          const raw =
+            error.response.data instanceof Blob
+              ? await error.response.data.text()
+              : error.response.data;
+          const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+          detail = parsed?.message || parsed?.detail?.status || "";
+        } catch {
+          detail = "";
+        }
         addTerminalMessage(
-          `❌ Server error: ${error.response.status} ${error.response.statusText}`,
+          detail
+            ? `❌ ${detail}`
+            : `❌ Server error: ${error.response.status} ${error.response.statusText}`,
           "error"
         );
-        if (error.response.data && typeof error.response.data === "string") {
-          addTerminalMessage(`Error details: ${error.response.data}`, "error");
-        }
       } else if (error.request) {
         // The request was made but no response was received
         addTerminalMessage(
@@ -246,7 +268,8 @@ const Optimize = () => {
                 <div className="status-item">
                   <span className="status-item-label">Resume Status:</span>
                   <span className="status-placeholder">
-                    Will be implemented later
+                    {RESUME_STATUS_TEXT[userStatus?.resume_state] ||
+                      "Not loaded yet"}
                   </span>
                 </div>
 
@@ -254,15 +277,16 @@ const Optimize = () => {
                 <div className="status-item">
                   <span className="status-item-label">Tweaking Status:</span>
                   <span className="status-placeholder">
-                    Will be implemented later
+                    {TWEAK_STATUS_TEXT[userStatus?.tweak_status] ||
+                      "Not loaded yet"}
                   </span>
                 </div>
 
-                {/* Tokens (Future Implementation) */}
+                {/* Items in the master resume */}
                 <div className="status-item">
-                  <span className="status-item-label">Tokens:</span>
+                  <span className="status-item-label">Items:</span>
                   <span className="status-tokens">
-                    (implemented in the future)
+                    {userStatus?.item_count ?? "—"}
                   </span>
                 </div>
               </div>

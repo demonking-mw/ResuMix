@@ -1,0 +1,7 @@
+# Tooling for working on ResuMix locally (formatting, linting, API tests).
+-r requirements.txt
+
+black>=25.1
+pylint>=3.3
+isort>=6.0
+requests>=2.32

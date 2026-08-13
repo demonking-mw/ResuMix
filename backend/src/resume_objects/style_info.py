@@ -31,6 +31,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 
+from .fonts import resolve_font
+
 
 @dataclasses.dataclass
 class FontAttributes:
@@ -93,7 +95,7 @@ class StyleInfo:
             left_ind = self.font_attributes.left_indent
         return ParagraphStyle(
             name=self.font_attributes.name,
-            fontName=self.font_attributes.font_name,
+            fontName=resolve_font(self.font_attributes.font_name),
             fontSize=self.font_attributes.font_size,
             textColor=(
                 colors.HexColor(self.font_attributes.text_color_hex)

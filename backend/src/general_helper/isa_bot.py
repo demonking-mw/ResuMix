@@ -22,21 +22,27 @@ class AIBot:
     """
 
     def __init__(
-        self, ai_source: str = "gpt", default_model: str = "gpt-4o-mini"
+        self, ai_source: str = "gpt", default_model: str = None
     ) -> None:
         # Load environment variables from .env file
         load_dotenv()
         self.api_key = ""
+        # Set OPENAI_BASE_URL to any OpenAI-compatible server (Ollama, LM Studio,
+        # vLLM, ...) to keep inference on this machine.
+        self.base_url = (os.getenv("OPENAI_BASE_URL") or "").strip() or None
         if ai_source == "gpt":
             # Read the OpenAI API secret key
-            self.api_key = os.getenv("OPENAI_KEY")
+            self.api_key = os.getenv("OPENAI_KEY") or os.getenv("OPENAI_API_KEY")
             if not self.api_key:
-                raise ValueError("OpenAI API key not found in .env file")
+                if not self.base_url:
+                    raise ValueError("OpenAI API key not found in .env file")
+                # Local servers accept any non-empty key.
+                self.api_key = "local"
 
         else:
             raise ValueError("ai source bad")
-        self.ai_client = OpenAI(api_key=self.api_key)
-        self.default_model = default_model
+        self.ai_client = OpenAI(api_key=self.api_key, base_url=self.base_url)
+        self.default_model = default_model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
         self.total_tokens = 0
 
     def response_simple(
@@ -48,7 +54,6 @@ class AIBot:
         :param model: The model to use (optional, defaults to self.default_model)
         :return: The AI's response as a string
         """
-        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
 
@@ -71,7 +76,6 @@ class AIBot:
         :param model: The model to use (optional, defaults to self.default_model)
         :return: The AI's response as a string
         """
-        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
 
@@ -101,7 +105,6 @@ class AIBot:
         Get a response from the AI with an instruction and parse it into a specific type
         Have up to retries attempts to get valid response
         """
-        print("DEBUG: AI CALL")
         t0 = datetime.datetime.now()
         if model is None:
             model = self.default_model
@@ -122,7 +125,6 @@ class AIBot:
             try:
                 parsed = ast.literal_eval(reply)
                 if isinstance(parsed, datatype):
-                    print("DEBUG: Parsed response successfully:" + str(parsed))
                     t1 = datetime.datetime.now()
                     print(f"Time taken to get gpt response: {t1 - t0}")
                     return True, parsed
@@ -158,7 +160,6 @@ class AIBot:
         :return: The AI's response as a string
         NOTE: the keys in prompt_dict should be 'system', 'user', or 'assistant' and its value is the content
         """
-        print("DEBUG: AI CALL")
         if model is None:
             model = self.default_model
 

@@ -6,6 +6,7 @@ import logo from "../assets/ResuMix.png";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import api from "../api/connection";
+import { GOOGLE_CLIENT_ID, GOOGLE_LOGIN_ENABLED } from "../config";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -15,6 +16,9 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+
+  // Set when the API interceptor bounces an expired session back here.
+  const sessionExpired = new URLSearchParams(location.search).get("expired") === "1";
 
   // Get the intended destination (where user was trying to go before login)
   const from = location.state?.from?.pathname || "/account";
@@ -28,12 +32,10 @@ export default function Login() {
     }
 
     try {
-      const response = await api.get("/user", {
-        params: {
-          type: "up",
-          uid: userId,
-          pwd: password,
-        },
+      const response = await api.post("/user", {
+        type: "up",
+        uid: userId,
+        pwd: password,
       });
 
       const data = response.data;
@@ -144,7 +146,7 @@ export default function Login() {
   };
 
   return (
-    <GoogleOAuthProvider clientId="934728058727-jvm3keubjaluikeg06hl4voifiq8fcv0.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <div className="auth-wrapper">
         <div className="auth-header">
           <Link to="/" className="logo-link">
@@ -155,6 +157,13 @@ export default function Login() {
 
         <div className="auth-card">
           <h2 className="auth-title">Log In</h2>
+          {sessionExpired && !errorMessage && (
+            <div className="error-container">
+              <span className="error-message">
+                Your session expired. Please log in again.
+              </span>
+            </div>
+          )}
           <form className="auth-form" onSubmit={handleSubmit}>
             <input
               type="text"
@@ -181,10 +190,6 @@ export default function Login() {
               </div>
             )}
 
-            <div className="forgot-link">
-              <Link to="/forgot-password">Forgot Password?</Link>
-            </div>
-
             <button type="submit" className="primary-btn">
               Log In
             </button>
@@ -192,18 +197,20 @@ export default function Login() {
             <hr className="divider" />
 
             {/* Google OAuth Login Button */}
-            <div
-              className="google-login-container"
-              style={{ marginBottom: "0px", textAlign: "center" }}
-            >
-              <GoogleLogin
-                onSuccess={handleGoogleLoginSuccess}
-                onError={() => {
-                  console.log("Google Login Failed");
-                  setErrorMessage("Google login failed");
-                }}
-              />
-            </div>
+            {GOOGLE_LOGIN_ENABLED && (
+              <div
+                className="google-login-container"
+                style={{ marginBottom: "0px", textAlign: "center" }}
+              >
+                <GoogleLogin
+                  onSuccess={handleGoogleLoginSuccess}
+                  onError={() => {
+                    console.log("Google Login Failed");
+                    setErrorMessage("Google login failed");
+                  }}
+                />
+              </div>
+            )}
 
             <hr className="divider" />
             <div className="signup-prompt">

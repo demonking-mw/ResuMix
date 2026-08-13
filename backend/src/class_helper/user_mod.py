@@ -90,7 +90,7 @@ class UserMod:
             "data",
             self.targets,
             "uid",
-            self.args["uid"],
+            self.uid,
         )
         self.database.run_sql(upd_query, values)
         self.executed = True

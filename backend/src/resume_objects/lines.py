@@ -36,9 +36,9 @@ class Line:
         self.content_str = ""  # content_str is pure string
         self.keywords = []  # list of pure strings
         self.aux_info = {}
-        self.bot = AIBot()  # AI bot for generating scores
+        self._bot = None  # built on demand; most lines never need the model
 
-        self.score: int = None  # Used for optimization
+        self.score: float = None  # Used for optimization
 
         # getter and setters are not needed
         if class_dict is not None:
@@ -56,6 +56,15 @@ class Line:
             )
             self.keywords = class_dict["keywords"] if "keywords" in class_dict else []
             self.aux_info = class_dict["aux_info"]
+            score = class_dict.get("score")
+            self.score = float(score) if isinstance(score, (int, float)) else None
+
+    @property
+    def bot(self) -> AIBot:
+        """The language-model client, created on first use."""
+        if self._bot is None:
+            self._bot = AIBot()
+        return self._bot
 
     def content_flatten(self) -> None:
         """
@@ -90,6 +99,8 @@ class Line:
             result["aux_info"] = {"type": "lines"}
         result["content"] = self.content
         result["content_str"] = self.content_str
+        if self.score is not None:
+            result["score"] = round(float(self.score), 4)
         return result
 
     # def __get_dict(self, prompt: str, retries: int) -> tuple[bool, dict]:

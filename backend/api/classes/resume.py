@@ -16,6 +16,7 @@ from flask_restful import Resource
 from backend.src.db_helper.dbconn import DBConn
 from backend.src.classes_req import resume_req
 from backend.src.class_helper import resume_handle
+from .errors import HANDLED_ERRORS, error_response
 
 
 class ResumeHandle(Resource):
@@ -30,13 +31,15 @@ class ResumeHandle(Resource):
         Get the resume to download
         """
         args = resume_req.resume_get.parse_args()
-        print("DEBUG: Resume Get reached here")
         database = DBConn()
-        resume_handle_obj = resume_handle.ResumeHandle(database, args)
-        success, resume_pdf_bytes = resume_handle_obj.get_resume(args)
-        database.close()
+        try:
+            resume_handle_obj = resume_handle.ResumeHandle(database, args)
+            success, resume_pdf_bytes = resume_handle_obj.get_resume(args)
+        except HANDLED_ERRORS as exc:
+            return error_response(exc)
+        finally:
+            database.close()
         if not success:
-            print("DEBUG: Failed to generate resume using resume_handle")
             return {"status": False, "message": "Failed to generate resume"}, 400
         return send_file(
             BytesIO(resume_pdf_bytes),
@@ -51,15 +54,15 @@ class ResumeHandle(Resource):
         Process the input, set cache vectors
         Return status only
         """
+        args = resume_req.resume_post.parse_args()
+        database = DBConn()
         try:
-            args = resume_req.resume_post.parse_args()
-            database = DBConn()
             resume_handle_obj = resume_handle.ResumeHandle(database, args)
             success, message = resume_handle_obj.set_resume_dict(args)
+        except HANDLED_ERRORS as exc:
+            return error_response(exc)
+        finally:
             database.close()
-        except Exception as e:
-            print(f"ERROR: Exception in ResumeHandle POST: {e}")
-            return {"status": False, "message": str(e)}, 500
         if not success:
             return {"status": False, "message": message}, 400
         return {
